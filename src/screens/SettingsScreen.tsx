@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -6,8 +6,10 @@ import {
   ScrollView, 
   Switch, 
   TouchableOpacity, 
-  Alert
+  Alert,
+  Linking
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme, ThemeType, FontScaleType } from '../context/ThemeContext';
@@ -28,9 +30,39 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
     setFontScale
   } = useTheme();
 
-  // Autoplay state could be local or context (simulated locally for settings page)
-  const [autoplay, setAutoplay] = React.useState(true);
-  const [notifications, setNotifications] = React.useState(true);
+  // Autoplay & Notifications — persisted to AsyncStorage (S2.3)
+  const [autoplay, setAutoplayState] = useState(true);
+  const [notifications, setNotificationsState] = useState(true);
+
+  useEffect(() => {
+    const loadPrefs = async () => {
+      try {
+        const raw = await AsyncStorage.getItem('verba_settings');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.autoplay !== undefined) setAutoplayState(parsed.autoplay);
+          if (parsed.notifications !== undefined) setNotificationsState(parsed.notifications);
+        }
+      } catch (e) {
+        console.warn('[Settings] Failed to load preferences', e);
+      }
+    };
+    loadPrefs();
+  }, []);
+
+  const savePref = async (key: string, value: boolean) => {
+    try {
+      const raw = await AsyncStorage.getItem('verba_settings');
+      const current = raw ? JSON.parse(raw) : {};
+      current[key] = value;
+      await AsyncStorage.setItem('verba_settings', JSON.stringify(current));
+    } catch (e) {
+      console.warn('[Settings] Failed to save preference', e);
+    }
+  };
+
+  const setAutoplay = (val: boolean) => { setAutoplayState(val); savePref('autoplay', val); };
+  const setNotifications = (val: boolean) => { setNotificationsState(val); savePref('notifications', val); };
 
   const handleLogout = () => {
     Alert.alert(
@@ -185,6 +217,9 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
             <TouchableOpacity 
               style={[styles.clickableRow, { borderBottomColor: themeColors.outlineVariant + '20' }]}
               activeOpacity={0.7}
+              onPress={() => Linking.openURL('https://www.freeprivacypolicy.com/live/verba-app')}
+              accessibilityLabel="Open Privacy Policy"
+              accessibilityRole="link"
             >
               <View style={styles.clickableRowLeft}>
                 <MaterialIcons name="shield" size={18} color={themeColors.onSurfaceVariant} />
@@ -196,6 +231,9 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
             <TouchableOpacity 
               style={[styles.clickableRow, { borderBottomColor: themeColors.outlineVariant + '20' }]}
               activeOpacity={0.7}
+              onPress={() => Linking.openURL('mailto:support@lexitech.rw?subject=Verba%20Support')}
+              accessibilityLabel="Contact Help and Support"
+              accessibilityRole="link"
             >
               <View style={styles.clickableRowLeft}>
                 <MaterialIcons name="help-center" size={18} color={themeColors.onSurfaceVariant} />

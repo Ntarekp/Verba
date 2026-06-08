@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Alert
+  Alert,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { lookupWord } from '../services/dictionaryService';
-import { DictionaryEntry } from '../models/DictionaryTypes';
+import { DictionaryEntry, Phonetic } from '../models/DictionaryTypes';
 import { WordCard } from '../components/WordCard';
 import { MeaningCard } from '../components/MeaningCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -27,6 +27,15 @@ import { rounded, spacing, typography } from '../styles/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WordDetails'>;
 
+// Derive a human-readable accent label from the audio URL
+const getAccentLabel = (phonetic: Phonetic): string => {
+  const url = phonetic.audio?.toLowerCase() || '';
+  if (url.includes('-us') || url.includes('_us') || url.includes('/en-us')) return '🇺🇸 American';
+  if (url.includes('-uk') || url.includes('_uk') || url.includes('/en-gb')) return '🇬🇧 British';
+  if (url.includes('-au') || url.includes('_au')) return '🇦🇺 Australian';
+  return phonetic.text ? phonetic.text : '🔊 Standard';
+};
+
 export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const { word: initialWord } = route.params;
   const [word, setWord] = useState(initialWord);
@@ -34,12 +43,24 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const { savedWords, addSavedWord, removeSavedWord, updateWordNotes } = useSaved();
   const { addHistoryWord } = useHistory();
-  const { playAudio, isLoading: isAudioPlaying } = useAudio();
+  const {
+    playAudio,
+    pauseAudio,
+    togglePlayPause,
+    isPlaying: isAudioPlaying,
+    isPaused: isAudioPaused,
+    isLoading: isAudioLoading,
+    currentUrl,
+  } = useAudio();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [errorType, setErrorType] = useState<'404' | 'offline' | 'server' | null>(null);
   const [entry, setEntry] = useState<DictionaryEntry | null>(null);
   const [noteText, setNoteText] = useState('');
+
+  // Activity 3, Req 5: track all available audio phonetics + which one is selected
+  const [availablePhonetics, setAvailablePhonetics] = useState<Phonetic[]>([]);
+  const [selectedPhoneticIndex, setSelectedPhoneticIndex] = useState<number>(0);
 
   const savedItem = savedWords.find(w => w.word.toLowerCase() === word.toLowerCase());
   const isSaved = !!savedItem;
@@ -48,19 +69,29 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     try {
       setLoading(true);
       setErrorType(null);
+      setAvailablePhonetics([]);
+      setSelectedPhoneticIndex(0);
+
       const data = await lookupWord(searchWord);
       setEntry(data);
-      
-      // Load saved notes if present
-      const match = savedWords.find(w => w.word.toLowerCase() === searchWord.toLowerCase());
+
+      // Extract all phonetics that have valid audio URLs (Activity 3, Req 1 & 5)
+      const validPhonetics = data.phonetics.filter(
+        p => p.audio && p.audio.trim().length > 0
+      );
+      setAvailablePhonetics(validPhonetics);
+
+      // Load saved notes if word is already bookmarked
+      const match = savedWords.find(
+        w => w.word.toLowerCase() === searchWord.toLowerCase()
+      );
       setNoteText(match?.learningNotes || '');
 
-      // Log search history
+      // Add to search history (Activity 4, Req 3)
       const primaryMeaning = data.meanings[0];
       const summary = primaryMeaning?.definitions[0]?.definition || '';
       const partOfSpeech = primaryMeaning?.partOfSpeech || 'noun';
       addHistoryWord(data.word, partOfSpeech, summary);
-      
     } catch (e: any) {
       console.error(e);
       if (e.message === 'WORD_NOT_FOUND') {
@@ -79,14 +110,27 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     fetchDetails(word);
   }, [word]);
 
+  // Activity 3, Req 4 & 7: play/pause toggle for selected pronunciation
   const handlePlayAudio = () => {
-    if (!entry) return;
-    const audioPhonetic = entry.phonetics.find(p => p.audio && p.audio.endsWith('.mp3'));
-    if (audioPhonetic) {
-      playAudio(audioPhonetic.audio);
-    } else {
-      Alert.alert('Pronunciation Unavailable', 'No voice recordings found for this entry.');
+    const selectedPhonetic = availablePhonetics[selectedPhoneticIndex];
+    if (!selectedPhonetic?.audio) {
+      Alert.alert(
+        'Pronunciation Unavailable',
+        'No voice recordings found for this entry.'
+      );
+      return;
     }
+    togglePlayPause(selectedPhonetic.audio);
+  };
+
+  // Activity 3, Req 5: switch to a different accent pronunciation
+  const handleSelectPhonetic = (index: number) => {
+    if (index === selectedPhoneticIndex) return;
+    // Stop any currently playing audio before switching accent
+    if (isAudioPlaying || isAudioPaused) {
+      pauseAudio();
+    }
+    setSelectedPhoneticIndex(index);
   };
 
   const handleToggleSave = () => {
@@ -104,8 +148,10 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const handleSaveNotes = () => {
     if (!entry) return;
     if (!isSaved) {
-      // Prompt user to save the word first
-      Alert.alert('Save Word First', 'Please bookmark this word to save notes associated with it.');
+      Alert.alert(
+        'Save Word First',
+        'Please bookmark this word to save notes associated with it.'
+      );
       return;
     }
     updateWordNotes(entry.word, noteText);
@@ -113,7 +159,6 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   };
 
   const handleSelectRelatedWord = (newWord: string) => {
-    // Tapping synonym/antonym triggers deep lookup reload
     setWord(newWord);
   };
 
@@ -127,9 +172,9 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
   if (errorType) {
     return (
-      <ErrorView 
-        type={errorType} 
-        query={word} 
+      <ErrorView
+        type={errorType}
+        query={word}
         onRetry={() => fetchDetails(word)}
         onBack={() => navigation.goBack()}
       />
@@ -138,21 +183,34 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
   if (!entry) return null;
 
-  const audioUrl = entry.phonetics.find(p => p.audio && p.audio.endsWith('.mp3'))?.audio || null;
+  // The audio URL currently selected for playback
+  const activeAudioUrl = availablePhonetics[selectedPhoneticIndex]?.audio || null;
+
+  // Determine if the currently-playing URL matches the selected phonetic
+  const isCurrentlySelected = currentUrl === activeAudioUrl;
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={[styles.container, { backgroundColor: themeColors.background }]}>
         {/* Custom Header Nav */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.navBtn}
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+          >
             <MaterialIcons name="arrow-back" size={24} color={themeColors.primary} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: themeColors.primary }]}>Verba</Text>
-          <TouchableOpacity style={styles.navBtn}>
+          <TouchableOpacity
+            style={styles.navBtn}
+            accessibilityLabel="More options"
+            accessibilityRole="button"
+          >
             <MaterialIcons name="more-vert" size={24} color={themeColors.onSurfaceVariant} />
           </TouchableOpacity>
         </View>
@@ -163,43 +221,120 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
             word={entry.word}
             phonetic={entry.phonetic}
             partOfSpeech={entry.meanings[0]?.partOfSpeech || 'noun'}
-            audioUrl={audioUrl}
+            audioUrl={activeAudioUrl}
             isSaved={isSaved}
             onPlay={handlePlayAudio}
             onToggleSave={handleToggleSave}
             savedCollection={savedItem?.collection}
+            isAudioPlaying={isAudioPlaying && isCurrentlySelected}
+            isAudioPaused={isAudioPaused && isCurrentlySelected}
+            isAudioLoading={isAudioLoading && isCurrentlySelected}
           />
+
+          {/* Activity 3, Req 5: Accent Selector — shown only when multiple pronunciations exist */}
+          {availablePhonetics.length > 1 && (
+            <View style={styles.accentSection}>
+              <Text
+                style={[
+                  styles.accentLabel,
+                  {
+                    color: themeColors.onSurfaceVariant,
+                    fontSize: typography.labelCaps.fontSize * fontSizeMultiplier,
+                  },
+                ]}
+              >
+                PRONUNCIATIONS
+              </Text>
+              <View style={styles.accentChips}>
+                {availablePhonetics.map((phonetic, index) => {
+                  const isSelected = index === selectedPhoneticIndex;
+                  const accentLabel = getAccentLabel(phonetic);
+                  return (
+                    <TouchableOpacity
+                      key={`${phonetic.audio}-${index}`}
+                      onPress={() => handleSelectPhonetic(index)}
+                      style={[
+                        styles.accentChip,
+                        {
+                          backgroundColor: isSelected
+                            ? themeColors.secondaryContainer
+                            : themeColors.surfaceContainerLowest,
+                          borderColor: isSelected
+                            ? 'transparent'
+                            : themeColors.outlineVariant + '60',
+                        },
+                      ]}
+                      activeOpacity={0.7}
+                      accessibilityLabel={`Select ${accentLabel} pronunciation`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isSelected }}
+                    >
+                      <Text
+                        style={[
+                          styles.accentChipText,
+                          {
+                            color: isSelected
+                              ? themeColors.onSecondaryContainer
+                              : themeColors.onSurfaceVariant,
+                            fontWeight: isSelected ? '600' : '500',
+                            fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                          },
+                        ]}
+                      >
+                        {accentLabel}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          )}
 
           {/* Word Origin Card (Etymology) */}
           {entry.origin ? (
-            <View style={[
-              styles.originCard, 
-              { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '30' }
-            ]}>
+            <View
+              style={[
+                styles.originCard,
+                {
+                  backgroundColor: themeColors.surfaceContainerLowest,
+                  borderColor: themeColors.outlineVariant + '30',
+                },
+              ]}
+            >
               <View style={styles.originHeader}>
                 <MaterialIcons name="history-edu" size={20} color={themeColors.secondary} />
-                <Text style={[
-                  styles.originTitle, 
-                  { color: themeColors.secondary, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
-                ]}>
+                <Text
+                  style={[
+                    styles.originTitle,
+                    {
+                      color: themeColors.secondary,
+                      fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                    },
+                  ]}
+                >
                   Word Origin
                 </Text>
               </View>
-              <Text style={[
-                styles.originText, 
-                { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }
-              ]}>
+              <Text
+                style={[
+                  styles.originText,
+                  {
+                    color: themeColors.onSurfaceVariant,
+                    fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                  },
+                ]}
+              >
                 {entry.origin}
               </Text>
             </View>
           ) : null}
 
-          {/* Senses Meanings List */}
+          {/* Meanings — all parts of speech with definitions (Activity 2) */}
           {entry.meanings.map((meaning, idx) => (
-            <MeaningCard 
-              key={idx} 
-              meaning={meaning} 
-              onSelectWord={handleSelectRelatedWord} 
+            <MeaningCard
+              key={idx}
+              meaning={meaning}
+              onSelectWord={handleSelectRelatedWord}
             />
           ))}
 
@@ -207,22 +342,27 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           <View style={styles.notesSection}>
             <View style={styles.notesHeader}>
               <MaterialIcons name="edit-note" size={24} color={themeColors.primary} />
-              <Text style={[
-                styles.notesTitle, 
-                { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
-              ]}>
+              <Text
+                style={[
+                  styles.notesTitle,
+                  {
+                    color: themeColors.onSurface,
+                    fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                  },
+                ]}
+              >
                 Learning Notes
               </Text>
             </View>
             <TextInput
               style={[
-                styles.notesInput, 
-                { 
-                  backgroundColor: themeColors.surfaceContainerLowest, 
+                styles.notesInput,
+                {
+                  backgroundColor: themeColors.surfaceContainerLowest,
                   borderColor: themeColors.outlineVariant + '50',
                   color: themeColors.onSurface,
-                  fontSize: 16 * fontSizeMultiplier 
-                }
+                  fontSize: 16 * fontSizeMultiplier,
+                },
               ]}
               multiline
               numberOfLines={4}
@@ -230,14 +370,22 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
               placeholderTextColor={`${themeColors.outline}A0`}
               value={noteText}
               onChangeText={setNoteText}
+              accessibilityLabel="Learning notes input"
             />
             <View style={styles.notesActions}>
               <TouchableOpacity
                 onPress={handleSaveNotes}
                 style={[styles.saveNoteBtn, { backgroundColor: themeColors.secondary }]}
                 activeOpacity={0.8}
+                accessibilityLabel="Save learning notes"
+                accessibilityRole="button"
               >
-                <Text style={[styles.saveNoteBtnText, { fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
+                <Text
+                  style={[
+                    styles.saveNoteBtnText,
+                    { fontSize: typography.buttonText.fontSize * fontSizeMultiplier },
+                  ]}
+                >
                   Save Note
                 </Text>
               </TouchableOpacity>
@@ -279,6 +427,37 @@ const styles = StyleSheet.create({
     padding: spacing.gutter,
     paddingBottom: 40,
   },
+  // Activity 3 Req 5 — Accent selector
+  accentSection: {
+    marginBottom: spacing.stackLg,
+    marginTop: -spacing.stackMd,
+  },
+  accentLabel: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
+    letterSpacing: 0.8,
+    marginBottom: 10,
+  },
+  accentChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  accentChip: {
+    borderWidth: 1,
+    borderRadius: rounded.full,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    shadowColor: '#0b1c30',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  accentChipText: {
+    fontFamily: 'Inter',
+  },
+  // Word Origin
   originCard: {
     borderRadius: rounded.xl,
     padding: spacing.gutter,
@@ -305,6 +484,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     opacity: 0.9,
   },
+  // Learning Notes
   notesSection: {
     marginTop: spacing.stackSm,
   },

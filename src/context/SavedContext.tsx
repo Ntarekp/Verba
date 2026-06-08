@@ -65,11 +65,11 @@ export const SavedProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
           }
         } else {
-          // Initialize streak data
+          // Initialize streak data — starts at 0 (no searches yet)
           const todayStr = getLocalDateString(new Date());
-          setStreakCount(1); // Default initial streak
+          setStreakCount(0);
           await AsyncStorage.setItem(STREAK_KEY, JSON.stringify({
-            streakCount: 1,
+            streakCount: 0,
             lastLookupDate: todayStr
           }));
         }

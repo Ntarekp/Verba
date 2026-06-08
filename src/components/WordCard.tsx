@@ -14,6 +14,10 @@ interface WordCardProps {
   onPlay: () => void;
   onToggleSave: () => void;
   savedCollection?: string;
+  // Audio playback state — passed from parent's useAudio hook
+  isAudioPlaying?: boolean;
+  isAudioPaused?: boolean;
+  isAudioLoading?: boolean;
 }
 
 export const WordCard: React.FC<WordCardProps> = ({
@@ -24,33 +28,51 @@ export const WordCard: React.FC<WordCardProps> = ({
   isSaved,
   onPlay,
   onToggleSave,
-  savedCollection
+  savedCollection,
+  isAudioPlaying = false,
+  isAudioPaused = false,
+  isAudioLoading = false,
 }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
 
   return (
-    <View style={[
-      styles.card, 
-      { 
-        backgroundColor: themeColors.surfaceContainerLowest, 
-        shadowColor: themeColors.primary 
-      }
-    ]}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: themeColors.surfaceContainerLowest,
+          shadowColor: themeColors.primary,
+        },
+      ]}
+    >
       {/* Background radial soft light highlight */}
-      <View style={[styles.gradientOverlay, { backgroundColor: themeColors.primaryFixedDim + '0A' }]} />
+      <View
+        style={[
+          styles.gradientOverlay,
+          { backgroundColor: themeColors.primaryFixedDim + '0A' },
+        ]}
+      />
 
       <View style={styles.headerRow}>
         <View style={styles.textContainer}>
-          <Text style={[
-            styles.labelCaps, 
-            { color: themeColors.primary, fontSize: typography.labelCaps.fontSize * fontSizeMultiplier }
-          ]}>
+          <Text
+            style={[
+              styles.labelCaps,
+              {
+                color: themeColors.primary,
+                fontSize: typography.labelCaps.fontSize * fontSizeMultiplier,
+              },
+            ]}
+          >
             {savedCollection ? `Saved in ${savedCollection}` : 'DICTIONARY DEFINITION'}
           </Text>
-          <Text 
+          <Text
             style={[
-              styles.displayWord, 
-              { color: themeColors.onSurface, fontSize: typography.displayWordMobile.fontSize * fontSizeMultiplier }
+              styles.displayWord,
+              {
+                color: themeColors.onSurface,
+                fontSize: typography.displayWordMobile.fontSize * fontSizeMultiplier,
+              },
             ]}
             numberOfLines={2}
             adjustsFontSizeToFit
@@ -59,49 +81,78 @@ export const WordCard: React.FC<WordCardProps> = ({
           </Text>
         </View>
 
-        <PronunciationButton audioUrl={audioUrl} onPress={onPlay} />
+        {/* Pronunciation button — shows play or pause based on state */}
+        <PronunciationButton
+          audioUrl={audioUrl}
+          onPress={onPlay}
+          isPlaying={isAudioPlaying}
+          isPaused={isAudioPaused}
+          isLoading={isAudioLoading}
+        />
       </View>
 
       <View style={styles.footerRow}>
         <View style={styles.metaContainer}>
-          <View style={[
-            styles.badge, 
-            { borderColor: themeColors.secondary + '40', backgroundColor: themeColors.secondary + '0A' }
-          ]}>
-            <Text style={[
-              styles.badgeText, 
-              { color: themeColors.secondary, fontSize: typography.caption.fontSize * fontSizeMultiplier }
-            ]}>
+          <View
+            style={[
+              styles.badge,
+              {
+                borderColor: themeColors.secondary + '40',
+                backgroundColor: themeColors.secondary + '0A',
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.badgeText,
+                {
+                  color: themeColors.secondary,
+                  fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                },
+              ]}
+            >
               {partOfSpeech.charAt(0).toUpperCase() + partOfSpeech.slice(1)}
             </Text>
           </View>
           {phonetic ? (
-            <Text style={[
-              styles.phoneticText, 
-              { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }
-            ]}>
+            <Text
+              style={[
+                styles.phoneticText,
+                {
+                  color: themeColors.onSurfaceVariant,
+                  fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                },
+              ]}
+            >
               {phonetic}
             </Text>
           ) : null}
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
             styles.saveBtn,
-            { backgroundColor: isSaved ? themeColors.secondary + '1A' : 'transparent' }
-          ]} 
+            { backgroundColor: isSaved ? themeColors.secondary + '1A' : 'transparent' },
+          ]}
           onPress={onToggleSave}
           activeOpacity={0.7}
+          accessibilityLabel={isSaved ? 'Remove from saved words' : 'Save this word'}
+          accessibilityRole="button"
         >
-          <MaterialIcons 
-            name={isSaved ? "star" : "star-border"} 
-            size={24} 
-            color={isSaved ? '#d97706' : themeColors.outline} 
+          <MaterialIcons
+            name={isSaved ? 'star' : 'star-border'}
+            size={24}
+            color={isSaved ? '#d97706' : themeColors.outline}
           />
-          <Text style={[
-            styles.saveText, 
-            { color: isSaved ? '#d97706' : themeColors.onSurfaceVariant, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
-          ]}>
+          <Text
+            style={[
+              styles.saveText,
+              {
+                color: isSaved ? '#d97706' : themeColors.onSurfaceVariant,
+                fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+              },
+            ]}
+          >
             {isSaved ? 'Saved' : 'Save'}
           </Text>
         </TouchableOpacity>

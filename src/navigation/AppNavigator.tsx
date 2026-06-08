@@ -9,6 +9,7 @@ import { WordDetailsScreen } from '../screens/WordDetailsScreen';
 import { HistoryScreen } from '../screens/HistoryScreen';
 import { SavedWordsScreen } from '../screens/SavedWordsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
+import { SplashScreen } from '../screens/SplashScreen';
 import { DrawerContent } from './DrawerContent';
 import { useTheme } from '../context/ThemeContext';
 
@@ -100,7 +101,7 @@ export const AppNavigator = () => {
   }, []);
 
   if (initialRoute === null) {
-    return null; // or Splash screen loading placeholder
+    return <SplashScreen />;
   }
 
   return (

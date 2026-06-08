@@ -8,6 +8,7 @@ import {
   FlatList,
   Alert
 } from 'react-native';
+import { useAudio } from '../hooks/useAudio';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { MaterialIcons } from '@expo/vector-icons';
 import { SearchBar } from '../components/SearchBar';
@@ -32,6 +33,12 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const { savedWords, addSavedWord, removeSavedWord, streakCount } = useSaved();
   const { history, addHistoryWord } = useHistory();
+  const {
+    togglePlayPause: toggleWodAudio,
+    isPlaying: isWodPlaying,
+    isPaused: isWodPaused,
+    isLoading: isWodAudioLoading,
+  } = useAudio();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -138,8 +145,11 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
           partOfSpeech={wordOfDay.partOfSpeech}
           audioUrl={wordOfDay.audioUrl}
           isSaved={isWodSaved}
-          onPlay={() => Alert.alert('Pronunciation', 'Playing pronunciation audio...')}
+          onPlay={() => toggleWodAudio(wordOfDay.audioUrl)}
           onToggleSave={handleToggleSaveWod}
+          isAudioPlaying={isWodPlaying}
+          isAudioPaused={isWodPaused}
+          isAudioLoading={isWodAudioLoading}
         />
 
         {/* Bento Grid layout */}
