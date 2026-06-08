@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Word Not Found - Verba</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "surface-dim": "#cbdbf5",
+                        "inverse-surface": "#213145",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary-container": "#4f46e5",
+                        "on-secondary-fixed": "#001a42",
+                        "on-secondary-container": "#fefcff",
+                        "error": "#ba1a1a",
+                        "tertiary": "#00505f",
+                        "on-tertiary-fixed": "#001f26",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#006a7c",
+                        "secondary-container": "#2170e4",
+                        "primary": "#3525cd",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface": "#0b1c30",
+                        "tertiary-fixed": "#acedff",
+                        "surface": "#f8f9ff",
+                        "on-surface-variant": "#464555",
+                        "surface-tint": "#4d44e3",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#e5eeff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "outline-variant": "#c7c4d8",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary-container": "#dad7ff",
+                        "outline": "#777587",
+                        "on-background": "#0b1c30",
+                        "primary-fixed": "#e2dfff",
+                        "secondary": "#0058be",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "background": "#f8f9ff",
+                        "on-tertiary-container": "#93e8ff",
+                        "inverse-primary": "#c3c0ff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#0f0069"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "unit": "8px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px",
+                        "gutter": "16px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px"
+                    },
+                    fontFamily: {
+                        "section-heading": ["Inter"],
+                        "caption": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-word": ["Inter"],
+                        "definition-body": ["Inter"],
+                        "button-text": ["Inter"],
+                        "display-word-mobile": ["Inter"]
+                    },
+                    fontSize: {
+                        "section-heading": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "caption": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-word": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "definition-body": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "display-word-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(79, 70, 229, 0.05);
+        }
+        
+        .search-input-focus:focus-within {
+            box-shadow: 0 0 0 2px rgba(53, 37, 205, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-definition-body antialiased relative overflow-hidden">
+<!-- Ambient Animation Layer -->
+<div class="fixed inset-0 z-0 opacity-40 pointer-events-none mix-blend-multiply">
+<!-- STITCH_SHADER_START:ANIMATION_36 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_36" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_36');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+varying vec2 v_texCoord;
+
+void main() {
+    vec2 uv = v_texCoord;
+    float time = u_time * 0.3;
+    
+    // Create a series of soft, pulsing circles
+    float dist = distance(uv, vec2(0.5));
+    float pulse = sin(dist * 10.0 - time * 2.0) * 0.5 + 0.5;
+    float mask = smoothstep(0.4, 0.41, dist + pulse * 0.05);
+    
+    vec3 color1 = vec3(0.31, 0.27, 0.90); // #4F46E5
+    vec3 color2 = vec3(0.12, 0.12, 0.12); // Deep dark
+    
+    vec3 color = mix(color1, color2, dist * 1.5);
+    gl_FragColor = vec4(color, (1.0 - mask) * 0.1);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_36 -->
+</div>
+<!-- Navigation suppressed as this is a non-linear state / dead end relative to global nav -->
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-gutter h-16 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-sm shadow-primary/5">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center p-2 rounded-full hover:bg-primary/5">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<span class="font-display-word-mobile text-display-word-mobile text-primary tracking-tight">Verba</span>
+<div class="w-10"></div> <!-- Placeholder for balance -->
+</header>
+<main class="flex-grow flex flex-col items-center justify-center px-container-padding py-24 relative z-10 w-full max-w-2xl mx-auto">
+<!-- Central Visual -->
+<div class="w-64 h-64 md:w-80 md:h-80 mb-stack-lg relative rounded-full overflow-hidden shadow-2xl shadow-primary/10">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent z-10 rounded-full pointer-events-none"></div>
+<img alt="Abstract 3D illustration of a glowing eye examining a scroll, representing linguistic discovery." class="w-full h-full object-cover rounded-full transform transition-transform hover:scale-105 duration-700 ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5q_DdqqXAUYuQhYbbS-5T6RDeHPQhVfyR4AsOUd1qwn_8X9rz65y0fBVAynj5hhoZmgix-e-5RIGJBt4C9m9OiyNwpv7rIElXJ_-loiujuNPQP_87NLoIUZn29fjaOPiqArDEa_yCG4fxL_3OzUrDoASGF7vHE9kbtz2qCMb4ixsUHbfP3PyjRHkbv2nnmtZJrs_lM90LTOlQnapGezBuRd_S4jNjesmzVesYQSKX4LhvhRXD8c8IP1l01mKK5Ntwnk0lOGq4xg"/>
+</div>
+<!-- Typography & Message -->
+<div class="text-center mb-stack-lg space-y-stack-sm w-full">
+<h1 class="font-section-heading text-section-heading text-primary">Linguistic Discovery Pending</h1>
+<p class="font-definition-body text-definition-body text-on-surface-variant/80 max-w-md mx-auto">
+                This word seems to be outside our current index. The lexicons are ever-expanding, and you might have just found a gap.
+            </p>
+</div>
+<!-- Action Area (Bento-ish layout for inputs) -->
+<div class="w-full max-w-md space-y-stack-md">
+<!-- Search Bar -->
+<div class="glass-panel rounded-xl p-2 flex items-center search-input-focus transition-all duration-300">
+<span class="material-symbols-outlined text-outline ml-3 mr-2" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-definition-body text-definition-body placeholder:text-outline-variant py-2" placeholder="Try another word..." type="text"/>
+<button aria-label="Voice Search" class="p-2 text-tertiary-container hover:bg-tertiary-container/10 rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="mic" data-weight="fill">mic</span>
+</button>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-secondary text-on-secondary font-button-text text-button-text py-4 rounded-xl shadow-lg shadow-secondary/20 hover:shadow-xl hover:-translate-y-0.5 active:scale-98 active:shadow-md transition-all duration-200 flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined group-hover:rotate-12 transition-transform duration-300" data-icon="add_circle">add_circle</span>
+                Request Word
+            </button>
+<!-- Secondary subtle action -->
+<div class="text-center pt-unit">
+<a class="font-caption text-caption text-secondary hover:text-primary transition-colors underline decoration-secondary/30 underline-offset-4" href="#">Return to Explore</a>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for the search input focus state
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('input[type="text"]');
+            const searchContainer = searchInput.closest('.glass-panel');
+            
+            searchInput.addEventListener('focus', () => {
+                searchContainer.style.transform = 'translateY(-2px)';
+                searchContainer.style.boxShadow = '0 12px 40px 0 rgba(79, 70, 229, 0.1)';
+            });
+            
+            searchInput.addEventListener('blur', () => {
+                searchContainer.style.transform = 'translateY(0)';
+                searchContainer.style.boxShadow = '';
+            });
+        });
+    </script>
+</body></html>

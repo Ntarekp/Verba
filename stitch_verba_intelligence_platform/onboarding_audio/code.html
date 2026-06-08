@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9ff;
+            overflow: hidden;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .waveform-bar {
+            transition: height 0.3s ease;
+        }
+        .cyan-glow {
+            box-shadow: 0 0 20px rgba(0, 188, 212, 0.15);
+        }
+        @keyframes pulse-cyan {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        .animate-pulse-cyan {
+            animation: pulse-cyan 3s infinite ease-in-out;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#4d44e3",
+                        "inverse-surface": "#213145",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "inverse-primary": "#c3c0ff",
+                        "surface": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-fixed": "#001f26",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary": "#0058be",
+                        "on-surface-variant": "#464555",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-container": "#2170e4",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#777587",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "primary-container": "#4f46e5",
+                        "tertiary": "#00505f",
+                        "tertiary-fixed": "#acedff",
+                        "primary-fixed": "#e2dfff",
+                        "on-surface": "#0b1c30",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container": "#e5eeff",
+                        "on-background": "#0b1c30",
+                        "tertiary-container": "#006a7c",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "primary": "#3525cd",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-container": "#fefcff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#93e8ff",
+                        "on-secondary-fixed": "#001a42",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff",
+                        "premium-cyan": "#00BCD4"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "definition-body": ["Inter"],
+                        "button-text": ["Inter"],
+                        "section-heading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-word": ["Inter"],
+                        "caption": ["Inter"],
+                        "display-word-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "definition-body": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "section-heading": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-word": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-word-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen">
+<!-- Atmospheric Background Animation -->
+
+<!-- Top AppBar (Simplified for Onboarding) -->
+<header class="fixed top-0 w-full z-50 flex justify-center items-center px-container-padding py-stack-lg">
+<h1 class="font-display-word-mobile text-display-word-mobile tracking-tighter text-primary">Verba</h1>
+</header>
+<main class="flex-1 flex flex-col items-center justify-center px-container-padding pt-stack-lg pb-32 z-10">
+<!-- Main Content Card / Glassmorphic Visualization -->
+<div class="w-full max-w-md aspect-[4/5] glass-panel rounded-[32px] shadow-2xl overflow-hidden flex flex-col p-stack-lg relative animate-pulse-cyan outline outline-1 outline-white/20">
+<!-- Visualization Area: Advanced Pronunciation -->
+<div class="flex-1 flex flex-col items-center justify-center space-y-stack-lg">
+<!-- Word Card Snippet -->
+<div class="w-full bg-white/40 rounded-2xl p-stack-md flex items-center justify-between border border-white/40 shadow-sm">
+<div>
+<div class="font-display-word-mobile text-3xl text-on-surface tracking-tight">Eloquent</div>
+<div class="text-secondary font-definition-body italic text-base opacity-70">/ˈel.ə.kwənt/</div>
+</div>
+<button aria-label="Play Pronunciation" class="w-12 h-12 rounded-full bg-premium-cyan text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<!-- Audio Waveform Visualization -->
+<div class="flex items-end justify-center h-32 space-x-1.5 w-full px-4" id="waveform-container">
+<!-- Dynamic Waveform Bars Generated by JS -->
+</div>
+<!-- Phonetic Guide Chips -->
+<div class="flex flex-wrap justify-center gap-2">
+<span class="px-3 py-1 rounded-full border border-premium-cyan/30 text-premium-cyan font-label-caps text-[10px] uppercase tracking-wider">Stressed Syllable</span>
+<span class="px-3 py-1 rounded-full border border-primary/30 text-primary font-label-caps text-[10px] uppercase tracking-wider">Glottal Stop</span>
+</div>
+</div>
+<!-- Descriptive Text -->
+<div class="text-center space-y-stack-sm pt-stack-md">
+<h2 class="font-section-heading text-section-heading text-on-surface">Perfect Pronunciation</h2>
+<p class="font-definition-body text-caption text-on-surface-variant max-w-[280px] mx-auto">
+                    Master every word with crystal-clear audio and detailed phonetic guides.
+                </p>
+</div>
+</div>
+</main>
+<!-- Footer Controls -->
+<footer class="fixed bottom-0 left-0 w-full p-container-padding flex flex-col items-center space-y-stack-lg z-50 bg-gradient-to-t from-surface via-surface/90 to-transparent">
+<!-- Progress Dots (2 of 4) -->
+<div class="flex space-x-2">
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-6 h-2 rounded-full bg-primary shadow-md"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+<!-- Buttons -->
+<div class="w-full max-w-md flex items-center justify-between">
+<button class="text-on-surface-variant font-button-text hover:text-primary transition-colors px-4 py-2">
+                Skip
+            </button>
+<button class="bg-secondary text-on-secondary px-10 py-4 rounded-full font-button-text text-button-text shadow-xl hover:shadow-secondary-container/20 active:scale-95 transition-all flex items-center gap-2">
+                Next
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Safe Area Spacer -->
+<div class="h-4"></div>
+</footer>
+<script>
+        // Simple Waveform Generator & Animation
+        const container = document.getElementById('waveform-container');
+        const barCount = 28;
+        const bars = [];
+
+        for (let i = 0; i < barCount; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'waveform-bar w-1.5 bg-premium-cyan rounded-full opacity-60';
+            // Random initial height for variety
+            const baseHeight = 20 + Math.random() * 60;
+            bar.style.height = `${baseHeight}%`;
+            container.appendChild(bar);
+            bars.push({ element: bar, phase: Math.random() * Math.PI * 2 });
+        }
+
+        let step = 0;
+        function animateWaveform() {
+            step += 0.05;
+            bars.forEach((barObj, index) => {
+                const wave = Math.sin(step + barObj.phase) * 0.5 + 0.5;
+                const newHeight = 15 + (wave * 70) + (Math.sin(step * 2 + index * 0.5) * 10);
+                barObj.element.style.height = `${newHeight}%`;
+                
+                // Opacity shift for feeling of "movement"
+                barObj.element.style.opacity = 0.3 + (wave * 0.5);
+            });
+            requestAnimationFrame(animateWaveform);
+        }
+
+        animateWaveform();
+
+        // Button Interactions
+        document.querySelector('button[aria-label="Play Pronunciation"]').addEventListener('click', function() {
+            this.classList.add('scale-90');
+            setTimeout(() => this.classList.remove('scale-90'), 150);
+            
+            // Trigger a faster waveform "pulse"
+            step += 2; 
+        });
+    </script>
+</body></html>

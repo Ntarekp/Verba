@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ethereal - Word Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-bright": "#f8f9ff",
+                        "inverse-surface": "#213145",
+                        "surface-container": "#e5eeff",
+                        "background": "#f8f9ff",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-high": "#dce9ff",
+                        "tertiary": "#00505f",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "primary": "#3525cd",
+                        "on-error": "#ffffff",
+                        "on-background": "#0b1c30",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#777587",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-container": "#2170e4",
+                        "on-primary-container": "#dad7ff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#acedff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-tint": "#4d44e3",
+                        "inverse-primary": "#c3c0ff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-container": "#93e8ff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "primary-fixed": "#e2dfff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#004395",
+                        "tertiary-container": "#006a7c",
+                        "on-secondary-container": "#fefcff",
+                        "surface": "#f8f9ff",
+                        "primary-container": "#4f46e5",
+                        "on-surface": "#0b1c30",
+                        "on-surface-variant": "#464555",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-variant": "#d3e4fe",
+                        "on-error-container": "#93000a",
+                        "secondary": "#0058be",
+                        "on-tertiary-fixed": "#001f26"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "gutter": "16px",
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "display-word-mobile": ["Inter"],
+                        "definition-body": ["Inter"],
+                        "section-heading": ["Inter"],
+                        "display-word": ["Inter"],
+                        "button-text": ["Inter"],
+                        "caption": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-word-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "definition-body": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "section-heading": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-word": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "caption": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(248, 249, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(79, 70, 229, 0.08);
+        }
+        .text-gradient {
+            background: linear-gradient(to right, theme('colors.primary'), theme('colors.tertiary'));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- Top Navigation Anchor (Dictionary active context) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface/70 dark:bg-on-background/70 backdrop-blur-xl border-b border-white/10 shadow-[0_8px_32px_0_rgba(79,70,229,0.08)]">
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity scale-95 active:scale-90 flex items-center justify-center p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_back" data-weight="regular">arrow_back</span>
+</button>
+<span class="font-display-word-mobile text-display-word-mobile tracking-tight text-primary">Verba</span>
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity scale-95 active:scale-90 flex items-center justify-center p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="more_vert" data-weight="regular">more_vert</span>
+</button>
+</header>
+<main class="flex-grow pt-24 pb-32 px-container-padding max-w-3xl mx-auto w-full space-y-stack-lg">
+<!-- Word Header Section -->
+<section class="flex flex-col items-center text-center space-y-stack-sm animate-fade-in-up">
+<h1 class="font-display-word text-display-word text-primary tracking-tight">Ethereal</h1>
+<div class="flex items-center space-x-unit">
+<span class="font-caption text-caption text-on-surface-variant">/əˈTHirēəl/</span>
+<button aria-label="Pronounce" class="bg-tertiary-container/10 text-tertiary-container hover:bg-tertiary-container/20 rounded-full p-2 transition-colors flex items-center justify-center scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="volume_up" data-weight="fill" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+</button>
+</div>
+<div class="flex items-center space-x-stack-md mt-stack-md">
+<div class="border border-primary text-primary px-3 py-1 rounded-full font-label-caps text-label-caps inline-block">
+                    Adjective
+                </div>
+<button aria-label="Save word" class="text-on-surface-variant hover:text-primary transition-colors flex items-center space-x-1">
+<span class="material-symbols-outlined" data-icon="bookmark_border" data-weight="regular">bookmark_border</span>
+<span class="font-button-text text-button-text text-sm">Save</span>
+</button>
+</div>
+</section>
+<!-- Image Integration -->
+<section class="w-full rounded-2xl overflow-hidden shadow-[0_8px_32px_0_rgba(79,70,229,0.1)] relative h-64">
+<img alt="Hero Image" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZQL3vR2NpgAGUqV4erNAttdcBhvrO6c6crNnRl4vYigntwZn-Lf24qCaqB6Xvcxy6_BlDsxnhlrzyQYubcdGQgctTqVjKYm9VPMwOr4sDbu5rWRCQKbGfil6Ravjv3CmP8M6MMkgZVkJhu3hpXHWPhX_BiiWLRymbDHSEgvgbbKVz_PAxhuH3lFDB3cKfU8r_Vsm6DTD8MIHkmuRmE7Z0alox3SmEwgXZFn1AIqeMoXEZhoV1a6ORP6JxilRcZmAWYT043hCEAQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+</section>
+<!-- Definitions & Examples -->
+<section class="space-y-stack-md relative pl-4 border-l-2 border-primary">
+<div class="space-y-stack-sm">
+<p class="font-definition-body text-definition-body text-on-background">
+<span class="font-semibold text-primary mr-2">1.</span>
+                    Extremely delicate and light in a way that seems too perfect for this world.
+                </p>
+<p class="font-definition-body text-definition-body text-on-surface-variant/80 italic pl-6">
+                    "Her ethereal beauty left everyone speechless."
+                </p>
+</div>
+<div class="space-y-stack-sm">
+<p class="font-definition-body text-definition-body text-on-background">
+<span class="font-semibold text-primary mr-2">2.</span>
+                    Heavenly or spiritual.
+                </p>
+<p class="font-definition-body text-definition-body text-on-surface-variant/80 italic pl-6">
+                    "The choir's voices had an ethereal quality that moved the congregation."
+                </p>
+</div>
+</section>
+<!-- Word Origin Glass Card -->
+<section class="glass-panel rounded-[24px] p-container-padding space-y-stack-md relative overflow-hidden group">
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-secondary-container/10 rounded-full blur-2xl group-hover:bg-secondary-container/20 transition-colors duration-500"></div>
+<div class="flex items-center space-x-2 text-secondary">
+<span class="material-symbols-outlined" data-icon="history_edu" data-weight="regular">history_edu</span>
+<h3 class="font-section-heading text-section-heading text-lg">Word Origin</h3>
+</div>
+<p class="font-definition-body text-definition-body text-on-surface-variant text-sm leading-relaxed">
+                Early 16th century: via Latin from Greek aitherios (from aithēr 'ether') + -al. Originally used to describe the highest regions of the atmosphere.
+            </p>
+</section>
+<!-- Synonyms & Antonyms Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<div class="glass-panel rounded-xl p-stack-md">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-unit">Synonyms</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface rounded-md font-caption text-caption">delicate</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface rounded-md font-caption text-caption">exquisite</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface rounded-md font-caption text-caption">celestial</span>
+</div>
+</div>
+<div class="glass-panel rounded-xl p-stack-md">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-unit">Antonyms</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface rounded-md font-caption text-caption">substantial</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface rounded-md font-caption text-caption">earthly</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface rounded-md font-caption text-caption">tangible</span>
+</div>
+</div>
+</section>
+<!-- Learning Notes -->
+<section class="space-y-stack-sm">
+<div class="flex items-center justify-between">
+<label class="font-section-heading text-section-heading text-lg flex items-center space-x-2" for="learning-notes">
+<span class="material-symbols-outlined text-primary" data-icon="edit_note" data-weight="regular">edit_note</span>
+<span>Learning Notes</span>
+</label>
+</div>
+<textarea class="w-full glass-panel rounded-xl p-stack-md text-on-background font-definition-body text-definition-body focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow resize-none" id="learning-notes" placeholder="Add your personal notes or mnemonic devices here..." rows="4"></textarea>
+<div class="flex justify-end">
+<button class="bg-secondary text-on-secondary font-button-text text-button-text px-6 py-2 rounded-lg scale-98 active:scale-95 transition-all hover:bg-secondary/90">
+                    Save Note
+                </button>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation (Dictionary Active) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-gutter py-2 pb-safe bg-surface/80 dark:bg-on-background/80 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.04)] rounded-t-3xl md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary transition-colors scale-98 active:scale-95 transition-all w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="search" data-weight="regular">search</span>
+<span class="font-label-caps text-[10px] tracking-wider uppercase">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim bg-secondary-container/20 rounded-full px-4 py-1 hover:text-secondary transition-colors scale-98 active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="book_2" data-weight="fill" style="font-variation-settings: 'FILL' 1;">book_2</span>
+<span class="font-label-caps text-[10px] tracking-wider uppercase">Dictionary</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary transition-colors scale-98 active:scale-95 transition-all w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="history" data-weight="regular">history</span>
+<span class="font-label-caps text-[10px] tracking-wider uppercase">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary transition-colors scale-98 active:scale-95 transition-all w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person" data-weight="regular">person</span>
+<span class="font-label-caps text-[10px] tracking-wider uppercase">Profile</span>
+</a>
+</nav>
+<style>
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+    </style>
+</body></html>

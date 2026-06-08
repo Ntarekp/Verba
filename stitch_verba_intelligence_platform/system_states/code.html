@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Verba - System States</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#001a42",
+                    "secondary-container": "#2170e4",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#0058be",
+                    "primary-fixed": "#e2dfff",
+                    "surface-bright": "#f8f9ff",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#d3e4fe",
+                    "surface-dim": "#cbdbf5",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "surface-variant": "#d3e4fe",
+                    "on-background": "#0b1c30",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#c7c4d8",
+                    "primary": "#3525cd",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#464555",
+                    "surface-tint": "#4d44e3",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#acedff",
+                    "secondary-fixed": "#d8e2ff",
+                    "inverse-surface": "#213145",
+                    "tertiary": "#00505f",
+                    "on-tertiary-fixed": "#001f26",
+                    "surface-container-high": "#dce9ff",
+                    "error": "#ba1a1a",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "surface-container-low": "#eff4ff",
+                    "on-surface": "#0b1c30",
+                    "primary-container": "#4f46e5",
+                    "on-primary-container": "#dad7ff",
+                    "tertiary-container": "#006a7c",
+                    "on-primary-fixed": "#0f0069",
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "on-tertiary-container": "#93e8ff",
+                    "inverse-primary": "#c3c0ff",
+                    "surface": "#f8f9ff",
+                    "on-secondary-container": "#fefcff",
+                    "outline": "#777587",
+                    "tertiary-fixed-dim": "#4cd7f6",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "surface-container": "#e5eeff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "background": "#f8f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "stack-lg": "32px",
+                    "gutter": "16px",
+                    "container-padding": "24px",
+                    "stack-sm": "8px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "section-heading": [
+                            "Inter"
+                    ],
+                    "button-text": [
+                            "Inter"
+                    ],
+                    "display-word-mobile": [
+                            "Inter"
+                    ],
+                    "display-word": [
+                            "Inter"
+                    ],
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "caption": [
+                            "Inter"
+                    ],
+                    "definition-body": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "section-heading": [
+                            "28px",
+                            {
+                                    "lineHeight": "36px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "button-text": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "display-word-mobile": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "display-word": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "caption": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "definition-body": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        
+        .glass-panel {
+            background: rgba(248, 249, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ambient-shadow {
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.08);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .pulse-soft {
+            animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .7; transform: scale(0.98); }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen w-full flex flex-col md:flex-row gap-6 p-6 overflow-y-auto">
+<!-- Screen 1: No Connection -->
+<div class="flex-1 w-full flex flex-col items-center justify-center min-h-[500px] relative rounded-3xl overflow-hidden bg-surface-container-lowest ambient-shadow glass-panel fade-in-up" style="animation-delay: 0.1s;">
+<!-- Subtle background pattern -->
+<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, theme('colors.primary') 1px, transparent 0); background-size: 24px 24px;"></div>
+<div class="z-10 flex flex-col items-center text-center p-container-padding max-w-sm">
+<div class="w-24 h-24 rounded-full bg-surface-container-high flex items-center justify-center mb-stack-lg pulse-soft relative">
+<div class="absolute inset-0 rounded-full border border-primary-fixed-dim/30"></div>
+<span class="material-symbols-outlined text-4xl text-on-surface-variant" style="font-variation-settings: 'wght' 200;">wifi_off</span>
+</div>
+<h2 class="font-section-heading text-section-heading-mobile text-on-surface mb-stack-sm">You're offline</h2>
+<p class="font-definition-body text-definition-body text-on-surface-variant mb-stack-lg">Verba requires an active connection to process definitions and language data. Please check your network.</p>
+<button class="w-full py-3 px-6 rounded-xl bg-secondary text-on-secondary font-button-text text-button-text hover:bg-secondary/90 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-xl">refresh</span>
+                Try Again
+            </button>
+</div>
+</div>
+<!-- Screen 2: Update Required -->
+<div class="flex-1 w-full flex flex-col items-center justify-center min-h-[500px] relative rounded-3xl overflow-hidden bg-surface-container-lowest ambient-shadow glass-panel fade-in-up" style="animation-delay: 0.2s;">
+<div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: linear-gradient(theme('colors.secondary') 1px, transparent 1px), linear-gradient(90deg, theme('colors.secondary') 1px, transparent 1px); background-size: 32px 32px;"></div>
+<div class="z-10 flex flex-col items-center text-center p-container-padding max-w-sm">
+<div class="w-24 h-24 rounded-2xl bg-secondary-container flex items-center justify-center mb-stack-lg relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/20 to-transparent"></div>
+<span class="material-symbols-outlined text-4xl text-on-secondary-container" data-weight="fill">system_update</span>
+</div>
+<h2 class="font-section-heading text-section-heading-mobile text-on-surface mb-stack-sm">Update Required</h2>
+<p class="font-definition-body text-definition-body text-on-surface-variant mb-stack-lg">A new version of Verba is ready. It includes structural improvements and expanded lexical databases.</p>
+<button class="w-full py-3 px-6 rounded-xl bg-primary-container text-on-primary-container font-button-text text-button-text hover:bg-primary-container/90 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-xl">download</span>
+                Download Now
+            </button>
+<button class="mt-stack-sm w-full py-3 px-6 rounded-xl bg-transparent text-primary font-button-text text-button-text hover:bg-surface-container transition-all duration-200">
+                Release Notes
+            </button>
+</div>
+</div>
+<!-- Screen 3: API Error -->
+<div class="flex-1 w-full flex flex-col items-center justify-center min-h-[500px] relative rounded-3xl overflow-hidden bg-surface-container-lowest ambient-shadow glass-panel fade-in-up" style="animation-delay: 0.3s;">
+<div class="absolute inset-0 opacity-5 pointer-events-none bg-gradient-to-br from-error-container/20 to-transparent"></div>
+<div class="z-10 flex flex-col items-center text-center p-container-padding max-w-sm">
+<div class="w-24 h-24 rounded-full border border-error-container bg-surface flex items-center justify-center mb-stack-lg">
+<span class="material-symbols-outlined text-4xl text-error" style="font-variation-settings: 'wght' 200;">error_outline</span>
+</div>
+<h2 class="font-section-heading text-section-heading-mobile text-on-surface mb-stack-sm">Connection Failed</h2>
+<p class="font-definition-body text-definition-body text-on-surface-variant mb-stack-lg">We couldn't reach the linguistic database. The server might be experiencing high load or structural maintenance.</p>
+<div class="flex w-full gap-stack-sm">
+<button class="flex-1 py-3 px-6 rounded-xl border border-outline-variant text-on-surface-variant font-button-text text-button-text hover:bg-surface-container transition-all duration-200">
+                    Cancel
+                </button>
+<button class="flex-1 py-3 px-6 rounded-xl bg-secondary text-on-secondary font-button-text text-button-text hover:bg-secondary/90 active:scale-95 transition-all duration-200">
+                    Retry
+                </button>
+</div>
+<p class="font-caption text-caption text-outline mt-stack-md">Error Code: ERR_API_TIMEOUT</p>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verba | Welcome Back</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-low": "#eff4ff",
+                      "surface-container-high": "#dce9ff",
+                      "tertiary-fixed-dim": "#4cd7f6",
+                      "on-error": "#ffffff",
+                      "tertiary": "#00505f",
+                      "on-tertiary-container": "#93e8ff",
+                      "tertiary-container": "#006a7c",
+                      "primary-fixed": "#e2dfff",
+                      "inverse-primary": "#c3c0ff",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "on-surface": "#0b1c30",
+                      "surface-dim": "#cbdbf5",
+                      "on-secondary-fixed": "#001a42",
+                      "surface-container": "#e5eeff",
+                      "background": "#f8f9ff",
+                      "secondary-container": "#2170e4",
+                      "error": "#ba1a1a",
+                      "inverse-surface": "#213145",
+                      "on-tertiary-fixed": "#001f26",
+                      "on-surface-variant": "#464555",
+                      "tertiary-fixed": "#acedff",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#d8e2ff",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "on-tertiary-fixed-variant": "#004e5c",
+                      "on-secondary-fixed-variant": "#004395",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-bright": "#f8f9ff",
+                      "outline": "#777587",
+                      "on-secondary": "#ffffff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface": "#f8f9ff",
+                      "on-secondary-container": "#fefcff",
+                      "primary-container": "#4f46e5",
+                      "on-primary-container": "#dad7ff",
+                      "on-error-container": "#93000a",
+                      "primary": "#3525cd",
+                      "on-primary-fixed": "#0f0069",
+                      "on-primary": "#ffffff",
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-variant": "#d3e4fe",
+                      "surface-tint": "#4d44e3",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "secondary": "#0058be",
+                      "outline-variant": "#c7c4d8",
+                      "on-background": "#0b1c30"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "unit": "8px",
+                      "gutter": "16px",
+                      "container-padding": "24px",
+                      "stack-lg": "32px"
+              },
+              "fontFamily": {
+                      "display-word-mobile": ["Inter"],
+                      "caption": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "definition-body": ["Inter"],
+                      "display-word": ["Inter"],
+                      "button-text": ["Inter"],
+                      "section-heading": ["Inter"]
+              },
+              "fontSize": {
+                      "display-word-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "definition-body": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "display-word": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "section-heading": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9ff;
+            overflow: hidden;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(79, 70, 229, 0.08);
+        }
+        .input-focus:focus-within {
+            border-color: #3525cd;
+            box-shadow: 0 0 0 4px rgba(53, 37, 205, 0.1);
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2.5s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .floating-orb {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 50px) scale(1.2); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex items-center justify-center relative px-gutter">
+<!-- Atmospheric Background Elements -->
+<div class="floating-orb w-[500px] h-[500px] bg-primary-container top-[-100px] left-[-100px]"></div>
+<div class="floating-orb w-[400px] h-[400px] bg-tertiary-fixed-dim bottom-[-50px] right-[-100px]" style="animation-delay: -5s;"></div>
+<!-- Main Container -->
+<main class="w-full max-w-[1200px] grid lg:grid-cols-2 gap-stack-lg items-center h-full max-h-[800px]">
+<!-- Left Side: Visual/Branding (Desktop Only) -->
+<section class="hidden lg:flex flex-col justify-center space-y-stack-lg p-container-padding">
+<div class="space-y-stack-sm">
+<h1 class="font-display-word text-display-word text-primary tracking-tighter">Verba</h1>
+<p class="font-section-heading text-section-heading text-on-surface-variant max-w-md">
+                    Master your vocabulary with intelligent precision.
+                </p>
+</div>
+<div class="relative w-full aspect-square rounded-[32px] overflow-hidden shadow-2xl">
+<img alt="Minimalist study environment" class="w-full h-full object-cover" data-alt="A high-end, minimalist workspace scene featuring an open dictionary on a clean white oak desk. Soft, natural morning light streams through a nearby window, casting long, elegant shadows. The color palette is composed of soft blues, crisp whites, and warm wood tones, reflecting a serene and intelligent atmosphere. The photography style is editorial, with a shallow depth of field focusing on the texture of the paper and the precision of the typography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA19odlDEzg4xbutmscLYa7S2jkOEXCjfvkXxbhpKozn2GJ6zAKLFtRV7XLld3__FvgJ7matGCwlyVb7SV0UdvxA7jYeqba9ZWQyUfGjsAwZq-QzUxXlLg9vu-l5v7pQi8CE-u4nlEfKtJCv3vq6qXoMSKYulQN0EsR1K3NpoW8GCWkDITBEPJSOM5DRbW80m4ZHmzNgeNH0kWQup927E9_-C066klVzQ6r6-9MdMY6iYkNrqizMJdPI8Ae-hMXZb9pQXo18Ylgfg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+<div class="absolute bottom-stack-lg left-stack-lg right-stack-lg glass-panel p-stack-md rounded-xl">
+<p class="text-on-surface font-medium italic">"The limits of my language mean the limits of my world."</p>
+<p class="text-on-surface-variant text-sm mt-1">— Ludwig Wittgenstein</p>
+</div>
+</div>
+</section>
+<!-- Right Side: Login Form -->
+<section class="flex flex-col items-center justify-center w-full">
+<div class="glass-panel w-full max-w-md p-container-padding rounded-[32px] space-y-stack-lg">
+<!-- Header -->
+<div class="text-center lg:text-left space-y-stack-sm">
+<div class="lg:hidden mb-stack-md">
+<span class="font-display-word-mobile text-display-word-mobile text-primary tracking-tighter">Verba</span>
+</div>
+<h2 class="font-section-heading text-section-heading text-on-surface">Welcome back</h2>
+<p class="text-on-surface-variant font-caption text-caption">Please enter your details to sign in.</p>
+</div>
+<!-- Form -->
+<form class="space-y-stack-md" onsubmit="return false;">
+<!-- Email -->
+<div class="space-y-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant px-1" for="email">Email Address</label>
+<div class="relative flex items-center bg-white/50 border border-outline-variant rounded-xl px-4 py-3 input-focus transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant/50 mr-3 group-focus-within:text-primary transition-colors">mail</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-on-surface placeholder:text-on-surface-variant/40 outline-none" id="email" placeholder="name@example.com" type="email"/>
+</div>
+</div>
+<!-- Password -->
+<div class="space-y-1">
+<div class="flex justify-between items-center px-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="password">Password</label>
+<a class="text-[12px] font-semibold text-secondary hover:text-primary transition-colors" href="#">Forgot Password?</a>
+</div>
+<div class="relative flex items-center bg-white/50 border border-outline-variant rounded-xl px-4 py-3 input-focus transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant/50 mr-3 group-focus-within:text-primary transition-colors">lock</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-on-surface placeholder:text-on-surface-variant/40 outline-none" id="password" placeholder="••••••••" type="password"/>
+<button class="material-symbols-outlined text-on-surface-variant/50 hover:text-on-surface transition-colors" type="button">visibility</button>
+</div>
+</div>
+<!-- Login Button -->
+<button class="w-full bg-secondary hover:bg-primary text-white font-button-text text-button-text py-4 rounded-xl shadow-lg shadow-secondary/20 transition-all active:scale-[0.98] flex items-center justify-center space-x-2">
+<span>Sign in</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</form>
+<!-- Divider -->
+<div class="relative py-2">
+<div class="absolute inset-0 flex items-center"><div class="w-full border-t border-outline-variant/30"></div></div>
+<div class="relative flex justify-center"><span class="bg-white/10 px-4 text-xs font-semibold text-on-surface-variant/40 uppercase tracking-widest">or continue with</span></div>
+</div>
+<!-- Social Logins -->
+<div class="grid grid-cols-2 gap-stack-md">
+<button class="flex items-center justify-center space-x-2 py-3 border border-outline-variant rounded-xl hover:bg-white/80 transition-all active:scale-[0.98]">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+<span class="font-button-text text-sm text-on-surface">Google</span>
+</button>
+<button class="flex items-center justify-center space-x-2 py-3 border border-outline-variant rounded-xl hover:bg-white/80 transition-all active:scale-[0.98]">
+<svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"></path>
+</svg>
+<span class="font-button-text text-sm text-on-surface">GitHub</span>
+</button>
+</div>
+<!-- Footer Link -->
+<p class="text-center font-caption text-caption text-on-surface-variant">
+                    Don't have an account? 
+                    <a class="text-secondary font-bold hover:underline" href="#">Sign up for free</a>
+</p>
+</div>
+<!-- Accessibility / Utility -->
+<div class="mt-stack-lg flex space-x-stack-md text-[10px] font-semibold text-on-surface-variant/40 tracking-widest uppercase">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<span>•</span>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<span>•</span>
+<a class="hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</section>
+</main>
+<script>
+        // Micro-interactions for input focus
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('shadow-md');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('shadow-md');
+            });
+        });
+
+        // Toggle Password Visibility (Conceptual)
+        const viewPassBtn = document.querySelector('button.material-symbols-outlined');
+        if (viewPassBtn) {
+            viewPassBtn.addEventListener('click', () => {
+                const passInput = document.getElementById('password');
+                if (passInput.type === 'password') {
+                    passInput.type = 'text';
+                    viewPassBtn.textContent = 'visibility_off';
+                } else {
+                    passInput.type = 'password';
+                    viewPassBtn.textContent = 'visibility';
+                }
+            });
+        }
+    </script>
+</body></html>

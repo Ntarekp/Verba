@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Verba",
+    "slug": "verba",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./src/assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f8f9ff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#f8f9ff"
+      }
+    },
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    }
+  }
+}

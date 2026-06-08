@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Server Error - Verba</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "surface-dim": "#cbdbf5",
+                        "inverse-surface": "#213145",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary-container": "#4f46e5",
+                        "on-secondary-fixed": "#001a42",
+                        "on-secondary-container": "#fefcff",
+                        "error": "#ba1a1a",
+                        "tertiary": "#00505f",
+                        "on-tertiary-fixed": "#001f26",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#006a7c",
+                        "secondary-container": "#2170e4",
+                        "primary": "#3525cd",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface": "#0b1c30",
+                        "tertiary-fixed": "#acedff",
+                        "surface": "#f8f9ff",
+                        "on-surface-variant": "#464555",
+                        "surface-tint": "#4d44e3",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#e5eeff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "outline-variant": "#c7c4d8",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary-container": "#dad7ff",
+                        "outline": "#777587",
+                        "on-background": "#0b1c30",
+                        "primary-fixed": "#e2dfff",
+                        "secondary": "#0058be",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "background": "#f8f9ff",
+                        "on-tertiary-container": "#93e8ff",
+                        "inverse-primary": "#c3c0ff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#0f0069"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px",
+                        "gutter": "16px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "section-heading": ["Inter"],
+                        "caption": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-word": ["Inter"],
+                        "definition-body": ["Inter"],
+                        "button-text": ["Inter"],
+                        "display-word-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "section-heading": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "caption": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-word": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "definition-body": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "display-word-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    },
+                    "keyframes": {
+                        "pulse-soft": {
+                            "0%, 100%": { opacity: 0.8 },
+                            "50%": { opacity: 0.4 }
+                        },
+                        "shimmer": {
+                            "0%": { backgroundPosition: "200% 0" },
+                            "100%": { backgroundPosition: "-200% 0" }
+                        }
+                    },
+                    "animation": {
+                        "pulse-soft": "pulse-soft 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                        "shimmer": "shimmer 2s infinite linear"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .gradient-bg {
+            background: radial-gradient(circle at 50% 50%, rgba(186, 26, 26, 0.05) 0%, rgba(248, 249, 255, 1) 100%);
+        }
+        
+        .shimmer-bg {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+        }
+
+        /* Suppress navigation since this is an error state */
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center relative overflow-hidden font-sans">
+<!-- Pulsing Background Effect -->
+<div class="absolute inset-0 z-0 gradient-bg animate-pulse-soft"></div>
+<div class="absolute inset-0 z-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNjN2M0ZDgiIGZpbGwtb3BhY2l0eT0iMC4yIi8+PC9zdmc+')] opacity-50"></div>
+<!-- Main Error Card Canvas -->
+<main class="relative z-10 flex flex-col items-center justify-center p-container-padding max-w-md w-full">
+<!-- Disconnected Node Icon (Neo-Minimalist) -->
+<div class="mb-stack-lg relative">
+<div class="absolute inset-0 bg-error/10 rounded-full blur-xl scale-150"></div>
+<div class="w-24 h-24 rounded-full bg-surface-container-lowest border border-error/20 flex items-center justify-center shadow-[0_8px_32px_rgba(186,26,26,0.08)] relative z-10">
+<span class="material-symbols-outlined text-4xl text-error" style="font-variation-settings: 'FILL' 0, 'wght' 300;">
+                    cloud_off
+                </span>
+</div>
+<!-- Decorative floating particles -->
+<div class="absolute -top-4 -right-4 w-3 h-3 rounded-full bg-error/30 animate-pulse-soft" style="animation-delay: 0.5s;"></div>
+<div class="absolute -bottom-2 -left-6 w-2 h-2 rounded-full bg-error/20 animate-pulse-soft" style="animation-delay: 1s;"></div>
+</div>
+<!-- Typography Context -->
+<div class="text-center space-y-stack-sm mb-stack-lg w-full">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-error-container/50 border border-error/10 mb-2">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-on-error-container">Error 503 • Timeout</span>
+</div>
+<h1 class="font-display-word-mobile text-display-word-mobile text-on-background tracking-tight md:font-display-word md:text-display-word">
+                Connection Lost
+            </h1>
+<p class="font-definition-body text-definition-body text-on-surface-variant max-w-sm mx-auto">
+                We're having trouble reaching the dictionary servers. Please check your connection and try again.
+            </p>
+</div>
+<!-- Actions -->
+<div class="flex flex-col w-full gap-stack-md">
+<button class="group relative w-full h-14 bg-secondary text-on-secondary rounded-xl font-button-text text-button-text shadow-[0_4px_14px_rgba(0,88,190,0.25)] hover:bg-secondary/90 hover:scale-[0.98] active:scale-[0.96] transition-all duration-200 overflow-hidden flex items-center justify-center gap-2" id="retryBtn">
+<!-- Shimmer Effect Overlay -->
+<div class="absolute inset-0 shimmer-bg animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'wght' 500;">
+                    refresh
+                </span>
+<span id="retryText">Retry Connection</span>
+<!-- Loading state (hidden by default) -->
+<div class="hidden absolute inset-0 bg-secondary flex items-center justify-center" id="loadingSpinner">
+<div class="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+</div>
+</button>
+<a class="w-full h-12 flex items-center justify-center text-primary font-button-text text-button-text hover:bg-primary/5 rounded-lg transition-colors duration-200" href="#">
+                Check System Status
+                <span class="material-symbols-outlined ml-1 text-[18px]">
+                    arrow_forward
+                </span>
+</a>
+</div>
+</main>
+<script>
+        document.getElementById('retryBtn').addEventListener('click', function() {
+            const btn = this;
+            const spinner = document.getElementById('loadingSpinner');
+            
+            // Show loading state
+            spinner.classList.remove('hidden');
+            btn.classList.add('pointer-events-none');
+            
+            // Simulate network request
+            setTimeout(() => {
+                spinner.classList.add('hidden');
+                btn.classList.remove('pointer-events-none');
+                
+                // Add a subtle shake to indicate it failed again
+                btn.classList.add('translate-x-1');
+                setTimeout(() => btn.classList.remove('translate-x-1', 'translate-x-[-4px]'), 100);
+                setTimeout(() => btn.classList.add('translate-x-[-4px]'), 50);
+                
+            }, 1500);
+        });
+    </script>
+</body></html>

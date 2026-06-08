@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Verba - Ready to Begin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#4d44e3",
+                        "inverse-surface": "#213145",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "inverse-primary": "#c3c0ff",
+                        "surface": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-fixed": "#001f26",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary": "#0058be",
+                        "on-surface-variant": "#464555",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-container": "#2170e4",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#777587",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "primary-container": "#4f46e5",
+                        "tertiary": "#00505f",
+                        "tertiary-fixed": "#acedff",
+                        "primary-fixed": "#e2dfff",
+                        "on-surface": "#0b1c30",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container": "#e5eeff",
+                        "on-background": "#0b1c30",
+                        "tertiary-container": "#006a7c",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "primary": "#3525cd",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-container": "#fefcff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#93e8ff",
+                        "on-secondary-fixed": "#001a42",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "definition-body": ["Inter"],
+                        "button-text": ["Inter"],
+                        "section-heading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-word": ["Inter"],
+                        "caption": ["Inter"],
+                        "display-word-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "definition-body": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "section-heading": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-word": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-word-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .soft-glow {
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.08);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        @keyframes pulse-cyan {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pulse-audio {
+            animation: pulse-cyan 3s infinite ease-in-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-definition-body min-h-screen flex flex-col items-center justify-between overflow-hidden">
+<!-- Subtle Mesh Background -->
+<div class="fixed inset-0 z-0 opacity-40">
+
+</div>
+<!-- Top Branding Anchor -->
+<header class="fixed top-0 w-full z-50 flex justify-center py-stack-lg">
+<h1 class="font-display-word-mobile text-display-word-mobile tracking-tighter text-primary">Verba</h1>
+</header>
+<!-- Main Content Canvas -->
+<main class="relative z-10 w-full max-w-md px-container-padding pt-32 flex-grow flex flex-col items-center justify-center space-y-stack-lg">
+<!-- Curated Word of the Day Card -->
+<div class="glass-card soft-glow w-full rounded-[24px] p-stack-lg flex flex-col space-y-stack-md transform transition-all hover:scale-[1.01]">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-primary px-3 py-1 bg-primary-container/10 rounded-full">WORD OF THE DAY</span>
+<button class="pulse-audio w-10 h-10 rounded-full bg-tertiary-fixed-dim text-on-tertiary-fixed flex items-center justify-center soft-glow">
+<span class="material-symbols-outlined" data-icon="volume_up">volume_up</span>
+</button>
+</div>
+<div class="space-y-1">
+<h2 class="font-display-word-mobile text-display-word-mobile text-on-surface">Ethereal</h2>
+<p class="font-caption text-caption text-on-surface-variant italic">/əˈTHirēəl/ • adjective</p>
+</div>
+<div class="relative pl-4 border-l-2 border-primary">
+<p class="font-definition-body text-definition-body text-on-surface leading-snug">
+                    Extremely delicate and light in a way that seems too perfect for this world.
+                </p>
+<p class="font-caption text-caption text-on-surface-variant/70 mt-2">
+                    "The morning mist gave the landscape an ethereal quality."
+                </p>
+</div>
+<!-- Visual Element inside card -->
+<div class="w-full h-32 rounded-xl overflow-hidden mt-2 relative">
+<img class="w-full h-full object-cover" data-alt="A serene landscape at dawn featuring rolling hills covered in a thick, luminous silver mist. The lighting is high-key and soft, creating an ethereal and minimalist atmosphere consistent with a clean UI design. The color palette is composed of cool whites, soft greys, and deep indigo accents, reflecting an intelligent and calm brand identity with a high-end editorial feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXCAj089mriL6Vzn1PqiSkwivuD8mn2EXJBdng9RL2WXwP8wpKjnWTg89x3oBOSq5HydGqb_5Kn4Cx4sNSVBTyzuyEi8exIm3NK4cUslgxXiVcpkAOZJRidBbZeICxRMlnu9rWU_AWcsVUob4CFhihc_G_OOav543dDD2bCduc_wDQ_mHNAQqjpmvirsXl4Jc6HR1r7q-nGS64pwWfm94PPzV36KiP7YRhwbUDeubJB1Pc22SH6_5GByc1p5oAyQTtDlngU5olAQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface/40 to-transparent"></div>
+</div>
+</div>
+<!-- Onboarding Text -->
+<div class="text-center space-y-stack-sm px-4">
+<h3 class="font-section-heading text-section-heading text-on-surface">Ready to begin?</h3>
+<p class="font-definition-body text-definition-body text-on-surface-variant">
+                Join the future of language intelligence.
+            </p>
+</div>
+</main>
+<!-- Bottom Action Shell -->
+<footer class="relative z-10 w-full max-w-md px-container-padding pb-12 flex flex-col items-center space-y-stack-lg">
+<!-- Progress Dots (4 of 4) -->
+<div class="flex items-center space-x-2">
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant/40"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant/40"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant/40"></div>
+<div class="w-6 h-1.5 rounded-full bg-primary"></div>
+</div>
+<!-- Get Started CTA -->
+<button class="w-full py-4 bg-primary text-on-primary font-button-text text-button-text rounded-xl shadow-xl shadow-primary/20 active:scale-95 transition-transform duration-200">
+            Get Started
+        </button>
+</footer>
+<script>
+        // Micro-interaction for the word card
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = document.querySelector('.glass-card');
+            
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 25;
+                const rotateY = (centerX - x) / 25;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+            });
+
+            // Audio button click simulation
+            const audioBtn = document.querySelector('.pulse-audio');
+            audioBtn.addEventListener('click', () => {
+                audioBtn.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    audioBtn.style.transform = '';
+                }, 100);
+            });
+        });
+    </script>
+</body></html>

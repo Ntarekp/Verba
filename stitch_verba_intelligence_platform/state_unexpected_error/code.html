@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verba - Unexpected Error</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#93e8ff",
+                      "on-tertiary-fixed": "#001f26",
+                      "on-surface": "#0b1c30",
+                      "inverse-on-surface": "#eaf1ff",
+                      "secondary-container": "#2170e4",
+                      "outline": "#777587",
+                      "inverse-primary": "#c3c0ff",
+                      "surface-container-highest": "#d3e4fe",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "background": "#f8f9ff",
+                      "outline-variant": "#c7c4d8",
+                      "on-background": "#0b1c30",
+                      "on-tertiary-fixed-variant": "#004e5c",
+                      "primary-container": "#4f46e5",
+                      "surface-bright": "#f8f9ff",
+                      "on-error": "#ffffff",
+                      "tertiary": "#00505f",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#eff4ff",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "error-container": "#ffdad6",
+                      "on-error-container": "#93000a",
+                      "on-surface-variant": "#464555",
+                      "tertiary-container": "#006a7c",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-container": "#fefcff",
+                      "tertiary-fixed-dim": "#4cd7f6",
+                      "surface-container-high": "#dce9ff",
+                      "secondary-fixed": "#d8e2ff",
+                      "secondary": "#0058be",
+                      "on-primary-container": "#dad7ff",
+                      "tertiary-fixed": "#acedff",
+                      "surface-tint": "#4d44e3",
+                      "primary-fixed": "#e2dfff",
+                      "surface-dim": "#cbdbf5",
+                      "surface-variant": "#d3e4fe",
+                      "on-tertiary": "#ffffff",
+                      "surface": "#f8f9ff",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "inverse-surface": "#213145",
+                      "surface-container": "#e5eeff",
+                      "primary": "#3525cd",
+                      "on-secondary-fixed-variant": "#004395",
+                      "on-primary-fixed": "#0f0069",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed": "#001a42"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "container-padding": "24px",
+                      "stack-lg": "32px",
+                      "stack-sm": "8px",
+                      "unit": "8px",
+                      "stack-md": "16px"
+              },
+              "fontFamily": {
+                      "definition-body": [
+                              "Inter"
+                      ],
+                      "display-word-mobile": [
+                              "Inter"
+                      ],
+                      "button-text": [
+                              "Inter"
+                      ],
+                      "display-word": [
+                              "Inter"
+                      ],
+                      "caption": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "section-heading": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "definition-body": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-word-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "button-text": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-word": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "section-heading": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen flex flex-col font-definition-body text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation (Context: Hidden on standard transaction/error flows as per semantic shell mandate, keeping focus on error state canvas) -->
+<!-- However, to maintain brand anchor presence, a minimal top bar is provided, stripped of navigation -->
+<header class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-sm shadow-primary/5 flex items-center justify-between px-gutter h-16">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="book_2">book_2</span>
+<span class="font-display-word-mobile text-[24px] text-primary tracking-tight font-bold">Verba</span>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center p-container-padding pt-24 pb-safe relative overflow-hidden">
+<!-- Subtle Ambient Background Effects -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden">
+<div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl mix-blend-multiply opacity-70 transform -translate-x-1/2 -translate-y-1/2"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-3xl mix-blend-multiply opacity-60 transform translate-x-1/4 translate-y-1/4"></div>
+</div>
+<div class="relative z-10 max-w-lg w-full flex flex-col items-center text-center">
+<!-- Illustration Area -->
+<div class="relative w-full aspect-square max-w-[320px] mb-stack-lg rounded-[2rem] bg-surface-container-low/50 backdrop-blur-md shadow-[0_8px_32px_rgba(79,70,229,0.06)] border border-white/20 p-stack-md flex items-center justify-center overflow-hidden">
+<!-- Subtle inner glow -->
+<div class="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none rounded-[2rem]"></div>
+<img alt="Unexpected Error Illustration" class="w-full h-full object-cover rounded-[1.5rem] opacity-90 mix-blend-luminosity hover:mix-blend-normal transition-all duration-700 ease-in-out" data-alt="A premium 3D illustration of an ancient, ornate parchment scroll that appears slightly glitched, pixelated, or misaligned along its edges, set against a pristine, soft white and royal indigo light-mode background. The lighting is high-key and soft, emphasizing sophisticated neo-minimalist depth and glassmorphic textures. The overall mood is intelligent, calm, and slightly technological yet deeply rooted in classic academia. Ensure no harsh shadows, maintaining a highly polished UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFb1k6Ijyw1Ync6na3lNsz3ANGz2Egje0uWO6OwJ9EAdLcLuVuqcBOvv76k5JWkC2CkFBYWYjPICWg-DlQ0CWOvxuTzjcMqJv-MNeAG9wuFhwQZ7H8nqq7ZLRC-CHTLWmQXZUX-wYJg--OGz0SlqndUU_Thxo41YI6kdgvwoOoWf1hPOwpbwe_p1bLT2FZYkzZzm9Xa8q_YonD_VFpeixxuj5Srop4ofHTtGcdLvfye-YS4IPUPudi1jZ9UZUxLcGDZhjuQWj7JA"/>
+</div>
+<!-- Typography Content -->
+<div class="flex flex-col gap-stack-sm mb-stack-lg w-full">
+<h1 class="font-display-word-mobile md:font-display-word text-display-word-mobile md:text-display-word text-on-surface">Something went astray</h1>
+<p class="font-definition-body text-definition-body text-on-surface-variant max-w-[400px] mx-auto">
+                    Our linguistic servers encountered an unexpected paradox. We are working to resolve the anomaly.
+                </p>
+</div>
+<!-- Actions -->
+<div class="flex flex-col w-full gap-stack-sm sm:flex-row sm:justify-center">
+<button class="bg-secondary text-on-secondary font-button-text text-button-text px-6 py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 active:scale-98 transition-all duration-150 shadow-[0_4px_14px_rgba(0,88,190,0.2)]">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+                    Retry Discovery
+                </button>
+<button class="bg-surface-container-high text-on-surface font-button-text text-button-text px-6 py-4 rounded-xl flex items-center justify-center gap-2 border border-outline-variant/30 hover:bg-surface-container-highest active:scale-98 transition-all duration-150">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+                    Contact Scholar Support
+                </button>
+</div>
+</div>
+</main>
+</body></html>

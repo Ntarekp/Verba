@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Verba - Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#001a42",
+                    "secondary-container": "#2170e4",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#0058be",
+                    "primary-fixed": "#e2dfff",
+                    "surface-bright": "#f8f9ff",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#d3e4fe",
+                    "surface-dim": "#cbdbf5",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "surface-variant": "#d3e4fe",
+                    "on-background": "#0b1c30",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#c7c4d8",
+                    "primary": "#3525cd",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#464555",
+                    "surface-tint": "#4d44e3",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#acedff",
+                    "secondary-fixed": "#d8e2ff",
+                    "inverse-surface": "#213145",
+                    "tertiary": "#00505f",
+                    "on-tertiary-fixed": "#001f26",
+                    "surface-container-high": "#dce9ff",
+                    "error": "#ba1a1a",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "surface-container-low": "#eff4ff",
+                    "on-surface": "#0b1c30",
+                    "primary-container": "#4f46e5",
+                    "on-primary-container": "#dad7ff",
+                    "tertiary-container": "#006a7c",
+                    "on-primary-fixed": "#0f0069",
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "on-tertiary-container": "#93e8ff",
+                    "inverse-primary": "#c3c0ff",
+                    "surface": "#f8f9ff",
+                    "on-secondary-container": "#fefcff",
+                    "outline": "#777587",
+                    "tertiary-fixed-dim": "#4cd7f6",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "surface-container": "#e5eeff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "background": "#f8f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "stack-lg": "32px",
+                    "gutter": "16px",
+                    "container-padding": "24px",
+                    "stack-sm": "8px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "section-heading": ["Inter"],
+                    "button-text": ["Inter"],
+                    "display-word-mobile": ["Inter"],
+                    "display-word": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "caption": ["Inter"],
+                    "definition-body": ["Inter"]
+            },
+            "fontSize": {
+                    "section-heading": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "display-word-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-word": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "definition-body": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-card {
+            background: rgba(248, 249, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.08);
+        }
+        
+        /* Smooth Carousel Transitions */
+        .slide-container {
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .dot {
+            transition: all 0.3s ease;
+        }
+        .dot.active {
+            width: 24px;
+            background-color: #3525cd; /* primary */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-sans overflow-hidden">
+<!-- Note: TopAppBar and BottomNavBar are suppressed as this is an onboarding flow (Linear/Transactional intent) -->
+<!-- Top Navigation (Skip) -->
+<header class="w-full flex justify-end px-container-padding py-stack-md z-50 fixed top-0">
+<button class="text-on-surface-variant font-button-text text-button-text hover:opacity-80 transition-opacity" id="skipBtn">
+            Skip
+        </button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col relative w-full h-full overflow-hidden pt-20 pb-32">
+<!-- Carousel Slider -->
+<div class="flex w-[300vw] h-full slide-container" id="carouselSlider">
+<!-- Step 1: Intelligence -->
+<section class="w-[100vw] flex-shrink-0 flex flex-col items-center justify-center px-container-padding h-full relative">
+<!-- Visual Container -->
+<div class="w-full max-w-sm aspect-square mb-stack-lg relative flex items-center justify-center">
+<!-- Abstract Background Blob -->
+<div class="absolute inset-0 bg-primary-fixed-dim/30 rounded-full blur-3xl scale-75"></div>
+<!-- Premium Mockup / Illustration -->
+<div class="relative w-4/5 h-4/5 rounded-[32px] overflow-hidden shadow-2xl glass-card flex items-center justify-center">
+<img alt="Abstract code and dictionary data overlay in a sleek digital environment" class="w-full h-full object-cover opacity-90 mix-blend-multiply" data-alt="A premium, conceptual illustration of digital intelligence and language processing. The scene features glowing, semi-transparent panels containing elegant typography and abstract data structures, suggesting a highly advanced search interface. The color palette revolves around royal indigo and pristine white, set against a bright, airy light-mode background. Soft glassmorphism effects and delicate ambient shadows impart a sense of technological sophistication and clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFldomWRgDKLSgBfQdDzFYd6K50lHWimx6JX58C8HqaLiIU42HVf5cMjsv3cokmWJHKKMlUxex1XGMAABZzy81j9kfZ8_xq1h8jCucXgnGACaJoDEhN84N9-YsX7Vj6nkODqyVVxyNtBGh8sm7QLqnexc3kYsGe462M0kPnyz5kPr9u0M7dMtlksm48F75MQ3irkSI9m9RQMug-4PsjsiW0luvqK0bhImZ9QiBw7O15CUMH8zw8jFpR6lRmHNV26XjJemup6kXbA"/>
+<!-- UI Overlay Mockup -->
+<div class="absolute inset-x-4 top-1/4 bottom-1/4 glass-card rounded-xl p-4 flex flex-col gap-2 transform -rotate-2">
+<div class="h-2 w-1/3 bg-primary rounded-full mb-2"></div>
+<div class="h-1.5 w-full bg-outline-variant/50 rounded-full"></div>
+<div class="h-1.5 w-5/6 bg-outline-variant/50 rounded-full"></div>
+<div class="h-1.5 w-4/6 bg-outline-variant/50 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Typography -->
+<div class="text-center max-w-md px-4">
+<h1 class="font-section-heading text-section-heading-mobile md:text-section-heading mb-stack-sm text-primary">Intelligence at your fingertips</h1>
+<p class="font-definition-body text-caption md:text-definition-body text-on-surface-variant">Instant access to deep linguistic insights, comprehensive definitions, and contextual examples.</p>
+</div>
+</section>
+<!-- Step 2: Language -->
+<section class="w-[100vw] flex-shrink-0 flex flex-col items-center justify-center px-container-padding h-full relative">
+<!-- Visual Container -->
+<div class="w-full max-w-sm aspect-square mb-stack-lg relative flex items-center justify-center">
+<div class="absolute inset-0 bg-tertiary-fixed-dim/30 rounded-full blur-3xl scale-75"></div>
+<div class="relative w-4/5 h-4/5 rounded-[32px] overflow-hidden shadow-2xl glass-card flex items-center justify-center bg-surface">
+<!-- Soundwave visualization mockup -->
+<div class="flex items-center justify-center gap-1.5 h-16 w-3/4">
+<div class="w-1.5 h-4 bg-tertiary-fixed-dim rounded-full animate-pulse" style="animation-delay: 0.1s"></div>
+<div class="w-1.5 h-8 bg-tertiary-fixed-dim rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+<div class="w-1.5 h-12 bg-tertiary rounded-full animate-pulse" style="animation-delay: 0.3s"></div>
+<div class="w-1.5 h-16 bg-tertiary rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+<div class="w-1.5 h-10 bg-tertiary-fixed-dim rounded-full animate-pulse" style="animation-delay: 0.5s"></div>
+<div class="w-1.5 h-6 bg-tertiary-fixed-dim rounded-full animate-pulse" style="animation-delay: 0.6s"></div>
+<div class="w-1.5 h-4 bg-tertiary-fixed-dim rounded-full animate-pulse" style="animation-delay: 0.7s"></div>
+</div>
+<!-- Pronunciation Trigger Mockup -->
+<div class="absolute bottom-6 right-6 w-12 h-12 bg-tertiary-container rounded-full flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+</div>
+</div>
+</div>
+<!-- Typography -->
+<div class="text-center max-w-md px-4">
+<h1 class="font-section-heading text-section-heading-mobile md:text-section-heading mb-stack-sm text-tertiary">Speaks your language</h1>
+<p class="font-definition-body text-caption md:text-definition-body text-on-surface-variant">Master pronunciation with crystal-clear native audio and detailed phonetic transcriptions.</p>
+</div>
+</section>
+<!-- Step 3: Always with you -->
+<section class="w-[100vw] flex-shrink-0 flex flex-col items-center justify-center px-container-padding h-full relative">
+<!-- Visual Container -->
+<div class="w-full max-w-sm aspect-square mb-stack-lg relative flex items-center justify-center">
+<div class="absolute inset-0 bg-secondary-fixed-dim/30 rounded-full blur-3xl scale-75"></div>
+<div class="relative w-4/5 h-4/5 rounded-[32px] overflow-hidden shadow-2xl glass-card flex flex-col items-center justify-center bg-surface p-6 gap-4">
+<div class="w-full glass-card p-3 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<div class="flex-1">
+<div class="h-2 w-1/2 bg-on-surface rounded mb-1"></div>
+<div class="h-1.5 w-1/3 bg-outline-variant rounded"></div>
+</div>
+</div>
+<div class="w-full glass-card p-3 rounded-xl flex items-center gap-3 opacity-80">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">cloud_off</span>
+<div class="flex-1">
+<div class="h-2 w-2/3 bg-on-surface rounded mb-1"></div>
+<div class="h-1.5 w-1/4 bg-outline-variant rounded"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Typography -->
+<div class="text-center max-w-md px-4">
+<h1 class="font-section-heading text-section-heading-mobile md:text-section-heading mb-stack-sm text-secondary">Always with you</h1>
+<p class="font-definition-body text-caption md:text-definition-body text-on-surface-variant">Save critical vocabulary and access your entire linguistic database offline, anywhere.</p>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Controls Shell -->
+<footer class="fixed bottom-0 w-full px-container-padding pb-safe pt-stack-sm z-50 bg-surface/80 backdrop-blur-2xl border-t border-white/10 flex flex-col items-center gap-stack-md h-32 justify-center">
+<!-- Progress Indicators -->
+<div class="flex gap-2 mb-2">
+<div class="dot w-2 h-2 rounded-full bg-outline-variant/40 active" id="dot0"></div>
+<div class="dot w-2 h-2 rounded-full bg-outline-variant/40" id="dot1"></div>
+<div class="dot w-2 h-2 rounded-full bg-outline-variant/40" id="dot2"></div>
+</div>
+<!-- Buttons -->
+<div class="w-full flex justify-between items-center max-w-md mx-auto relative h-12">
+<button class="absolute right-0 w-12 h-12 bg-secondary text-on-secondary rounded-full flex items-center justify-center shadow-md hover:scale-95 transition-transform" id="nextBtn">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="absolute inset-0 w-full h-full bg-primary text-on-primary font-button-text text-button-text rounded-xl opacity-0 pointer-events-none transform translate-y-4 transition-all duration-300 hover:scale-[0.98] shadow-lg flex items-center justify-center gap-2" id="getStartedBtn">
+                Get Started
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</footer>
+<script>
+        const slider = document.getElementById('carouselSlider');
+        const nextBtn = document.getElementById('nextBtn');
+        const skipBtn = document.getElementById('skipBtn');
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        const dots = [document.getElementById('dot0'), document.getElementById('dot1'), document.getElementById('dot2')];
+        
+        let currentStep = 0;
+        const totalSteps = 3;
+
+        function updateUI() {
+            // Move slider
+            slider.style.transform = `translateX(-${currentStep * 100}vw)`;
+            
+            // Update dots
+            dots.forEach((dot, index) => {
+                if (index === currentStep) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+
+            // Toggle Buttons for last step
+            if (currentStep === totalSteps - 1) {
+                nextBtn.style.opacity = '0';
+                nextBtn.style.pointerEvents = 'none';
+                skipBtn.style.opacity = '0';
+                skipBtn.style.pointerEvents = 'none';
+                
+                getStartedBtn.style.opacity = '1';
+                getStartedBtn.style.pointerEvents = 'auto';
+                getStartedBtn.style.transform = 'translateY(0)';
+            } else {
+                nextBtn.style.opacity = '1';
+                nextBtn.style.pointerEvents = 'auto';
+                skipBtn.style.opacity = '1';
+                skipBtn.style.pointerEvents = 'auto';
+                
+                getStartedBtn.style.opacity = '0';
+                getStartedBtn.style.pointerEvents = 'none';
+                getStartedBtn.style.transform = 'translateY(16px)';
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                updateUI();
+            }
+        });
+
+        skipBtn.addEventListener('click', () => {
+            currentStep = totalSteps - 1;
+            updateUI();
+        });
+
+        // Optional: Simple swipe detection for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            const threshold = 50;
+            if (touchEndX < touchStartX - threshold) {
+                // Swipe Left -> Next
+                if (currentStep < totalSteps - 1) {
+                    currentStep++;
+                    updateUI();
+                }
+            }
+            if (touchEndX > touchStartX + threshold) {
+                // Swipe Right -> Prev
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateUI();
+                }
+            }
+        }
+    </script>
+</body></html>

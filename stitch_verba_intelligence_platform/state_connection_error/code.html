@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .error-glow {
+            box-shadow: 0 0 40px rgba(186, 26, 26, 0.08);
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 3s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#4d44e3",
+                        "inverse-surface": "#213145",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "inverse-primary": "#c3c0ff",
+                        "surface": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-fixed": "#001f26",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary": "#0058be",
+                        "on-surface-variant": "#464555",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-container": "#2170e4",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#777587",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "primary-container": "#4f46e5",
+                        "tertiary": "#00505f",
+                        "tertiary-fixed": "#acedff",
+                        "primary-fixed": "#e2dfff",
+                        "on-surface": "#0b1c30",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container": "#e5eeff",
+                        "on-background": "#0b1c30",
+                        "tertiary-container": "#006a7c",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "primary": "#3525cd",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-container": "#fefcff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#93e8ff",
+                        "on-secondary-fixed": "#001a42",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "definition-body": ["Inter"],
+                        "button-text": ["Inter"],
+                        "section-heading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-word": ["Inter"],
+                        "caption": ["Inter"],
+                        "display-word-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "definition-body": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "section-heading": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-word": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-word-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-definition-body min-h-screen flex flex-col items-center justify-center overflow-hidden">
+<!-- Top App Bar (Suppressing actual Nav per Rules for Transactional/Error states) -->
+<header class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-container-padding py-stack-sm">
+<span class="font-display-word-mobile text-display-word-mobile tracking-tighter text-primary">Verba</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">account_circle</span>
+</div>
+</header>
+<!-- Main Error Canvas -->
+<main class="relative w-full max-w-lg px-container-padding flex flex-col items-center text-center">
+<!-- Atmospheric Background Element -->
+<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-error/5 rounded-full blur-[100px] pointer-events-none"></div>
+<!-- Error Illustration / Icon Cluster -->
+<div class="relative mb-stack-lg animate-pulse-subtle">
+<div class="w-32 h-32 rounded-[32px] bg-error-container flex items-center justify-center error-glow relative z-10">
+<span class="material-symbols-outlined text-error text-5xl" style="font-variation-settings: 'wght' 300;">cloud_off</span>
+</div>
+<!-- Decorative elements representing "broken signals" -->
+<div class="absolute -top-4 -right-4 w-12 h-12 rounded-full border border-error/20 flex items-center justify-center bg-white/50 backdrop-blur-md">
+<span class="material-symbols-outlined text-error/60 text-xl">wifi_off</span>
+</div>
+<div class="absolute -bottom-2 -left-6 w-10 h-10 rounded-full border border-error/10 flex items-center justify-center bg-white/30 backdrop-blur-sm">
+<span class="material-symbols-outlined text-error/40 text-lg">sync_problem</span>
+</div>
+</div>
+<!-- Content Section -->
+<div class="space-y-stack-md z-20">
+<h1 class="font-section-heading text-section-heading text-on-background">
+                Connection Failed
+            </h1>
+<p class="font-definition-body text-on-surface-variant max-w-sm mx-auto">
+                We couldn't reach the linguistic database. Please try again in a moment.
+            </p>
+</div>
+<!-- Detailed Status Card (Bento-style snippet) -->
+<div class="mt-stack-lg w-full p-stack-md rounded-xl glass-panel border border-error/10 text-left flex items-start space-x-stack-md">
+<div class="mt-1">
+<span class="material-symbols-outlined text-error/60 text-base">info</span>
+</div>
+<div class="flex-1">
+<p class="font-label-caps text-label-caps text-on-surface-variant/60 uppercase tracking-widest mb-1">Error Code: API_TIMEOUT_503</p>
+<p class="text-caption font-caption text-on-surface-variant/80">
+                    The connection request exceeded the 15s limit. This is usually temporary.
+                </p>
+</div>
+</div>
+<!-- Action Area -->
+<div class="mt-stack-lg w-full flex flex-col sm:flex-row gap-stack-md justify-center">
+<button class="flex-1 py-4 px-8 bg-secondary text-on-secondary font-button-text text-button-text rounded-xl shadow-lg hover:opacity-90 active:scale-95 transition-all duration-200">
+                Retry
+            </button>
+<button class="flex-1 py-4 px-8 border border-outline/30 text-on-surface-variant font-button-text text-button-text rounded-xl hover:bg-surface-container transition-colors active:scale-95">
+                Cancel
+            </button>
+</div>
+</main>
+<!-- Bottom Footer Brand Hint -->
+<footer class="fixed bottom-8 w-full text-center">
+<p class="font-label-caps text-label-caps text-outline/40 uppercase tracking-[0.2em]">Verba Linguistic Engine v2.4.0</p>
+</footer>
+<script>
+        // Micro-interaction for the Retry button
+        const retryBtn = document.querySelector('button.bg-secondary');
+        retryBtn.addEventListener('click', () => {
+            const originalText = retryBtn.textContent;
+            retryBtn.innerHTML = `
+                <div class="flex items-center justify-center gap-2">
+                    <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Reconnecting...</span>
+                </div>
+            `;
+            retryBtn.classList.add('pointer-events-none', 'opacity-80');
+            
+            setTimeout(() => {
+                retryBtn.innerHTML = originalText;
+                retryBtn.classList.remove('pointer-events-none', 'opacity-80');
+                // Interaction simulation complete
+            }, 2500);
+        });
+
+        // Soft entry animation for content
+        window.addEventListener('DOMContentLoaded', () => {
+            const main = document.querySelector('main');
+            main.style.opacity = '0';
+            main.style.transform = 'translateY(20px)';
+            main.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            
+            requestAnimationFrame(() => {
+                main.style.opacity = '1';
+                main.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

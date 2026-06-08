@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saved Words</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#f8f9ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#4d44e3",
+                        "inverse-primary": "#c3c0ff",
+                        "secondary-container": "#2170e4",
+                        "primary-container": "#4f46e5",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#fefcff",
+                        "primary-fixed": "#e2dfff",
+                        "inverse-surface": "#213145",
+                        "on-tertiary-fixed": "#001f26",
+                        "on-secondary-fixed-variant": "#004395",
+                        "tertiary-fixed": "#acedff",
+                        "surface-container-low": "#eff4ff",
+                        "tertiary-container": "#006a7c",
+                        "on-primary-container": "#dad7ff",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "on-tertiary-container": "#93e8ff",
+                        "on-background": "#0b1c30",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "on-primary-fixed": "#0f0069",
+                        "on-surface-variant": "#464555",
+                        "on-surface": "#0b1c30",
+                        "secondary": "#0058be",
+                        "surface-container": "#e5eeff",
+                        "surface-bright": "#f8f9ff",
+                        "outline-variant": "#c7c4d8",
+                        "outline": "#777587",
+                        "primary": "#3525cd",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "surface-dim": "#cbdbf5",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#001a42",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-variant": "#d3e4fe",
+                        "tertiary": "#00505f",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c3c0ff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem"
+                    },
+                    spacing: {
+                        "container-padding": "24px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "gutter": "16px",
+                        "unit": "8px",
+                        "stack-sm": "8px"
+                    },
+                    fontFamily: {
+                        "display-word": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-word-mobile": ["Inter"],
+                        "button-text": ["Inter"],
+                        "section-heading": ["Inter"],
+                        "definition-body": ["Inter"],
+                        "caption": ["Inter"]
+                    },
+                    fontSize: {
+                        "display-word": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "display-word-mobile": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "button-text": ["16px", { lineHeight: "24px", fontWeight: "500" }],
+                        "section-heading": ["28px", { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" }],
+                        "definition-body": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                        "caption": ["14px", { lineHeight: "20px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.08);
+        }
+        .glass-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(79, 70, 229, 0.1), transparent);
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 80px); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 64px); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-safe">
+<!-- TopAppBar (Mobile) -->
+<header class="md:hidden fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-sm shadow-primary/5 flex items-center justify-between px-gutter h-16 pt-safe">
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-display-word-mobile text-display-word-mobile text-primary tracking-tight">Verba</h1>
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</header>
+<!-- NavigationDrawer (Web) -->
+<nav class="hidden md:flex fixed inset-y-0 left-0 z-[60] flex-col p-4 bg-surface-container-low h-full w-80 rounded-r-3xl divide-y divide-white/10 shadow-2xl shadow-primary/10">
+<div class="mb-8 px-2 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-display-word text-display-word overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDyTkQJG4RASNkD0r-uWzk3ak5ZQfvSw_aSIE-pms9-YTMsUR1HAydDdGIi9lZtlDbpuBEpXZCnheR9xf6xQ_VnTn3AZksm1uMyh7CgiaksU8Z59JLgLOgBk9IWKueux55xIDrGOOTDvzX9UuTR2BOr48tfE_jLyZevcpec8_fSEQ8o4Sp8tdTvIZ20uALPvNLMJ6lbYBppsiMpYYdLT-CuCoX3CwPD_qbg1X54MzYFA85r_3p9NNizGL92PT_bfgn7Dp7ppL8fw"/>
+</div>
+<div>
+<h2 class="font-button-text text-button-text text-on-surface">Language Explorer</h2>
+<p class="font-caption text-caption text-on-surface-variant">Verba Premium</p>
+<p class="font-caption text-caption text-primary">Level 12</p>
+</div>
+</div>
+<ul class="flex flex-col gap-2 pt-4">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-button-text text-button-text">Home</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-container text-on-primary-container mx-2 transition-colors active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+<span class="font-button-text text-button-text">Saved Words</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-button-text text-button-text">Learning Path</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-button-text text-button-text">Settings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-button-text text-button-text">Help</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content -->
+<main class="md:ml-80 pt-20 md:pt-8 px-container-padding max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="mb-stack-lg flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="font-section-heading text-section-heading text-on-surface mb-2">Saved Words</h1>
+<p class="font-definition-body text-definition-body text-on-surface-variant">Review and manage your vocabulary collection.</p>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-3">
+<button class="bg-secondary text-on-secondary px-6 py-3 rounded-xl font-button-text text-button-text hover:bg-opacity-90 active:scale-95 transition-all shadow-lg shadow-secondary/20 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    New Word
+                </button>
+</div>
+</div>
+<!-- Learning Progress Card -->
+<section class="glass-card rounded-3xl p-6 mb-stack-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-tertiary-fixed-dim/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+<div class="relative z-10 flex flex-col md:flex-row gap-8 items-center justify-between">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-tertiary-container text-on-tertiary-container flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-4xl" data-icon="local_fire_department" data-weight="fill" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div>
+<h3 class="font-button-text text-button-text text-on-surface-variant mb-1">Current Streak</h3>
+<div class="flex items-baseline gap-2">
+<span class="font-display-word text-display-word text-tertiary">14</span>
+<span class="font-caption text-caption text-tertiary-fixed-dim">days</span>
+</div>
+</div>
+</div>
+<div class="h-12 w-px bg-outline-variant/30 hidden md:block"></div>
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-primary-container text-on-primary-container flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-4xl" data-icon="workspace_premium" data-weight="fill" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<div>
+<h3 class="font-button-text text-button-text text-on-surface-variant mb-1">Words Mastered</h3>
+<div class="flex items-baseline gap-2">
+<span class="font-display-word text-display-word text-primary">248</span>
+<span class="font-caption text-caption text-primary-fixed-dim">total</span>
+</div>
+</div>
+</div>
+<div class="w-full md:w-auto">
+<button class="w-full md:w-auto px-6 py-3 rounded-xl border border-outline-variant text-on-surface font-button-text text-button-text hover:bg-surface-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+                        Start Quiz
+                    </button>
+</div>
+</div>
+</section>
+<!-- Search & Filter Controls -->
+<section class="mb-stack-md flex flex-col sm:flex-row gap-4">
+<!-- Search Bar -->
+<div class="flex-1 relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+</div>
+<input class="w-full pl-12 pr-12 py-4 bg-surface/70 backdrop-blur-md border border-white/20 rounded-2xl font-definition-body text-definition-body text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm" placeholder="Search saved words..." type="text"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-tertiary-fixed-dim hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+</button>
+</div>
+<!-- Filters -->
+<div class="flex gap-2">
+<button class="px-4 py-3 rounded-2xl border border-outline-variant/50 bg-surface/50 backdrop-blur-sm flex items-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-outline" data-icon="filter_list">filter_list</span>
+<span class="font-button-text text-button-text text-on-surface hidden sm:inline">Filter</span>
+</button>
+<button class="px-4 py-3 rounded-2xl border border-outline-variant/50 bg-surface/50 backdrop-blur-sm flex items-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-outline" data-icon="sort">sort</span>
+<span class="font-button-text text-button-text text-on-surface hidden sm:inline">Sort</span>
+</button>
+</div>
+</section>
+<!-- Collections Tabs -->
+<section class="mb-stack-lg overflow-x-auto pb-2 scrollbar-hide">
+<div class="flex gap-3 whitespace-nowrap min-w-max">
+<button class="px-5 py-2 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps tracking-widest border border-transparent">
+                    ALL WORDS
+                </button>
+<button class="px-5 py-2 rounded-full bg-transparent border border-outline-variant text-on-surface-variant font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors">
+                    FAVORITES <span class="ml-1 text-tertiary-fixed-dim">★</span>
+</button>
+<button class="px-5 py-2 rounded-full bg-transparent border border-outline-variant text-on-surface-variant font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors">
+                    ACADEMIC
+                </button>
+<button class="px-5 py-2 rounded-full bg-transparent border border-outline-variant text-on-surface-variant font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors">
+                    TRAVEL
+                </button>
+<button class="px-5 py-2 rounded-full bg-transparent border border-outline-variant text-on-surface-variant font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors border-dashed">
+                    + NEW COLLECTION
+                </button>
+</div>
+</section>
+<!-- Word List (Bento Grid approach) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-stack-lg">
+<!-- Word Card 1 -->
+<article class="glass-card rounded-3xl p-6 relative group hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="font-section-heading text-section-heading text-on-surface mb-1">Ephemeral</h2>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider text-primary border border-primary/30">Adj</span>
+<span class="font-caption text-caption text-on-surface-variant font-mono bg-surface-container px-2 py-1 rounded">/ɪˈfem.ər.əl/</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full bg-tertiary-fixed-dim/10 text-tertiary-fixed-dim flex items-center justify-center hover:bg-tertiary-fixed-dim/20 transition-colors animate-pulse">
+<span class="material-symbols-outlined" data-icon="volume_up">volume_up</span>
+</button>
+<button class="text-tertiary">
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+</div>
+<div class="pl-4 border-l-2 border-primary mb-4 relative">
+<p class="font-definition-body text-definition-body text-on-surface leading-snug">Lasting for a very short time.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-3 mb-4">
+<p class="font-caption text-caption text-on-surface-variant/80 italic">"Fame in the world of rock and pop is largely ephemeral."</p>
+</div>
+<div class="glass-divider my-4"></div>
+<div class="flex justify-between items-center">
+<span class="font-caption text-caption text-outline">Added 2d ago</span>
+<div class="flex gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+</div>
+</div>
+</article>
+<!-- Word Card 2 -->
+<article class="glass-card rounded-3xl p-6 relative group hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="font-section-heading text-section-heading text-on-surface mb-1">Ubiquitous</h2>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider text-primary border border-primary/30">Adj</span>
+<span class="font-caption text-caption text-on-surface-variant font-mono bg-surface-container px-2 py-1 rounded">/juːˈbɪk.wɪ.təs/</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full bg-tertiary-fixed-dim/10 text-tertiary-fixed-dim flex items-center justify-center hover:bg-tertiary-fixed-dim/20 transition-colors">
+<span class="material-symbols-outlined" data-icon="volume_up">volume_up</span>
+</button>
+<button class="text-outline hover:text-tertiary transition-colors">
+<span class="material-symbols-outlined" data-icon="star">star</span>
+</button>
+</div>
+</div>
+<div class="pl-4 border-l-2 border-primary mb-4 relative">
+<p class="font-definition-body text-definition-body text-on-surface leading-snug">Seeming to be everywhere.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-3 mb-4">
+<p class="font-caption text-caption text-on-surface-variant/80 italic">"The mobile phone, that most ubiquitous of consumer-electronic appliances, is about to enter a new age."</p>
+</div>
+<div class="glass-divider my-4"></div>
+<div class="flex justify-between items-center">
+<span class="font-caption text-caption text-outline">Added 1w ago</span>
+<div class="flex gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+</div>
+</div>
+</article>
+<!-- Word Card 3 -->
+<article class="glass-card rounded-3xl p-6 relative group hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="font-section-heading text-section-heading text-on-surface mb-1">Mellifluous</h2>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider text-primary border border-primary/30">Adj</span>
+<span class="font-caption text-caption text-on-surface-variant font-mono bg-surface-container px-2 py-1 rounded">/məlˈɪf.lu.əs/</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full bg-tertiary-fixed-dim/10 text-tertiary-fixed-dim flex items-center justify-center hover:bg-tertiary-fixed-dim/20 transition-colors">
+<span class="material-symbols-outlined" data-icon="volume_up">volume_up</span>
+</button>
+<button class="text-tertiary">
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+</div>
+<div class="pl-4 border-l-2 border-primary mb-4 relative">
+<p class="font-definition-body text-definition-body text-on-surface leading-snug">Having a pleasant and flowing sound.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-3 mb-4">
+<p class="font-caption text-caption text-on-surface-variant/80 italic">"A deep mellifluous voice."</p>
+</div>
+<div class="glass-divider my-4"></div>
+<div class="flex justify-between items-center">
+<span class="font-caption text-caption text-outline">Added 2w ago</span>
+<div class="flex gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+</div>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-surface/80 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_20px_rgba(79,70,229,0.08)] z-50 rounded-t-xl">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60 hover:text-secondary transition-colors active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="translate">translate</span>
+<span class="font-label-caps text-label-caps">Translate</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60 hover:text-secondary transition-colors active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="book_2">book_2</span>
+<span class="font-label-caps text-label-caps">Dictionary</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-secondary bg-secondary-fixed/20 rounded-xl px-4 py-2 active:scale-98 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark" data-weight="fill" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<span class="font-label-caps text-label-caps">Saved Words</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60 hover:text-secondary transition-colors active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60 hover:text-secondary transition-colors active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+</body></html>

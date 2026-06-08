@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Verba - Home Search</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#00505f",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "surface-bright": "#f8f9ff",
+                        "inverse-surface": "#213145",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-high": "#dce9ff",
+                        "on-primary-fixed": "#0f0069",
+                        "background": "#f8f9ff",
+                        "surface-container": "#e5eeff",
+                        "outline": "#777587",
+                        "surface-dim": "#cbdbf5",
+                        "on-primary-container": "#dad7ff",
+                        "secondary-container": "#2170e4",
+                        "surface-container-low": "#eff4ff",
+                        "primary": "#3525cd",
+                        "on-error": "#ffffff",
+                        "on-background": "#0b1c30",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "on-tertiary-container": "#93e8ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#e2dfff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "tertiary-fixed": "#acedff",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c7c4d8",
+                        "surface-tint": "#4d44e3",
+                        "inverse-primary": "#c3c0ff",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-variant": "#d3e4fe",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#001f26",
+                        "secondary": "#0058be",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#4f46e5",
+                        "on-surface": "#0b1c30",
+                        "surface": "#f8f9ff",
+                        "tertiary-container": "#006a7c",
+                        "on-secondary-container": "#fefcff",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-surface-variant": "#464555"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "container-padding": "24px",
+                        "gutter": "16px",
+                        "stack-md": "16px",
+                        "unit": "8px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "section-heading": ["Inter"],
+                        "definition-body": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-word-mobile": ["Inter"],
+                        "caption": ["Inter"],
+                        "button-text": ["Inter"],
+                        "display-word": ["Inter"]
+                    },
+                    "fontSize": {
+                        "section-heading": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "definition-body": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-word-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "caption": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "display-word": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #f8f9ff;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .glass-card {
+            background: rgba(248, 249, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.08);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-background pb-[100px] md:pb-0 pt-16">
+<!-- Top App Bar -->
+<header class="bg-surface/70 dark:bg-surface-dim/70 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 dark:border-white/5 shadow-sm shadow-primary/5 flex items-center justify-between px-gutter h-16">
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-display-word-mobile text-display-word-mobile text-primary tracking-tight" style="font-size: 24px; line-height: 32px;">Verba</h1>
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</header>
+<main class="px-container-padding max-w-4xl mx-auto space-y-stack-lg pt-stack-md">
+<!-- Search Bar -->
+<section class="relative group">
+<div class="glass-card rounded-full flex items-center px-4 py-3 transition-all duration-300 focus-within:ring-2 focus-within:ring-primary focus-within:shadow-[0_8px_32px_rgba(79,70,229,0.15)]">
+<span class="material-symbols-outlined text-outline mr-3" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none outline-none font-definition-body text-definition-body text-on-surface placeholder:text-outline-variant focus:ring-0 p-0" placeholder="Search millions of words" type="text"/>
+<button class="text-tertiary-fixed-dim hover:text-tertiary transition-colors ml-3 focus:outline-none">
+<span class="material-symbols-outlined" data-icon="mic" data-weight="fill" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+</div>
+</section>
+<!-- Word of the Day Hero Card -->
+<section>
+<div class="glass-card rounded-3xl p-6 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/30 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
+<div class="flex justify-between items-start mb-unit">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">Word of the Day</span>
+<button aria-label="Play pronunciation" class="w-10 h-10 rounded-full bg-tertiary-fixed/20 text-tertiary-fixed-dim flex items-center justify-center hover:bg-tertiary-fixed/30 transition-colors active:scale-95 relative">
+<span class="absolute inset-0 rounded-full animate-ping bg-tertiary-fixed/10" style="animation-duration: 3s;"></span>
+<span class="material-symbols-outlined" data-icon="volume_up" data-weight="fill" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+</button>
+</div>
+<h2 class="font-display-word-mobile text-display-word-mobile text-on-surface mb-unit">Ethereal</h2>
+<div class="flex gap-2 mb-stack-md">
+<span class="font-caption text-caption text-secondary border border-secondary/20 rounded-full px-3 py-1">Adjective</span>
+<span class="font-caption text-caption text-outline-variant py-1">/ɪˈθɪəriəl/</span>
+</div>
+<div class="relative pl-4 border-l-2 border-primary mb-stack-sm">
+<p class="font-definition-body text-definition-body text-on-surface">Extremely delicate and light in a way that seems not to be of this world.</p>
+</div>
+<p class="font-caption text-caption text-on-surface-variant/80 italic pl-4">"Her ethereal beauty seemed to glow in the dim light of the church."</p>
+</div>
+</section>
+<!-- Widgets Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<!-- Learning Progress -->
+<div class="glass-card rounded-2xl p-5 flex items-center justify-between">
+<div>
+<h3 class="font-button-text text-button-text text-on-surface mb-1">Learning Progress</h3>
+<p class="font-caption text-caption text-on-surface-variant">Level 12 • 450 words mastered</p>
+</div>
+<div class="relative w-16 h-16">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-high" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="75, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-label-caps text-label-caps text-on-surface">75%</span>
+</div>
+</div>
+</div>
+<!-- Daily Challenge -->
+<div class="glass-card rounded-2xl p-5 bg-gradient-to-br from-surface to-surface-container-low border-l-4 border-l-secondary relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="emoji_events">emoji_events</span>
+</div>
+<h3 class="font-button-text text-button-text text-on-surface mb-1">Daily Challenge</h3>
+<p class="font-caption text-caption text-on-surface-variant mb-3">Identify 5 synonyms for 'Ephemeral'</p>
+<button class="bg-secondary hover:bg-secondary/90 text-on-secondary font-button-text text-button-text py-2 px-4 rounded-lg transition-all active:scale-95 shadow-md shadow-secondary/20 inline-flex items-center gap-2">
+                    Start Challenge
+                    <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Recent Searches Chips -->
+<section>
+<h3 class="font-button-text text-button-text text-on-surface mb-unit">Recent Searches</h3>
+<div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2">
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant/50 text-on-surface font-caption text-caption hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="history">history</span>
+                    Serendipity
+                </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant/50 text-on-surface font-caption text-caption hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="history">history</span>
+                    Ubiquitous
+                </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant/50 text-on-surface font-caption text-caption hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="history">history</span>
+                    Mellifluous
+                </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant/50 text-on-surface font-caption text-caption hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="history">history</span>
+                    Enigma
+                </button>
+</div>
+</section>
+<!-- Trending Words List -->
+<section>
+<div class="flex items-center justify-between mb-unit">
+<h3 class="font-button-text text-button-text text-on-surface">Trending Words</h3>
+<button class="text-secondary font-label-caps text-label-caps uppercase tracking-wider hover:opacity-80 transition-opacity">View All</button>
+</div>
+<div class="space-y-2">
+<div class="glass-card rounded-xl p-4 flex justify-between items-center hover:bg-surface-container-low/50 transition-colors cursor-pointer group">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-button-text text-button-text text-on-surface group-hover:text-primary transition-colors">Resilience</h4>
+<span class="material-symbols-outlined text-error text-sm" data-icon="trending_up">trending_up</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-1">The capacity to recover quickly from difficulties; toughness.</p>
+</div>
+<button class="text-outline-variant hover:text-secondary transition-colors pl-4">
+<span class="material-symbols-outlined" data-icon="bookmark_add">bookmark_add</span>
+</button>
+</div>
+<div class="glass-card rounded-xl p-4 flex justify-between items-center hover:bg-surface-container-low/50 transition-colors cursor-pointer group">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-button-text text-button-text text-on-surface group-hover:text-primary transition-colors">Empathy</h4>
+<span class="material-symbols-outlined text-error text-sm" data-icon="trending_up">trending_up</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-1">The ability to understand and share the feelings of another.</p>
+</div>
+<button class="text-outline-variant hover:text-secondary transition-colors pl-4">
+<span class="material-symbols-outlined" data-icon="bookmark_add">bookmark_add</span>
+</button>
+</div>
+<div class="glass-card rounded-xl p-4 flex justify-between items-center hover:bg-surface-container-low/50 transition-colors cursor-pointer group">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-button-text text-button-text text-on-surface group-hover:text-primary transition-colors">Paradigm</h4>
+<span class="material-symbols-outlined text-error text-sm" data-icon="trending_up">trending_up</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-1">A typical example or pattern of something; a model.</p>
+</div>
+<button class="text-outline-variant hover:text-secondary transition-colors pl-4">
+<span class="material-symbols-outlined" data-icon="bookmark_add">bookmark_add</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Nav Bar (Mobile Only) -->
+<nav class="md:hidden bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-2xl fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe z-50 border-t border-white/10 dark:border-white/5 rounded-t-xl shadow-[0_-4px_20px_rgba(79,70,229,0.08)]">
+<!-- Active Tab: Dictionary (closest intent to Search/Home) -->
+<a class="flex flex-col items-center gap-1 text-secondary dark:text-secondary-fixed-dim bg-secondary-fixed/20 rounded-xl px-4 py-2 hover:text-secondary transition-colors active:scale-98 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="book_2" data-weight="fill" style="font-variation-settings: 'FILL' 1;">book_2</span>
+<span class="font-label-caps text-label-caps">Dictionary</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60 dark:text-on-surface-variant/60 hover:text-secondary transition-colors active:scale-98 duration-150 px-4 py-2" href="#">
+<span class="material-symbols-outlined" data-icon="translate">translate</span>
+<span class="font-label-caps text-label-caps">Translate</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60 dark:text-on-surface-variant/60 hover:text-secondary transition-colors active:scale-98 duration-150 px-4 py-2" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/60 dark:text-on-surface-variant/60 hover:text-secondary transition-colors active:scale-98 duration-150 px-4 py-2" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+<!-- Desktop Nav Drawer (Hidden on Mobile) -->
+<nav class="hidden md:flex bg-surface-container-low dark:bg-surface-container-lowest h-full w-80 rounded-r-3xl divide-y divide-white/10 shadow-2xl shadow-primary/10 fixed inset-y-0 left-0 z-[60] flex-col p-4 border-r border-outline-variant/10">
+<div class="flex items-center gap-4 p-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-2xl text-on-surface-variant" data-icon="person">person</span>
+</div>
+<div>
+<h2 class="font-button-text text-button-text text-on-surface">Language Explorer</h2>
+<p class="font-caption text-caption text-on-surface-variant">Verba Premium</p>
+<span class="font-label-caps text-label-caps text-primary mt-1 inline-block">Level 12</span>
+</div>
+</div>
+<div class="flex-1 py-4 space-y-2">
+<!-- Active Tab -->
+<a class="flex items-center gap-4 p-3 bg-primary-container text-on-primary-container rounded-lg mx-2 hover:bg-surface-container-highest transition-colors active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-button-text text-button-text">Home</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 hover:bg-surface-container-highest transition-colors active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+<span class="font-button-text text-button-text">Saved Words</span>
+</a>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 hover:bg-surface-container-highest transition-colors active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-button-text text-button-text">Learning Path</span>
+</a>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 hover:bg-surface-container-highest transition-colors active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-button-text text-button-text">Settings</span>
+</a>
+</div>
+<div class="py-4">
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 hover:bg-surface-container-highest transition-colors active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-button-text text-button-text">Help</span>
+</a>
+</div>
+</nav>
+</body></html>

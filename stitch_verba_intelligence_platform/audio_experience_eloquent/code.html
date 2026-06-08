@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verba - Eloquent Pronunciation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-bright": "#f8f9ff",
+                        "inverse-surface": "#213145",
+                        "surface-container": "#e5eeff",
+                        "background": "#f8f9ff",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-high": "#dce9ff",
+                        "tertiary": "#00505f",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "primary": "#3525cd",
+                        "on-error": "#ffffff",
+                        "on-background": "#0b1c30",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#777587",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-container": "#2170e4",
+                        "on-primary-container": "#dad7ff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#acedff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-tint": "#4d44e3",
+                        "inverse-primary": "#c3c0ff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-container": "#93e8ff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "primary-fixed": "#e2dfff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#004395",
+                        "tertiary-container": "#006a7c",
+                        "on-secondary-container": "#fefcff",
+                        "surface": "#f8f9ff",
+                        "primary-container": "#4f46e5",
+                        "on-surface": "#0b1c30",
+                        "on-surface-variant": "#464555",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-variant": "#d3e4fe",
+                        "on-error-container": "#93000a",
+                        "secondary": "#0058be",
+                        "on-tertiary-fixed": "#001f26"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "gutter": "16px",
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "display-word-mobile": ["Inter"],
+                        "definition-body": ["Inter"],
+                        "section-heading": ["Inter"],
+                        "display-word": ["Inter"],
+                        "button-text": ["Inter"],
+                        "caption": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-word-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "definition-body": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "section-heading": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-word": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "caption": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(248, 249, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(79, 70, 229, 0.08);
+        }
+        
+        .ripple-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple-btn::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+        }
+        .ripple-btn:active::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition: 0s;
+        }
+
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .accent-gradient {
+            background: linear-gradient(135deg, #3525cd 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #3525cd 0%, #00d4ff 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-sans antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation (Shell) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-[0_8px_32px_0_rgba(79,70,229,0.08)]">
+<button class="text-primary font-bold hover:opacity-80 transition-opacity scale-95 active:scale-90 flex items-center justify-center p-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-section-heading text-section-heading tracking-tight text-primary">Verba</h1>
+<button class="text-primary font-bold hover:opacity-80 transition-opacity scale-95 active:scale-90 flex items-center justify-center p-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">bookmark_border</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-24 pb-32 px-container-padding md:px-8 max-w-4xl mx-auto w-full flex flex-col gap-stack-lg relative">
+<!-- Header Section -->
+<section class="flex flex-col items-center text-center space-y-unit mt-8 relative z-10">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-primary font-label-caps text-label-caps mb-4">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+                Pronunciation Detail
+            </div>
+<h2 class="font-display-word-mobile md:font-display-word text-display-word-mobile md:text-display-word text-on-surface">Eloquent</h2>
+<p class="font-definition-body text-definition-body text-on-surface-variant opacity-80 font-serif italic tracking-wide">
+                /ˈel.ə.kwənt/
+            </p>
+</section>
+<!-- Interactive Audio Player Card (Glassmorphic) -->
+<section class="glass-panel rounded-[32px] p-6 md:p-10 relative overflow-hidden flex flex-col items-center z-10 mt-4 border border-white/60">
+<!-- Shader Background Layer -->
+<div class="absolute inset-0 z-0 opacity-20 mix-blend-multiply pointer-events-none rounded-[32px] overflow-hidden">
+<!-- STITCH_SHADER_START:ANIMATION_27 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_27" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_27');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+varying vec2 v_texCoord;
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Create a soft, flowing wave pattern
+    float wave = sin(uv.x * 3.0 + u_time * 0.5) * 0.1;
+    wave += sin(uv.x * 5.0 - u_time * 0.3) * 0.05;
+    
+    float mask = smoothstep(0.4 + wave, 0.41 + wave, uv.y);
+    
+    // Base colors from the design system
+    vec3 color_indigo = vec3(0.31, 0.27, 0.90); // #4F46E5
+    vec3 color_blue = vec3(0.23, 0.51, 0.96);   // #3B82F6
+    vec3 color_cyan = vec3(0.02, 0.71, 0.83);   // #06B6D4
+    
+    vec3 final_color = mix(color_indigo, color_blue, uv.x);
+    final_color = mix(final_color, color_cyan, wave * 2.0 + 0.5);
+    
+    gl_FragColor = vec4(final_color, mask * 0.15);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_27 -->
+</div>
+<div class="relative z-10 w-full flex flex-col items-center">
+<!-- Accent Toggle -->
+<div class="flex bg-surface-container-high rounded-full p-1 mb-10 border border-outline-variant/20 shadow-inner">
+<button class="px-6 py-2 rounded-full bg-primary text-on-primary font-button-text text-button-text shadow-sm transition-all">
+                        American
+                    </button>
+<button class="px-6 py-2 rounded-full text-on-surface-variant font-button-text text-button-text hover:text-primary transition-colors">
+                        British
+                    </button>
+</div>
+<!-- Main Play Button Area -->
+<div class="relative flex items-center justify-center mb-12">
+<!-- Pulse rings behind button -->
+<div class="absolute inset-0 rounded-full border-2 border-primary/20 pulse-ring"></div>
+<div class="absolute inset-[-20px] rounded-full border border-[#00d4ff]/30 pulse-ring" style="animation-delay: 0.5s;"></div>
+<button class="ripple-btn w-24 h-24 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(53,37,205,0.4)] hover:scale-105 active:scale-95 transition-transform relative z-10">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">pause</span>
+</button>
+</div>
+<!-- Progress Bar -->
+<div class="w-full max-w-md space-y-2 mb-8">
+<div class="flex justify-between font-caption text-caption text-on-surface-variant">
+<span>0:01</span>
+<span>0:02</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden relative cursor-pointer group">
+<div class="absolute top-0 left-0 h-full w-[45%] progress-bar-fill rounded-full shadow-[0_0_10px_rgba(0,212,255,0.5)]"></div>
+<!-- Playhead -->
+<div class="absolute top-1/2 -translate-y-1/2 left-[45%] w-3 h-3 bg-white rounded-full shadow border border-primary opacity-0 group-hover:opacity-100 transition-opacity -ml-1.5"></div>
+</div>
+</div>
+<!-- Pronunciation Tags (Bento-style chips) -->
+<div class="flex flex-wrap justify-center gap-3 w-full">
+<div class="px-4 py-2 rounded-xl bg-surface-container/50 border border-primary/10 text-primary font-caption text-caption flex items-center gap-2 backdrop-blur-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        Stressed Syllable: 'El'
+                    </div>
+<div class="px-4 py-2 rounded-xl bg-surface-container/50 border border-outline-variant/20 text-on-surface-variant font-caption text-caption flex items-center gap-2 backdrop-blur-sm hover:border-primary/30 transition-colors cursor-help">
+<span class="material-symbols-outlined text-[16px]">info</span>
+                        Clear Schwa: /ə/
+                    </div>
+<div class="px-4 py-2 rounded-xl bg-surface-container/50 border border-outline-variant/20 text-on-surface-variant font-caption text-caption flex items-center gap-2 backdrop-blur-sm hover:border-primary/30 transition-colors cursor-help">
+<span class="material-symbols-outlined text-[16px]">record_voice_over</span>
+                        Aspirated 'k'
+                    </div>
+</div>
+</div>
+</section>
+<!-- Secondary States Preview (For Design Review) -->
+<section class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 opacity-70">
+<!-- Loading State Variant -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px]">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-4 uppercase tracking-widest">Loading State</p>
+<button class="w-16 h-16 bg-surface-container-high text-primary rounded-full flex items-center justify-center opacity-60">
+<span class="material-symbols-outlined animate-spin" style="font-variation-settings: 'FILL' 0;">autorenew</span>
+</button>
+<div class="w-32 h-2 bg-surface-variant rounded-full mt-4 overflow-hidden relative">
+<div class="absolute top-0 left-0 h-full w-1/3 bg-primary rounded-full animate-[pulse-ring_1.5s_ease-in-out_infinite] translate-x-full"></div>
+</div>
+</div>
+<!-- Error State Variant -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] border-error/20">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-4 uppercase tracking-widest">Error State</p>
+<button class="w-16 h-16 bg-error-container text-error rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">error</span>
+</button>
+<p class="font-caption text-caption text-error mt-3 text-center">Audio unavailable. Tap to retry.</p>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation (Shell) - Suppressed on Desktop, visible on Mobile -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-gutter py-2 pb-safe bg-surface/80 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_24px_rgba(0,0,0,0.04)] rounded-t-3xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary transition-colors scale-98 active:scale-95 py-2">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">search</span>
+<span class="font-label-caps text-[10px]">Search</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary bg-secondary-container/20 rounded-full px-5 py-1 scale-98 active:scale-95 transition-all">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">book_2</span>
+<span class="font-label-caps text-[10px]">Dictionary</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary transition-colors scale-98 active:scale-95 py-2">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">history</span>
+<span class="font-label-caps text-[10px]">History</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-secondary transition-colors scale-98 active:scale-95 py-2">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-label-caps text-[10px]">Profile</span>
+</button>
+</nav>
+</body></html>

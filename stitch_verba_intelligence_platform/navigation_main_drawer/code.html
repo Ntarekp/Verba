@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verba - Navigation Drawer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-bright": "#f8f9ff",
+                        "inverse-surface": "#213145",
+                        "surface-container": "#e5eeff",
+                        "background": "#f8f9ff",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-high": "#dce9ff",
+                        "tertiary": "#00505f",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "primary": "#3525cd",
+                        "on-error": "#ffffff",
+                        "on-background": "#0b1c30",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#777587",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-container": "#2170e4",
+                        "on-primary-container": "#dad7ff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#acedff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-tint": "#4d44e3",
+                        "inverse-primary": "#c3c0ff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-container": "#93e8ff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "primary-fixed": "#e2dfff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#004395",
+                        "tertiary-container": "#006a7c",
+                        "on-secondary-container": "#fefcff",
+                        "surface": "#f8f9ff",
+                        "primary-container": "#4f46e5",
+                        "on-surface": "#0b1c30",
+                        "on-surface-variant": "#464555",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-variant": "#d3e4fe",
+                        "on-error-container": "#93000a",
+                        "secondary": "#0058be",
+                        "on-tertiary-fixed": "#001f26"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "gutter": "16px",
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter", "sans-serif"],
+                        "display-word-mobile": ["Inter", "sans-serif"],
+                        "definition-body": ["Inter", "sans-serif"],
+                        "section-heading": ["Inter", "sans-serif"],
+                        "display-word": ["Inter", "sans-serif"],
+                        "button-text": ["Inter", "sans-serif"],
+                        "caption": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-word-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "definition-body": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "section-heading": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-word": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "button-text": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "caption": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex items-center justify-center p-4">
+<!-- Backdrop Overlay for context -->
+<div class="fixed inset-0 bg-on-background/20 backdrop-blur-sm z-40 pointer-events-none"></div>
+<!-- Navigation Drawer Component from JSON -->
+<!-- Applying style_shell_layout, style_bg_color, style_component_shape, style_shadows_and_elevation, style_interactions -->
+<nav class="fixed left-0 top-0 h-full w-80 z-[60] p-6 flex flex-col gap-stack-lg bg-surface-container/90 backdrop-blur-2xl shadow-2xl rounded-r-3xl border-r border-white/10 transition-all duration-300 ease-in-out transform translate-x-0">
+<!-- Header Profile Section -->
+<div class="flex flex-col gap-stack-sm w-full pt-4">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-variant flex-shrink-0 border-2 border-primary/20">
+<img alt="Alex Verba profile picture" class="w-full h-full object-cover" data-alt="A close up, professional portrait of a calm, intelligent person. Soft studio lighting. The aesthetic is clean, modern, and high-quality, fitting a premium language learning application. Light mode color palette with soft background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWeXx9T_lC7DcLD53qI8Z6KRtCjVEFWh3GkeVhfReiQohrpxtioElLKJIkv_GorKRAC5B4VY2CccdFdEHi79qhISmgmUt0Q9qYrrtKB-KBXMsJ3W6bHmgGB4jwQBQUsrQrGGEA6X5pf-cWkhEHke3jmcoSmQsyLESLFSgjjBMcbSU7SQnJULqm3SpVonTbuIbhatKjC-V1HniZTW0HK6dFUm4DruGpJRSbnvfFQ5Iqtr9jejFXqpcmZSvATV0eKxJvvJtSGS1x8Q"/>
+</div>
+<div class="flex flex-col">
+<h2 class="font-button-text text-button-text text-on-surface font-bold">Alex Verba</h2>
+<p class="font-caption text-caption text-primary font-semibold">Intelligence Tier: Scholar</p>
+<p class="font-caption text-caption text-on-surface-variant">1,240 words mastered</p>
+</div>
+</div>
+</div>
+<!-- Navigation List -->
+<!-- Active state mapped to "Saved Words" as default per JSON, using style_active_navigation and style_inactive_navigation -->
+<div class="flex flex-col flex-1 overflow-y-auto gap-unit pr-2 -mr-2 scrollbar-hide">
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-transform font-button-text text-button-text group" href="#">
+<span class="material-symbols-outlined text-tertiary-container group-hover:text-primary transition-colors">history</span>
+<span>Search History</span>
+</a>
+<!-- Active Item from JSON -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold font-button-text text-button-text hover:translate-x-1 transition-transform group" href="#">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<span>Saved Words</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-transform font-button-text text-button-text group" href="#">
+<span class="material-symbols-outlined text-tertiary-container group-hover:text-primary transition-colors">calendar_today</span>
+<span>Word Of The Day</span>
+</a>
+<div class="h-px w-full bg-surface-container-highest my-2"></div>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-transform font-button-text text-button-text group" href="#">
+<span class="material-symbols-outlined text-tertiary-container group-hover:text-primary transition-colors">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-transform font-button-text text-button-text group" href="#">
+<span class="material-symbols-outlined text-tertiary-container group-hover:text-primary transition-colors">info</span>
+<span>About</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-transform font-button-text text-button-text group" href="#">
+<span class="material-symbols-outlined text-tertiary-container group-hover:text-primary transition-colors">feedback</span>
+<span>Feedback</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-transform font-button-text text-button-text group" href="#">
+<span class="material-symbols-outlined text-tertiary-container group-hover:text-primary transition-colors">help</span>
+<span>Support</span>
+</a>
+</div>
+<!-- Premium Upgrade Card -->
+<!-- Based on JSON item "Verba Premium" but designed as a highlighted card at bottom -->
+<div class="mt-auto pt-4 border-t border-surface-container-highest">
+<div class="bg-gradient-to-br from-primary-container to-secondary-container rounded-2xl p-5 text-on-primary shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-transform cursor-pointer">
+<!-- Abstract decorative element -->
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-white/20 rounded-full blur-2xl group-hover:blur-3xl transition-all"></div>
+<div class="flex items-center gap-3 mb-2 relative z-10">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<h3 class="font-button-text text-button-text font-bold text-white">Verba Premium</h3>
+</div>
+<p class="font-caption text-caption text-primary-fixed-dim mb-4 relative z-10">Unlock advanced etymology, unlimited lists, and offline mode.</p>
+<button class="w-full py-2 px-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg font-label-caps text-label-caps text-white transition-colors relative z-10 flex items-center justify-center gap-2">
+<span>Upgrade Now</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</nav>
+</body></html>

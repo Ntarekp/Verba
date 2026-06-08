@@ -1,0 +1,361 @@
+import React from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  Switch, 
+  TouchableOpacity, 
+  Alert
+} from 'react-native';
+import { DrawerScreenProps } from '@react-navigation/drawer';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useTheme, ThemeType, FontScaleType } from '../context/ThemeContext';
+import { DrawerParamList } from '../navigation/AppNavigator';
+import { rounded, spacing, typography } from '../styles/theme';
+
+type Props = DrawerScreenProps<DrawerParamList, 'Settings'>;
+
+export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
+  const { 
+    themeColors, 
+    fontSizeMultiplier,
+    themeName,
+    isDarkMode,
+    fontScale,
+    setThemeName,
+    setIsDarkMode,
+    setFontScale
+  } = useTheme();
+
+  // Autoplay state could be local or context (simulated locally for settings page)
+  const [autoplay, setAutoplay] = React.useState(true);
+  const [notifications, setNotifications] = React.useState(true);
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Log Out',
+      'Are you sure you want to log out of Verba Premium?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Log Out', style: 'destructive', onPress: () => navigation.getParent()?.navigate('Onboarding') }
+      ]
+    );
+  };
+
+  const themes: { name: ThemeType; color: string }[] = [
+    { name: 'Classic', color: '#3525cd' },
+    { name: 'Royal', color: '#0b1c30' },
+    { name: 'Midnight', color: '#4f46e5' }
+  ];
+
+  const fontScales: FontScaleType[] = ['Small', 'Medium', 'Large'];
+
+  return (
+    <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Title */}
+        <View style={styles.header}>
+          <Text style={[
+            styles.headerTitle, 
+            { color: themeColors.onSurface, fontSize: typography.sectionHeading.fontSize * 0.8 * fontSizeMultiplier }
+          ]}>
+            Settings
+          </Text>
+          <Text style={[styles.headerSubtitle, { color: themeColors.onSurfaceVariant }]}>
+            Manage your app preferences and settings.
+          </Text>
+        </View>
+
+        <View style={styles.sectionsContainer}>
+          {/* Appearance Group */}
+          <View style={[styles.sectionCard, { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '30' }]}>
+            <Text style={[styles.sectionTitle, { color: themeColors.primary, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
+              <MaterialIcons name="palette" size={18} /> Appearance
+            </Text>
+            
+            <View style={[styles.row, { borderBottomColor: themeColors.outlineVariant + '20' }]}>
+              <View>
+                <Text style={[styles.rowTitle, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>Dark Mode</Text>
+                <Text style={[styles.rowSubtitle, { color: themeColors.onSurfaceVariant, fontSize: 13 * fontSizeMultiplier }]}>Adjust app visual theme</Text>
+              </View>
+              <Switch
+                value={isDarkMode}
+                onValueChange={setIsDarkMode}
+                trackColor={{ false: themeColors.outlineVariant, true: themeColors.primary }}
+                thumbColor="#fff"
+              />
+            </View>
+
+            <View style={[styles.row, { borderBottomColor: themeColors.outlineVariant + '20' }]}>
+              <View>
+                <Text style={[styles.rowTitle, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>Theme Selection</Text>
+                <Text style={[styles.rowSubtitle, { color: themeColors.onSurfaceVariant, fontSize: 13 * fontSizeMultiplier }]}>Select brand accent colors</Text>
+              </View>
+              <View style={styles.themeRow}>
+                {themes.map((t) => (
+                  <TouchableOpacity
+                    key={t.name}
+                    onPress={() => setThemeName(t.name)}
+                    style={[
+                      styles.themeCircle,
+                      { 
+                        backgroundColor: t.color,
+                        borderColor: themeName === t.name ? themeColors.onSurface : 'transparent',
+                        borderWidth: themeName === t.name ? 2 : 0
+                      }
+                    ]}
+                  />
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.columnRow}>
+              <View style={styles.fontScaleLabelRow}>
+                <Text style={[styles.rowTitle, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>Font Size Scale</Text>
+                <Text style={[styles.fontScaleValue, { color: themeColors.primary }]}>{fontScale}</Text>
+              </View>
+              <View style={styles.fontScaleContainer}>
+                {fontScales.map((scale) => (
+                  <TouchableOpacity
+                    key={scale}
+                    onPress={() => setFontScale(scale)}
+                    style={[
+                      styles.fontScaleBtn,
+                      { 
+                        backgroundColor: fontScale === scale ? themeColors.primaryContainer : themeColors.surfaceContainerLow,
+                      }
+                    ]}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.fontScaleBtnText,
+                      { 
+                        color: fontScale === scale ? themeColors.onPrimaryContainer : themeColors.onSurfaceVariant,
+                        fontWeight: fontScale === scale ? '700' : '400'
+                      }
+                    ]}>
+                      {scale}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </View>
+
+          {/* Preferences Group */}
+          <View style={[styles.sectionCard, { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '30' }]}>
+            <Text style={[styles.sectionTitle, { color: themeColors.primary, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
+              <MaterialIcons name="tune" size={18} /> Preferences
+            </Text>
+
+            <View style={[styles.row, { borderBottomColor: themeColors.outlineVariant + '20' }]}>
+              <View>
+                <Text style={[styles.rowTitle, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>Audio Autoplay</Text>
+                <Text style={[styles.rowSubtitle, { color: themeColors.onSurfaceVariant, fontSize: 13 * fontSizeMultiplier }]}>Play pronunciation on load</Text>
+              </View>
+              <Switch
+                value={autoplay}
+                onValueChange={setAutoplay}
+                trackColor={{ false: themeColors.outlineVariant, true: themeColors.primary }}
+                thumbColor="#fff"
+              />
+            </View>
+
+            <View style={styles.row}>
+              <View>
+                <Text style={[styles.rowTitle, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>Daily Reminders</Text>
+                <Text style={[styles.rowSubtitle, { color: themeColors.onSurfaceVariant, fontSize: 13 * fontSizeMultiplier }]}>Streak notifications status</Text>
+              </View>
+              <Switch
+                value={notifications}
+                onValueChange={setNotifications}
+                trackColor={{ false: themeColors.outlineVariant, true: themeColors.primary }}
+                thumbColor="#fff"
+              />
+            </View>
+          </View>
+
+          {/* App Info Group */}
+          <View style={[styles.sectionCard, { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '30' }]}>
+            <Text style={[styles.sectionTitle, { color: themeColors.primary, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
+              <MaterialIcons name="info" size={18} /> App Info
+            </Text>
+
+            <TouchableOpacity 
+              style={[styles.clickableRow, { borderBottomColor: themeColors.outlineVariant + '20' }]}
+              activeOpacity={0.7}
+            >
+              <View style={styles.clickableRowLeft}>
+                <MaterialIcons name="shield" size={18} color={themeColors.onSurfaceVariant} />
+                <Text style={[styles.clickableRowText, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>Privacy Policy</Text>
+              </View>
+              <MaterialIcons name="open-in-new" size={18} color={themeColors.outline} />
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.clickableRow, { borderBottomColor: themeColors.outlineVariant + '20' }]}
+              activeOpacity={0.7}
+            >
+              <View style={styles.clickableRowLeft}>
+                <MaterialIcons name="help-center" size={18} color={themeColors.onSurfaceVariant} />
+                <Text style={[styles.clickableRowText, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>Help Center</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={20} color={themeColors.outline} />
+            </TouchableOpacity>
+
+            <View style={styles.infoRow}>
+              <View style={styles.clickableRowLeft}>
+                <MaterialIcons name="update" size={18} color={themeColors.onSurfaceVariant} />
+                <Text style={[styles.clickableRowText, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>App Version</Text>
+              </View>
+              <Text style={[styles.versionText, { color: themeColors.outline }]}>v2.5.0</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Log Out button */}
+        <TouchableOpacity 
+          onPress={handleLogout}
+          style={[styles.logoutBtn, { backgroundColor: themeColors.errorContainer + '40', borderColor: themeColors.error + '40' }]}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.logoutBtnText, { color: themeColors.error, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
+            Log Out
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContainer: {
+    padding: spacing.gutter,
+    paddingBottom: 40,
+  },
+  header: {
+    marginBottom: spacing.stackLg,
+  },
+  headerTitle: {
+    fontFamily: 'Inter',
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontFamily: 'Inter',
+    fontSize: 14,
+    opacity: 0.8,
+  },
+  sectionsContainer: {
+    gap: spacing.stackMd,
+    marginBottom: spacing.stackLg,
+  },
+  sectionCard: {
+    borderRadius: rounded.xl,
+    padding: 18,
+    borderWidth: 1,
+    shadowColor: '#0b1c30',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.02,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  sectionTitle: {
+    fontFamily: 'Inter',
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  rowTitle: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
+  },
+  rowSubtitle: {
+    fontFamily: 'Inter',
+    opacity: 0.8,
+    marginTop: 2,
+  },
+  themeRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  themeCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+  },
+  columnRow: {
+    paddingVertical: 12,
+  },
+  fontScaleLabelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  fontScaleValue: {
+    fontFamily: 'Inter',
+    fontWeight: '700',
+  },
+  fontScaleContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  fontScaleBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: rounded.default,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fontScaleBtnText: {
+    fontFamily: 'Inter',
+  },
+  clickableRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+  },
+  clickableRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  clickableRowText: {
+    fontFamily: 'Inter',
+    fontWeight: '500',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+  },
+  versionText: {
+    fontFamily: 'Inter',
+    fontWeight: '500',
+    fontSize: 14,
+  },
+  logoutBtn: {
+    paddingVertical: 14,
+    borderRadius: rounded.full,
+    alignItems: 'center',
+    borderWidth: 1,
+    marginTop: spacing.stackSm,
+  },
+  logoutBtnText: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
+  },
+});

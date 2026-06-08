@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verba | Session Expired</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#eff4ff",
+                        "surface-container-high": "#dce9ff",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "on-error": "#ffffff",
+                        "tertiary": "#00505f",
+                        "on-tertiary-container": "#93e8ff",
+                        "tertiary-container": "#006a7c",
+                        "primary-fixed": "#e2dfff",
+                        "inverse-primary": "#c3c0ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-surface": "#0b1c30",
+                        "surface-dim": "#cbdbf5",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-container": "#e5eeff",
+                        "background": "#f8f9ff",
+                        "secondary-container": "#2170e4",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#213145",
+                        "on-tertiary-fixed": "#001f26",
+                        "on-surface-variant": "#464555",
+                        "tertiary-fixed": "#acedff",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#d8e2ff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "on-secondary-fixed-variant": "#004395",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "outline": "#777587",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface": "#f8f9ff",
+                        "on-secondary-container": "#fefcff",
+                        "primary-container": "#4f46e5",
+                        "on-primary-container": "#dad7ff",
+                        "on-error-container": "#93000a",
+                        "primary": "#3525cd",
+                        "on-primary-fixed": "#001257",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-variant": "#d3e4fe",
+                        "surface-tint": "#4d44e3",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary": "#0058be",
+                        "outline-variant": "#c7c4d8",
+                        "on-background": "#0b1c30"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "unit": "8px",
+                        "gutter": "16px",
+                        "container-padding": "24px",
+                        "stack-lg": "32px"
+                    },
+                    "fontFamily": {
+                        "display-word-mobile": ["Inter"],
+                        "caption": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "definition-body": ["Inter"],
+                        "display-word": ["Inter"],
+                        "button-text": ["Inter"],
+                        "section-heading": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-word-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "definition-body": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "display-word": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "section-heading": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float { animation: subtle-float 6s ease-in-out infinite; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen flex items-center justify-center overflow-hidden">
+<!-- Background Atmospheric Elements -->
+<div class="fixed inset-0 z-0 pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/5 rounded-full blur-[120px]"></div>
+<!-- Subtle Pattern Overlay -->
+<div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#3525cd 1px, transparent 1px); background-size: 32px 32px;"></div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 w-full max-w-lg px-gutter">
+<div class="glass-card rounded-[32px] p-10 md:p-12 shadow-[0_32px_64px_-16px_rgba(79,70,229,0.12)] flex flex-col items-center text-center">
+<!-- Branding Context (Suppressed Nav, but keep logo for identity) -->
+<div class="mb-10 animate-float">
+<div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shadow-xl shadow-primary/20 mb-6 mx-auto">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'wght' 300;">lock_clock</span>
+</div>
+<h2 class="font-display-word-mobile text-display-word-mobile text-primary tracking-tight">Verba</h2>
+</div>
+<!-- Message Section -->
+<div class="space-y-4 mb-10">
+<h1 class="font-section-heading text-section-heading text-on-surface">Session Expired</h1>
+<p class="font-definition-body text-definition-body text-on-surface-variant max-w-[320px] mx-auto opacity-80">
+                    For your security, your session has timed out due to inactivity. Please sign in again to continue your language journey.
+                </p>
+</div>
+<!-- Action Area -->
+<div class="w-full space-y-4">
+<button class="group relative w-full bg-secondary py-5 rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all duration-200 overflow-hidden" onclick="handleSignIn()">
+<span class="relative z-10 font-button-text text-button-text text-white font-semibold">Sign In Again</span>
+<span class="relative z-10 material-symbols-outlined text-white transition-transform group-hover:translate-x-1" style="font-variation-settings: 'wght' 500;">arrow_forward</span>
+<!-- Hover Glow Effect -->
+<div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</button>
+<button class="w-full py-4 font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200">
+                    RETURN TO HOME
+                </button>
+</div>
+<!-- Security Badge -->
+<div class="mt-12 flex items-center gap-2 px-4 py-2 bg-surface-container-low rounded-full border border-white/50">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest text-[10px]">Secure Authentication</span>
+</div>
+</div>
+<!-- Secondary Contextual Images (Bento-style background hints) -->
+<div class="mt-12 grid grid-cols-2 gap-4 opacity-40 grayscale pointer-events-none select-none">
+<div class="aspect-video bg-surface-container-high rounded-2xl overflow-hidden">
+<img alt="Minimalist workspace" class="w-full h-full object-cover" data-alt="A serene, minimalist workspace with a single open book and a clean digital tablet displaying linguistic data. The lighting is soft and diffused, creating a calm, high-end atmosphere. The scene is rendered in cool tones of blue and grey, consistent with a professional, secure digital application's visual language." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpMp66ar2QQpuVfMLZGKuqXakeFhkrwRIoxstxkxuiXEb303Ca9CW7Wv7YM9Km1Ao7NyIr0AD32hHJwqDiolZSuZuc1h9ErF5ssnOA6H79ridfVddFcQfHkpF8WWNayK1TELCdYU0VZdzYtvVAiDaxPIRnoPpeIsQ2BopJL1r3V17EjhKrOOmOcNcXw_2rQTKi4sfqWBOIUClrhNWLT8QfMJdSP_7DEOTv4OKj656p8J1pPgKy9uxrtXFr-3Vz019Yy1cmv1lfxw"/>
+</div>
+<div class="aspect-video bg-surface-container-high rounded-2xl overflow-hidden">
+<img alt="Abstract technology" class="w-full h-full object-cover" data-alt="Abstract visualization of secure data flowing through a network. Soft, glowing lines of deep indigo and cyan intersect in a dark, atmospheric space. The aesthetic is sophisticated and high-tech, representing safe and encrypted data transmission in a modern software environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsyJ8aN4L--lZPL4sZpLL2reReRMXqF8b_X8Pn2xhljS-uPyi_VNUEsstmjdV7Jw6fsUVOABj9a6ciXbYekG2uqPpdn9XYfsTlzKU_hRiTrtS95yVOqP8-u0tLgtTJtK4Wlg3oYaNkU9mWHa09lfvj1ySbXxp9zEZg49HP1y-ztbgCeyplWmPWnV5NQQCh4sMvaR9gOorNiPlFc-P-QBizcTiaNc1bkUBdvhHStFRYVRgmM_e27aP-kqsvj5PQIlz1zwOEsdM_NQ"/>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions
+        function handleSignIn() {
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            
+            // Loading State Simulation
+            btn.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="font-button-text text-button-text">Redirecting...</span>
+                </div>
+            `;
+            btn.classList.add('pointer-events-none');
+            
+            // Mock redirect delay
+            setTimeout(() => {
+                console.log('Redirecting to login...');
+                // Reset for demo purposes
+                btn.innerHTML = originalContent;
+                btn.classList.remove('pointer-events-none');
+            }, 1500);
+        }
+
+        // Parallax effect on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            const moveX = (x - 0.5) * 20;
+            const moveY = (y - 0.5) * 20;
+            
+            const card = document.querySelector('.glass-card');
+            card.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+    </script>
+</body></html>
