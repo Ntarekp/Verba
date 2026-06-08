@@ -171,6 +171,9 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
           isAudioPlaying={isWodPlaying}
           isAudioPaused={isWodPaused}
           isAudioLoading={isWodAudioLoading}
+          definition={wordOfDay.definition}
+          example={wordOfDay.example}
+          savedCollection="WORD OF THE DAY"
         />
 
         {/* Bento Grid layout */}

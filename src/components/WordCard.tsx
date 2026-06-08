@@ -14,6 +14,8 @@ interface WordCardProps {
   onPlay: () => void;
   onToggleSave: () => void;
   savedCollection?: string;
+  definition?: string;
+  example?: string;
   // Audio playback state — passed from parent's useAudio hook
   isAudioPlaying?: boolean;
   isAudioPaused?: boolean;
@@ -29,6 +31,8 @@ export const WordCard: React.FC<WordCardProps> = ({
   onPlay,
   onToggleSave,
   savedCollection,
+  definition,
+  example,
   isAudioPlaying = false,
   isAudioPaused = false,
   isAudioLoading = false,
@@ -90,6 +94,23 @@ export const WordCard: React.FC<WordCardProps> = ({
           isLoading={isAudioLoading}
         />
       </View>
+
+      {/* Definition + example (shown on Home WotD card) */}
+      {definition ? (
+        <View style={styles.definitionBlock}>
+          <View style={[styles.definitionBar, { backgroundColor: themeColors.primary }]} />
+          <View style={styles.definitionContent}>
+            <Text style={[styles.definitionText, { color: themeColors.onSurface, fontSize: typography.definitionBody.fontSize * 0.9 * fontSizeMultiplier }]}>
+              {definition}
+            </Text>
+            {example ? (
+              <Text style={[styles.exampleText, { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }]}>
+                "{example}"
+              </Text>
+            ) : null}
+          </View>
+        </View>
+      ) : null}
 
       <View style={styles.footerRow}>
         <View style={styles.metaContainer}>
@@ -240,5 +261,31 @@ const styles = StyleSheet.create({
   saveText: {
     fontFamily: 'Inter',
     fontWeight: '500',
+  },
+  definitionBlock: {
+    flexDirection: 'row',
+    marginTop: spacing.stackSm,
+    marginBottom: spacing.stackSm,
+  },
+  definitionBar: {
+    width: 3,
+    borderRadius: 99,
+    marginRight: 12,
+  },
+  definitionContent: {
+    flex: 1,
+    paddingVertical: 4,
+  },
+  definitionText: {
+    fontFamily: 'Inter',
+    fontWeight: '400',
+    lineHeight: 24,
+  },
+  exampleText: {
+    fontFamily: 'Inter',
+    fontStyle: 'italic',
+    lineHeight: 20,
+    marginTop: 6,
+    opacity: 0.75,
   },
 });
