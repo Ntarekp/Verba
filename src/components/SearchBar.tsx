@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { rounded } from '../styles/theme';
@@ -54,7 +54,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           <MaterialIcons name="close" size={20} color={themeColors.outline} />
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity style={styles.iconBtn}>
+        <TouchableOpacity
+          style={styles.iconBtn}
+          onPress={() =>
+            Alert.alert(
+              'Voice Search',
+              'Voice search is not available yet. Please type the word you want to look up.'
+            )
+          }
+          accessibilityLabel="Voice search unavailable"
+          accessibilityRole="button"
+        >
           <MaterialIcons name="mic" size={20} color={themeColors.tertiary} />
         </TouchableOpacity>
       )}

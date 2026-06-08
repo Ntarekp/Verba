@@ -117,6 +117,25 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
             placeholder="Search millions of words"
           />
 
+          {/* Activity 1: explicit search button */}
+          <TouchableOpacity
+            onPress={() => handleSearchSubmit()}
+            style={[styles.searchButton, { backgroundColor: themeColors.secondary }]}
+            activeOpacity={0.85}
+            accessibilityLabel="Search dictionary"
+            accessibilityRole="button"
+          >
+            <MaterialIcons name="search" size={20} color="#fff" />
+            <Text
+              style={[
+                styles.searchButtonText,
+                { fontSize: typography.buttonText.fontSize * fontSizeMultiplier },
+              ]}
+            >
+              Search
+            </Text>
+          </TouchableOpacity>
+
           {/* Suggestions Dropdown panel */}
           {suggestions.length > 0 && (
             <View style={[
@@ -148,7 +167,7 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
                       {restPart}
                     </Text>
                     {pos ? (
-                      <View style={[styles.posBadge, { backgroundColor: themeColors.primaryFixed }]}>
+                      <View style={[styles.posBadge, { backgroundColor: themeColors.primaryContainer + '30' }]}>
                         <Text style={[styles.posBadgeText, { color: themeColors.primary }]}>{pos}</Text>
                       </View>
                     ) : null}
@@ -321,10 +340,29 @@ const styles = StyleSheet.create({
     position: 'relative',
     zIndex: 10,
     marginBottom: spacing.stackLg,
+    gap: spacing.stackSm,
+  },
+  searchButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: rounded.xl,
+    shadowColor: '#0058be',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  searchButtonText: {
+    fontFamily: 'Inter',
+    color: '#fff',
+    fontWeight: '600',
   },
   suggestionsPanel: {
     position: 'absolute',
-    top: 56,
+    top: 120,
     left: 0,
     right: 0,
     borderRadius: rounded.lg,

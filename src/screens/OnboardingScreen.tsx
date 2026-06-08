@@ -35,18 +35,25 @@ export const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
       type: 'intelligence',
     },
     {
-      title: 'Speaks your language',
+      title: 'Perfect Pronunciation',
       description: 'Master pronunciation with crystal-clear native audio and detailed phonetic transcriptions.',
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAZQL3vR2NpgAGUqV4erNAttdcBhvrO6c6crNnRl4vYigntwZn-Lf24qCaqB6Xvcxy6_BlDsxnhlrzyQYubcdGQgctTqVjKYm9VPMwOr4sDbu5rWRCQKbGfil6Ravjv3CmP8M6MMkgZVkJhu3hpXHWPhX_BiiWLRymbDHSEgvgbbKVz_PAxhuH3lFDB3cKfU8r_Vsm6DTD8MIHkmuRmE7Z0alox3SmEwgXZFn1AIqeMoXEZhoV1a6ORP6JxilRcZmAWYT043hCEAQ',
       color: themeColors.tertiary,
       type: 'audio',
     },
     {
-      title: 'Always with you',
-      description: 'Save critical vocabulary and access your entire linguistic database offline, anywhere.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC5q_DdqqXAUYuQhYbbS-5T6RDeHPQhVfyR4AsOUd1qwn_8X9rz65y0fBVAynj5hhoZmgix-e-5RIGJBt4C9m9OiyNwpv7rIElXJ_-loiujuNPQP_87NLoIUZn29fjaOPiqArDEa_yCG4fxL_3OzUrDoASGF7vHE9kbtz2qCMb4ixsUHbfP3PyjRHkbv2nnmtZJrs_lM90LTOlQnapGezBuRd_S4jNjesmzVesYQSKX4LhvhRXD8c8IP1l01mKK5Ntwnk0lOGq4xg',
+      title: 'Learn Anywhere',
+      description: 'Access your entire vocabulary library and essential definitions without an internet connection.',
+      image: '',
       color: themeColors.secondary,
-      type: 'offline',
+      type: 'learnAnywhere',
+    },
+    {
+      title: 'Ready to begin?',
+      description: 'Join the future of language intelligence.',
+      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC5q_DdqqXAUYuQhYbbS-5T6RDeHPQhVfyR4AsOUd1qwn_8X9rz65y0fBVAynj5hhoZmgix-e-5RIGJBt4C9m9OiyNwpv7rIElXJ_-loiujuNPQP_87NLoIUZn29fjaOPiqArDEa_yCG4fxL_3OzUrDoASGF7vHE9kbtz2qCMb4ixsUHbfP3PyjRHkbv2nnmtZJrs_lM90LTOlQnapGezBuRd_S4jNjesmzVesYQSKX4LhvhRXD8c8IP1l01mKK5Ntwnk0lOGq4xg',
+      color: themeColors.primary,
+      type: 'final',
     }
   ];
 
@@ -133,24 +140,18 @@ export const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
                       <MaterialIcons name="volume-up" size={24} color={themeColors.onTertiaryContainer} />
                     </View>
                   </View>
-                ) : step.type === 'offline' ? (
-                  // Offline/Cloud bento items mockup
+                ) : step.type === 'learnAnywhere' ? (
+                  // Learn Anywhere: cloud + arrow + book layout (T4.1)
                   <View style={styles.offlineMockup}>
-                    <View style={[styles.mockBento, { backgroundColor: themeColors.surfaceContainerLow }]}>
-                      <MaterialIcons name="bookmark" size={24} color={themeColors.secondary} />
-                      <View style={styles.mockBentoLines}>
-                        <View style={[styles.mockLineShort, { backgroundColor: themeColors.onSurface }]} />
-                        <View style={[styles.mockLineLong, { backgroundColor: themeColors.outlineVariant }]} />
-                      </View>
-                    </View>
-                    <View style={[styles.mockBento, { backgroundColor: themeColors.surfaceContainerLow, opacity: 0.8 }]}>
-                      <MaterialIcons name="cloud-off" size={24} color={themeColors.secondary} />
-                      <View style={styles.mockBentoLines}>
-                        <View style={[styles.mockLineLong, { backgroundColor: themeColors.onSurface }]} />
-                        <View style={[styles.mockLineShort, { backgroundColor: themeColors.outlineVariant }]} />
-                      </View>
+                    <MaterialIcons name="cloud-download" size={56} color={themeColors.primary} style={{ alignSelf: 'center' }} />
+                    <MaterialIcons name="arrow-downward" size={24} color={themeColors.primary + '80'} style={{ alignSelf: 'center' }} />
+                    <View style={[styles.mockBento, { backgroundColor: themeColors.surfaceContainerLow, alignSelf: 'center', paddingHorizontal: 24 }]}>
+                      <MaterialIcons name="menu-book" size={32} color={themeColors.primary} />
                     </View>
                   </View>
+                ) : step.type === 'final' ? (
+                  // Final step: shows scroll illustration
+                  <Image source={{ uri: step.image }} style={styles.slideImage} />
                 ) : (
                   // General screen mockup
                   <Image source={{ uri: step.image }} style={styles.slideImage} />

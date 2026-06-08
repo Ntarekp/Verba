@@ -26,10 +26,10 @@ export const ErrorView: React.FC<ErrorViewProps> = ({
       case '404':
         return {
           icon: 'find-in-page',
-          title: 'Linguistic Discovery Pending',
-          desc: `The word "${query || 'unknown'}" seems to be outside our current index. The lexicons are ever-expanding, and you might have just found a gap.`,
-          actionLabel: 'Request Word',
-          actionIcon: 'add-circle' as const,
+          title: 'Word Not Found',
+          desc: `We could not find "${query || 'this word'}" in the dictionary. Check the spelling or try another word.`,
+          actionLabel: 'Try Again',
+          actionIcon: 'refresh' as const,
         };
       case 'offline':
         return {

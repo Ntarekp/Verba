@@ -23,6 +23,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useSaved } from '../context/SavedContext';
 import { useHistory } from '../context/HistoryContext';
 import { useAudio } from '../hooks/useAudio';
+import { getAutoplayEnabled } from '../utils/settingsHelper';
 import { rounded, spacing, typography } from '../styles/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WordDetails'>;
@@ -45,7 +46,7 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const { addHistoryWord } = useHistory();
   const {
     playAudio,
-    pauseAudio,
+    stopAudio,
     togglePlayPause,
     isPlaying: isAudioPlaying,
     isPaused: isAudioPaused,
@@ -81,6 +82,14 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       );
       setAvailablePhonetics(validPhonetics);
 
+      // Activity 3 + Settings: autoplay first pronunciation when enabled
+      if (validPhonetics.length > 0) {
+        const autoplay = await getAutoplayEnabled();
+        if (autoplay && validPhonetics[0].audio) {
+          playAudio(validPhonetics[0].audio);
+        }
+      }
+
       // Load saved notes if word is already bookmarked
       const match = savedWords.find(
         w => w.word.toLowerCase() === searchWord.toLowerCase()
@@ -98,6 +107,8 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
         setErrorType('404');
       } else if (e.message === 'NETWORK_TIMEOUT') {
         setErrorType('offline');
+      } else if (e.message === 'EMPTY_RESPONSE' || e.message === 'EMPTY_QUERY') {
+        setErrorType('server');
       } else {
         setErrorType('server');
       }
@@ -106,9 +117,24 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     }
   };
 
+  // Sync when navigation passes a new word (Activity 4 — history re-search)
   useEffect(() => {
+    if (route.params.word !== word) {
+      setWord(route.params.word);
+    }
+  }, [route.params.word]);
+
+  useEffect(() => {
+    stopAudio();
     fetchDetails(word);
   }, [word]);
+
+  // Activity 3 Req 7: stop audio when leaving the screen
+  useEffect(() => {
+    return () => {
+      stopAudio();
+    };
+  }, [stopAudio]);
 
   // Activity 3, Req 4 & 7: play/pause toggle for selected pronunciation
   const handlePlayAudio = () => {
@@ -126,10 +152,7 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   // Activity 3, Req 5: switch to a different accent pronunciation
   const handleSelectPhonetic = (index: number) => {
     if (index === selectedPhoneticIndex) return;
-    // Stop any currently playing audio before switching accent
-    if (isAudioPlaying || isAudioPaused) {
-      pauseAudio();
-    }
+    stopAudio();
     setSelectedPhoneticIndex(index);
   };
 
@@ -177,6 +200,14 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
         query={word}
         onRetry={() => fetchDetails(word)}
         onBack={() => navigation.goBack()}
+        onNavigateToSaved={
+          errorType === 'offline'
+            ? () => {
+                navigation.goBack();
+                navigation.getParent()?.navigate('MainDrawer', { screen: 'SavedWords' });
+              }
+            : undefined
+        }
       />
     );
   }

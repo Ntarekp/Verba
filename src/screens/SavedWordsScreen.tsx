@@ -14,6 +14,7 @@ import { DrawerScreenProps } from '@react-navigation/drawer';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSaved } from '../context/SavedContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAudio } from '../hooks/useAudio';
 import { SearchBar } from '../components/SearchBar';
 import { EmptyState } from '../components/EmptyState';
 import { DrawerParamList } from '../navigation/AppNavigator';
@@ -32,6 +33,21 @@ interface QuizQuestion {
 export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const { savedWords, removeSavedWord, streakCount } = useSaved();
+  const { togglePlayPause, isPlaying, isLoading } = useAudio();
+
+  // Helper: relative time from timestamp
+  const getRelativeTime = (ts: number) => {
+    const diff = Date.now() - ts;
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days === 1) return 'Yesterday';
+    if (days < 7) return `${days}d ago`;
+    return `${Math.floor(days / 7)}w ago`;
+  };
 
   const [activeTab, setActiveTab] = useState<CollectionType>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -139,32 +155,55 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
       >
         <View style={styles.cardHeader}>
           <View style={styles.wordHeaderLeft}>
-            <Text style={[styles.wordName, { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
-              {item.word}
-            </Text>
-            <View style={[styles.badge, { borderColor: themeColors.primary + '30', backgroundColor: themeColors.primary + '0A' }]}>
-              <Text style={[styles.badgeText, { color: themeColors.primary, fontSize: 10 }]}>
-                {item.partOfSpeech.substring(0, 3)}
-              </Text>
+            <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Text style={[styles.wordName, { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
+                  {item.word}
+                </Text>
+                <View style={[styles.badge, { borderColor: themeColors.primary + '30', backgroundColor: themeColors.primary + '0A' }]}>
+                  <Text style={[styles.badgeText, { color: themeColors.primary, fontSize: 10 }]}>
+                    {item.partOfSpeech.substring(0, 3)}
+                  </Text>
+                </View>
+              </View>
+              {/* T3.2: Phonetic text */}
+              {item.phonetic ? (
+                <Text style={[styles.phoneticText, { color: themeColors.onSurfaceVariant }]}>
+                  {item.phonetic}
+                </Text>
+              ) : null}
             </View>
           </View>
           <View style={styles.cardHeaderRight}>
+            {/* T3.1: Audio icon */}
+            <TouchableOpacity 
+              onPress={() => togglePlayPause(`https://api.dictionaryapi.dev/media/pronunciations/en/${item.word.toLowerCase()}-us.mp3`)}
+              style={styles.audioBtn}
+              activeOpacity={0.7}
+            >
+              <MaterialIcons name="volume-up" size={20} color={themeColors.tertiary} />
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => removeSavedWord(item.word)} style={styles.bookmarkBtn}>
               <MaterialIcons name="star" size={22} color="#d97706" />
             </TouchableOpacity>
           </View>
         </View>
 
-        <Text 
-          style={[styles.definitionSummary, { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }]}
-          numberOfLines={2}
-        >
-          {item.definitionSummary}
-        </Text>
+        {/* T3.5: Definition with left blue bar */}
+        <View style={styles.defWithBar}>
+          <View style={[styles.defBar, { backgroundColor: themeColors.primary }]} />
+          <Text 
+            style={[styles.definitionSummary, { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }]}
+            numberOfLines={2}
+          >
+            {item.definitionSummary}
+          </Text>
+        </View>
 
         <View style={styles.cardFooter}>
+          {/* T3.3: Added X ago timestamp */}
           <Text style={[styles.dateText, { color: themeColors.outline }]}>
-            Saved in {item.collection}
+            Added {getRelativeTime(item.timestamp)}
           </Text>
           {/* Mastery Indicator dots */}
           <View style={styles.masteryDots}>
@@ -506,10 +545,30 @@ const styles = StyleSheet.create({
   bookmarkBtn: {
     padding: 4,
   },
+  audioBtn: {
+    padding: 4,
+    marginRight: 4,
+  },
+  phoneticText: {
+    fontFamily: 'Inter',
+    fontSize: 12,
+    fontStyle: 'italic',
+    marginTop: 2,
+    opacity: 0.7,
+  },
+  defWithBar: {
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  defBar: {
+    width: 2,
+    borderRadius: 99,
+    marginRight: 10,
+  },
   definitionSummary: {
     fontFamily: 'Inter',
     lineHeight: 18,
-    marginBottom: 12,
+    flex: 1,
   },
   cardFooter: {
     flexDirection: 'row',

@@ -6,6 +6,8 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  Linking,
+  Alert,
 } from 'react-native';
 import {
   DrawerContentComponentProps,
@@ -28,11 +30,20 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
 
   const activeRouteName = state.routeNames[state.index];
 
+  const WORD_OF_THE_DAY = 'Ethereal';
+
   const menuItems = [
     { name: 'Discover', label: 'Home', icon: 'home' },
     { name: 'SavedWords', label: 'Saved Words', icon: 'bookmark' },
-    { name: 'History', label: 'History', icon: 'history' },
+    { name: 'History', label: 'Search History', icon: 'history' },
+    { label: 'Word Of The Day', icon: 'today', isWotd: true },
+  ];
+
+  const secondaryItems: Array<{name?: string, label: string, icon: string, action?: () => void}> = [
     { name: 'Settings', label: 'Settings', icon: 'settings' },
+    { label: 'About', icon: 'info-outline', action: () => Alert.alert('About Verba', 'Verba Intelligence v2.5.0\nBy LexiTech Solutions Ltd\n\nA premium dictionary app powered by the Free Dictionary API.') },
+    { label: 'Feedback', icon: 'feedback', action: () => Linking.openURL('mailto:feedback@lexitech.rw?subject=Verba%20Feedback') },
+    { label: 'Support', icon: 'help-outline', action: () => Linking.openURL('mailto:support@lexitech.rw?subject=Verba%20Support') },
   ];
 
   // Navigate from drawer directly to WordDetails (Activity 4, Req 5 & 6)
@@ -113,11 +124,21 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
         {/* Main Navigation Items */}
         <View style={styles.menuList}>
           {menuItems.map((item) => {
-            const isActive = activeRouteName === item.name;
+            const isWotd = 'isWotd' in item && item.isWotd;
+            const isActive = !isWotd && 'name' in item && activeRouteName === item.name;
             return (
               <TouchableOpacity
-                key={item.name}
-                onPress={() => navigation.navigate(item.name)}
+                key={item.label}
+                onPress={() => {
+                  if (isWotd) {
+                    navigation.closeDrawer();
+                    navigation.getParent()?.navigate('WordDetails', { word: WORD_OF_THE_DAY });
+                    return;
+                  }
+                  if ('name' in item && item.name) {
+                    navigation.navigate(item.name);
+                  }
+                }}
                 style={[
                   styles.menuItem,
                   {
@@ -128,6 +149,57 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                 ]}
                 activeOpacity={0.7}
                 accessibilityLabel={`Navigate to ${item.label}`}
+                accessibilityRole="menuitem"
+              >
+                <MaterialIcons
+                  name={item.icon as any}
+                  size={22}
+                  color={
+                    isActive
+                      ? themeColors.onPrimaryContainer
+                      : themeColors.onSurfaceVariant
+                  }
+                />
+                <Text
+                  style={[
+                    styles.menuItemText,
+                    {
+                      color: isActive
+                        ? themeColors.onPrimaryContainer
+                        : themeColors.onSurface,
+                      fontWeight: isActive ? '600' : '500',
+                      fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                    },
+                  ]}
+                >
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Divider */}
+        <View style={[styles.drawerDivider, { backgroundColor: themeColors.outlineVariant + '25' }]} />
+
+        {/* Secondary items: Settings, About, Feedback, Support */}
+        <View style={styles.menuList}>
+          {secondaryItems.map((item) => {
+            const isActive = item.name && activeRouteName === item.name;
+            return (
+              <TouchableOpacity
+                key={item.label}
+                onPress={() => item.name ? navigation.navigate(item.name) : item.action?.()}
+                style={[
+                  styles.menuItem,
+                  {
+                    backgroundColor: isActive
+                      ? themeColors.primaryContainer
+                      : 'transparent',
+                  },
+                ]}
+                activeOpacity={0.7}
+                accessibilityLabel={item.label}
                 accessibilityRole="menuitem"
               >
                 <MaterialIcons
@@ -251,30 +323,21 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
         )}
       </DrawerContentScrollView>
 
-      {/* Help & Logout footer */}
-      <View style={[styles.footer, { borderTopColor: themeColors.outlineVariant + '30' }]}>
+      {/* Verba Premium Card (T2.4) */}
+      <View style={[styles.premiumCard, { backgroundColor: themeColors.primaryContainer }]}>
+        <View style={styles.premiumHeader}>
+          <MaterialIcons name="workspace-premium" size={20} color={themeColors.onPrimaryContainer} />
+          <Text style={[styles.premiumTitle, { color: themeColors.onPrimaryContainer }]}>Verba Premium</Text>
+        </View>
+        <Text style={[styles.premiumDesc, { color: themeColors.onPrimaryContainer + 'CC' }]}>
+          Unlock advanced etymology, unlimited lists, and offline mode.
+        </Text>
         <TouchableOpacity
-          style={styles.footerBtn}
-          activeOpacity={0.7}
-          accessibilityLabel="Help and Support"
-          accessibilityRole="button"
+          style={[styles.premiumBtn, { backgroundColor: themeColors.onPrimaryContainer + '20' }]}
+          activeOpacity={0.8}
         >
-          <MaterialIcons
-            name="help-outline"
-            size={20}
-            color={themeColors.onSurfaceVariant}
-          />
-          <Text
-            style={[
-              styles.footerBtnText,
-              {
-                color: themeColors.onSurface,
-                fontSize: typography.caption.fontSize * fontSizeMultiplier,
-              },
-            ]}
-          >
-            Help & Support
-          </Text>
+          <Text style={[styles.premiumBtnText, { color: themeColors.onPrimaryContainer }]}>Upgrade Now</Text>
+          <MaterialIcons name="arrow-forward" size={16} color={themeColors.onPrimaryContainer} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -400,18 +463,44 @@ const styles = StyleSheet.create({
     opacity: 0.75,
     textTransform: 'capitalize',
   },
-  footer: {
-    padding: spacing.gutter,
-    borderTopWidth: 1,
+  drawerDivider: {
+    height: 1,
+    marginHorizontal: 16,
+    marginVertical: 8,
   },
-  footerBtn: {
+  premiumCard: {
+    margin: spacing.gutter,
+    borderRadius: rounded.xl,
+    padding: 18,
+  },
+  premiumHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingVertical: 8,
+    gap: 8,
+    marginBottom: 8,
   },
-  footerBtnText: {
+  premiumTitle: {
     fontFamily: 'Inter',
-    fontWeight: '500',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  premiumDesc: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 14,
+  },
+  premiumBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 10,
+    borderRadius: rounded.default,
+  },
+  premiumBtnText: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
+    fontSize: 14,
   },
 });

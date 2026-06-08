@@ -10,6 +10,7 @@ import {
   Linking
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CommonActions } from '@react-navigation/native';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme, ThemeType, FontScaleType } from '../context/ThemeContext';
@@ -66,11 +67,27 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleLogout = () => {
     Alert.alert(
-      'Log Out',
-      'Are you sure you want to log out of Verba Premium?',
+      'Reset App',
+      'This will return you to the onboarding screen. Your saved words and search history will be kept.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Log Out', style: 'destructive', onPress: () => navigation.getParent()?.navigate('Onboarding') }
+        {
+          text: 'Continue',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem('verba_first_launch_done');
+            } catch (e) {
+              console.warn('[Settings] Failed to reset first-launch flag', e);
+            }
+            navigation.getParent()?.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'Onboarding' }],
+              })
+            );
+          },
+        },
       ]
     );
   };
