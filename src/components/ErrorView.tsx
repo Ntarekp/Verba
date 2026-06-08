@@ -8,6 +8,7 @@ interface ErrorViewProps {
   type: '404' | 'offline' | 'timeout' | 'server';
   onRetry?: () => void;
   onBack?: () => void;
+  onNavigateToSaved?: () => void;
   query?: string;
 }
 
@@ -15,6 +16,7 @@ export const ErrorView: React.FC<ErrorViewProps> = ({
   type, 
   onRetry, 
   onBack,
+  onNavigateToSaved,
   query 
 }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
@@ -32,20 +34,23 @@ export const ErrorView: React.FC<ErrorViewProps> = ({
       case 'offline':
         return {
           icon: 'wifi-off',
-          title: 'Connection Lost',
-          desc: 'Your device is currently disconnected. Please verify your internet settings to resume lookup queries.',
-          actionLabel: 'Retry Connection',
+          title: "You're offline",
+          desc: 'Verba requires an active connection to process new definitions. Your saved words are still available.',
+          actionLabel: 'Try Again',
           actionIcon: 'refresh' as const,
+          secondaryLabel: 'Access Saved Words',
         };
       case 'timeout':
       case 'server':
       default:
         return {
-          icon: 'error-outline',
-          title: 'Server Timeout',
-          desc: 'Our lexicon services took too long to respond. This is usually temporary. Please try again.',
-          actionLabel: 'Retry Request',
+          icon: 'cloud-off',
+          title: 'Connection Lost',
+          desc: "We're having trouble reaching the dictionary servers. Please check your connection and try again.",
+          actionLabel: 'Retry Connection',
           actionIcon: 'refresh' as const,
+          errorCode: 'API_TIMEOUT_503',
+          errorDetail: 'The connection request exceeded the 15s limit. This is usually temporary.',
         };
     }
   };
@@ -79,6 +84,21 @@ export const ErrorView: React.FC<ErrorViewProps> = ({
         {content.desc}
       </Text>
 
+      {/* Error code info box (T1.5 — connection error) */}
+      {(content as any).errorCode && (
+        <View style={[styles.errorCodeBox, { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '40' }]}>
+          <MaterialIcons name="info-outline" size={16} color={themeColors.error} style={{ marginRight: 10, marginTop: 2 }} />
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.errorCodeLabel, { color: themeColors.onSurfaceVariant }]}>
+              ERROR CODE: {(content as any).errorCode}
+            </Text>
+            <Text style={[styles.errorCodeDetail, { color: themeColors.onSurfaceVariant }]}>
+              {(content as any).errorDetail}
+            </Text>
+          </View>
+        </View>
+      )}
+
       <View style={styles.actionContainer}>
         {onRetry ? (
           <TouchableOpacity
@@ -92,6 +112,22 @@ export const ErrorView: React.FC<ErrorViewProps> = ({
               { fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
             ]}>
               {content.actionLabel}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+
+        {/* "Access Saved Words" link for offline state (T1.4) */}
+        {type === 'offline' && onNavigateToSaved ? (
+          <TouchableOpacity
+            onPress={onNavigateToSaved}
+            style={styles.secondaryBtn}
+            activeOpacity={0.7}
+          >
+            <Text style={[
+              styles.secondaryBtnText, 
+              { color: themeColors.secondary, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
+            ]}>
+              Access Saved Words
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -187,5 +223,29 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontWeight: '500',
     textDecorationLine: 'underline',
+  },
+  errorCodeBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    width: '100%',
+    maxWidth: 320,
+    borderRadius: rounded.default,
+    borderWidth: 1,
+    padding: 14,
+    marginBottom: spacing.stackLg,
+  },
+  errorCodeLabel: {
+    fontFamily: 'Inter',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  errorCodeDetail: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    lineHeight: 18,
+    opacity: 0.8,
   },
 });

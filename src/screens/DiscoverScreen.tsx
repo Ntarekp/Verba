@@ -29,6 +29,15 @@ const SUGGESTIONS_BANK = [
   'solitude', 'serendipity', 'eloquent', 'audacious'
 ];
 
+// POS lookup for suggestion bank words (for badge display)
+const SUGGESTION_POS: Record<string, string> = {
+  ephemeral: 'Adj', ethereal: 'Adj', ubiquitous: 'Adj',
+  mellifluous: 'Adj', eloquent: 'Adj', audacious: 'Adj',
+  enigma: 'Noun', resilience: 'Noun', empathy: 'Noun',
+  paradigm: 'Noun', sycophant: 'Noun', solitude: 'Noun',
+  serendipity: 'Noun',
+};
+
 export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const { savedWords, addSavedWord, removeSavedWord, streakCount } = useSaved();
@@ -117,23 +126,35 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
                 borderColor: themeColors.outlineVariant + '60' 
               }
             ]}>
-              {suggestions.map((item, idx) => (
-                <TouchableOpacity
-                  key={item}
-                  style={[
-                    styles.suggestionRow,
-                    { borderBottomColor: idx < suggestions.length - 1 ? themeColors.outlineVariant + '20' : 'transparent' }
-                  ]}
-                  onPress={() => handleSearchSubmit(item)}
-                  activeOpacity={0.7}
-                >
-                  <MaterialIcons name="search" size={18} color={themeColors.outline} />
-                  <Text style={[styles.suggestionText, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>
-                    {item}
-                  </Text>
-                  <MaterialIcons name="north-west" size={16} color={themeColors.outline} />
-                </TouchableOpacity>
-              ))}
+              {suggestions.map((item, idx) => {
+                const query = debouncedQuery.trim().toLowerCase();
+                const matchLen = query.length;
+                const boldPart = item.slice(0, matchLen);
+                const restPart = item.slice(matchLen);
+                const pos = SUGGESTION_POS[item.toLowerCase()] || '';
+                return (
+                  <TouchableOpacity
+                    key={item}
+                    style={[
+                      styles.suggestionRow,
+                      { borderBottomColor: idx < suggestions.length - 1 ? themeColors.outlineVariant + '20' : 'transparent' }
+                    ]}
+                    onPress={() => handleSearchSubmit(item)}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialIcons name="search" size={18} color={themeColors.outline} />
+                    <Text style={[styles.suggestionText, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>
+                      <Text style={{ fontWeight: '700', color: themeColors.primary }}>{boldPart}</Text>
+                      {restPart}
+                    </Text>
+                    {pos ? (
+                      <View style={[styles.posBadge, { backgroundColor: themeColors.primaryFixed }]}>
+                        <Text style={[styles.posBadgeText, { color: themeColors.primary }]}>{pos}</Text>
+                      </View>
+                    ) : null}
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           )}
         </View>
@@ -167,11 +188,11 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
                 styles.bentoSubtitle, 
                 { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }
               ]}>
-                Lvl 12 • {savedWords.length} saved
+                Lvl {Math.max(1, Math.floor(savedWords.length / 10))} • {savedWords.length} saved
               </Text>
             </View>
             <View style={[styles.progressRing, { borderColor: themeColors.primary }]}>
-              <Text style={[styles.progressText, { color: themeColors.onSurface }]}>75%</Text>
+              <Text style={[styles.progressText, { color: themeColors.onSurface }]}>{Math.min(100, Math.round((savedWords.length / 50) * 100))}%</Text>
             </View>
           </View>
 
@@ -325,6 +346,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontWeight: '500',
     marginLeft: 12,
+  },
+  posBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: rounded.sm,
+    marginLeft: 8,
+  },
+  posBadgeText: {
+    fontFamily: 'Inter',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 0.3,
   },
   bentoGrid: {
     flexDirection: 'row',
