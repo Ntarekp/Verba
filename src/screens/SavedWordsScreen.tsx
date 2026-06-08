@@ -59,7 +59,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const insets = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
-  const narrowStatsLayout = windowWidth < 360;
+  const stackStatsLayout = windowWidth < 380 || fontSizeMultiplier > 1.1;
   const {
     savedWords,
     removeSavedWord,
@@ -214,8 +214,8 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
       </Text>
 
       <GlassCard padding={spacing.gutter} borderRadius={rounded.xl * 1.5} style={styles.statsCard}>
-        <View style={[styles.statsRow, narrowStatsLayout && styles.statsRowNarrow]}>
-          <View style={[styles.statBlock, narrowStatsLayout && styles.statBlockNarrow]}>
+        <View style={[styles.statsRow, stackStatsLayout && styles.statsRowNarrow]}>
+          <View style={[styles.statBlock, stackStatsLayout && styles.statBlockNarrow]}>
             <View
               style={[
                 styles.statIcon,
@@ -235,8 +235,10 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                   {
                     color: themeColors.onSurfaceVariant,
                     fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                    lineHeight: typography.caption.lineHeight * fontSizeMultiplier,
                   },
                 ]}
+                numberOfLines={2}
               >
                 Current Streak
               </Text>
@@ -247,6 +249,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                     {
                       color: themeColors.tertiary,
                       fontSize: 28 * fontSizeMultiplier,
+                      lineHeight: 32 * fontSizeMultiplier,
                     },
                   ]}
                 >
@@ -267,13 +270,13 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           </View>
 
-          {!narrowStatsLayout ? (
+          {!stackStatsLayout ? (
             <View
               style={[styles.statDivider, { backgroundColor: themeColors.outlineVariant + '40' }]}
             />
           ) : null}
 
-          <View style={[styles.statBlock, narrowStatsLayout && styles.statBlockNarrow]}>
+          <View style={[styles.statBlock, stackStatsLayout && styles.statBlockNarrow]}>
             <View
               style={[
                 styles.statIcon,
@@ -293,8 +296,10 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                   {
                     color: themeColors.onSurfaceVariant,
                     fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                    lineHeight: typography.caption.lineHeight * fontSizeMultiplier,
                   },
                 ]}
+                numberOfLines={2}
               >
                 Words Mastered
               </Text>
@@ -305,6 +310,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                     {
                       color: themeColors.primary,
                       fontSize: 28 * fontSizeMultiplier,
+                      lineHeight: 32 * fontSizeMultiplier,
                     },
                   ]}
                 >
@@ -363,18 +369,13 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.tabsContainer}>
-        <FlatList
-          horizontal
-          nestedScrollEnabled
-          showsHorizontalScrollIndicator={false}
-          data={COLLECTION_TABS}
-          keyExtractor={(tab) => tab.id}
-          contentContainerStyle={styles.tabsScroll}
-          renderItem={({ item: tab }) => {
+        <View style={styles.tabsWrap}>
+          {COLLECTION_TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             const count = collectionCounts[tab.id];
             return (
               <TouchableOpacity
+                key={tab.id}
                 onPress={() => setActiveTab(tab.id)}
                 style={[
                   styles.tabBtn,
@@ -397,6 +398,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                         ? themeColors.onSecondaryContainer
                         : themeColors.onSurfaceVariant,
                       fontSize: typography.labelCaps.fontSize * fontSizeMultiplier,
+                      lineHeight: typography.labelCaps.lineHeight * fontSizeMultiplier,
                     },
                   ]}
                 >
@@ -406,8 +408,8 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             );
-          }}
-        />
+          })}
+        </View>
       </View>
     </View>
   );
@@ -458,7 +460,17 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
               { borderBottomColor: themeColors.outlineVariant + '40' },
             ]}
           >
-            <Text style={[styles.quizHeaderTitle, { color: themeColors.primary }]}>
+            <Text
+              style={[
+                styles.quizHeaderTitle,
+                {
+                  color: themeColors.primary,
+                  fontSize: typography.sectionHeading.fontSize * 0.9 * fontSizeMultiplier,
+                  lineHeight: typography.sectionHeading.lineHeight * 0.9 * fontSizeMultiplier,
+                },
+              ]}
+              numberOfLines={1}
+            >
               Vocabulary Quiz
             </Text>
             <TouchableOpacity
@@ -477,7 +489,16 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
             >
-              <Text style={[styles.progressText, { color: themeColors.outline }]}>
+              <Text
+                style={[
+                  styles.progressText,
+                  {
+                    color: themeColors.outline,
+                    fontSize: typography.caption.fontSize * 0.85 * fontSizeMultiplier,
+                    lineHeight: typography.caption.lineHeight * 0.85 * fontSizeMultiplier,
+                  },
+                ]}
+              >
                 QUESTION {currentQuestionIdx + 1} OF {quizQuestions.length}
               </Text>
 
@@ -564,7 +585,15 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                   style={[styles.nextBtn, { backgroundColor: themeColors.primary }]}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.nextBtnText}>
+                  <Text
+                    style={[
+                      styles.nextBtnText,
+                      {
+                        fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                        lineHeight: typography.buttonText.lineHeight * fontSizeMultiplier,
+                      },
+                    ]}
+                  >
                     {currentQuestionIdx === quizQuestions.length - 1
                       ? 'Show Score'
                       : 'Next Question'}
@@ -573,7 +602,16 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                 </TouchableOpacity>
               )}
 
-              <Text style={[styles.scoreHint, { color: themeColors.outline }]}>
+              <Text
+                style={[
+                  styles.scoreHint,
+                  {
+                    color: themeColors.outline,
+                    fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                    lineHeight: typography.caption.lineHeight * fontSizeMultiplier,
+                  },
+                ]}
+              >
                 Score: {score} / {quizQuestions.length}
               </Text>
             </ScrollView>
@@ -709,15 +747,19 @@ const styles = StyleSheet.create({
   tabsContainer: {
     marginBottom: spacing.stackMd,
   },
-  tabsScroll: {
+  tabsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     paddingVertical: 4,
+    width: '100%',
   },
   tabBtn: {
     borderWidth: 1,
     borderRadius: rounded.full,
     paddingHorizontal: 16,
     paddingVertical: 8,
+    maxWidth: '100%',
   },
   tabBtnText: {
     fontFamily: 'Inter',
@@ -728,17 +770,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   quizHeader: {
-    height: 56,
+    minHeight: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+    paddingVertical: 8,
     borderBottomWidth: 1,
   },
   quizHeaderTitle: {
     fontFamily: 'Inter',
     fontWeight: '700',
-    fontSize: 20,
+    flex: 1,
+    minWidth: 0,
+    marginRight: spacing.stackSm,
   },
   closeBtn: {
     padding: 8,
@@ -762,7 +807,6 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontFamily: 'Inter',
-    fontSize: 12,
     fontWeight: '600',
     letterSpacing: 0.5,
     marginBottom: 12,
@@ -810,11 +854,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     color: '#fff',
     fontWeight: '600',
-    fontSize: 16,
   },
   scoreHint: {
     fontFamily: 'Inter',
-    fontSize: 13,
     textAlign: 'center',
   },
 });

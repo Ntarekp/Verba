@@ -24,7 +24,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onFocus,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const { themeColors } = useTheme();
+  const { themeColors, fontSizeMultiplier } = useTheme();
 
   return (
     <View
@@ -46,7 +46,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </TouchableOpacity>
 
       <TextInput
-        style={[styles.input, { color: themeColors.onSurface }]}
+        style={[
+          styles.input,
+          {
+            color: themeColors.onSurface,
+            fontSize: 16 * fontSizeMultiplier,
+            lineHeight: 22 * fontSizeMultiplier,
+          },
+        ]}
         placeholder={placeholder || 'Search millions of words...'}
         placeholderTextColor={`${themeColors.outline}B0`}
         value={value}

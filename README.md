@@ -1,54 +1,55 @@
 # Verba — Dictionary Mobile App
 
-**Verba** is a cross-platform React Native dictionary built for [LexiTech Solutions Ltd](https://github.com/Ntarekp/Verba). It delivers fast word lookup, pronunciation audio, saved vocabulary collections, search history, and a glass-inspired UI aligned with the Verba Intelligence Platform design system.
+**Verba** is a cross-platform React Native dictionary app built for LexiTech Solutions Ltd. It combines fast search, audio pronunciation, saved words, and clean glass-style UI with a polished mobile experience.
 
 ![Verba App Showcase](stitch_verba_intelligence_platform/app_store_showcase/screen.png)
 
-## Features
+## What this project includes
 
-- **Live search suggestions** — Autocomplete with part-of-speech badges as you type
-- **Word details** — Definitions, examples, etymology, synonyms/antonyms, and learning notes
-- **Audio pronunciation** — Play, pause, and switch accents when multiple recordings exist
-- **Saved words** — Collections, mastery tracking, streak stats, and vocabulary quiz
-- **Search history** — Recent lookups grouped by date
-- **Authentication** — Sign in, sign up, password recovery, and session management
-- **Offline-aware errors** — Clear states for not found, timeout, and connection issues
-- **Theming** — Light/dark mode, font scaling, and appearance presets
+- A working React Native app in `src/`
+- UI screens and business flow implemented for search, word details, saved collections, history, settings, and authentication
+- Offline-aware error states and responsive theming
+- Marketing and design assets located in `stitch_verba_intelligence_platform/`
 
-## Screenshots
+> The `stitch_verba_intelligence_platform/` directory contains marketing screens and design references for the Verba Intelligence Platform experience. These assets are for visual alignment and presentation, not runtime app code.
 
-Design references and marketing assets live in [`stitch_verba_intelligence_platform/`](stitch_verba_intelligence_platform/):
+## Core features
 
-| Screen | Preview |
-|--------|---------|
-| Dictionary & live suggestions | `search_live_suggestions/screen.png` |
-| Word details (Ethereal) | `word_details_ethereal/screen.png` |
-| Saved words collections | `saved_words_collections/screen.png` |
-| Search history | `search_history/screen.png` |
-| Settings | `settings_preferences/screen.png` |
-| Authentication | `authentication_login/screen.png` |
-| App Store showcase | `app_store_showcase/screen.png` |
-| Splash & onboarding | `splash_screen/screen.png`, `onboarding_search/screen.png` |
+- Live search suggestions with part-of-speech badges
+- Word detail pages with definitions, examples, synonyms, antonyms, and pronunciation audio
+- Saved vocabulary collections and mastery tracking
+- Search history grouped by date
+- Full authentication flow: login, signup, password recovery, and session persistence
+- Clear state handling for offline, timeout, not found, and unexpected errors
+- Light and dark themes plus font-scaling support
 
-## Tech Stack
+## Marketing & design assets
 
-- **React Native** (Expo 51)
-- **TypeScript**
-- **React Navigation** — Native stack + bottom tabs
-- **Axios** — Free Dictionary API (`https://api.dictionaryapi.dev/api/v2/entries/en/{word}`)
-- **AsyncStorage** — History, saved words, auth session, preferences
-- **expo-av** — Audio playback
-- **expo-blur** — Glass UI surfaces
+The following folders in `stitch_verba_intelligence_platform/` contain marketing screens, screenshots, and concept visuals used for presentation:
 
-## Getting Started
+- `app_store_showcase/`
+- `authentication_*`
+- `onboarding_*`
+- `search_*`
+- `saved_words_collections/`
+- `search_history/`
+- `settings_preferences/`
+- `splash_screen/`
+- `word_details_ethereal/`
+- `verba_app_logo/`
+
+These directories are intended to support branding, storytelling, and app store-ready visuals.
+
+## Quick start
 
 ### Prerequisites
 
 - Node.js 18+
 - npm or yarn
-- [Expo Go](https://expo.dev/go) on a device, or Android Studio / Xcode for emulators
+- [Expo CLI](https://expo.dev) installed globally or `npx expo`
+- [Expo Go](https://expo.dev/go) for testing on a device, or Android/iOS emulator
 
-### Install & run
+### Install and run
 
 ```bash
 git clone https://github.com/Ntarekp/Verba.git
@@ -57,31 +58,34 @@ npm install
 npx expo start
 ```
 
-Press `a` for Android, `i` for iOS, or scan the QR code with Expo Go.
+Then choose `a` for Android, `i` for iOS, or scan the QR code with Expo Go.
 
-### Demo account
+## Demo credentials
+
+If a demo login is available in this build, try:
 
 | Field | Value |
 |-------|-------|
 | Email | `demo@verba.app` |
 | Password | `Verba2024` |
 
-You can also create a new account from the sign-up screen. Credentials are stored locally on the device for this demo build.
+If not, use the sign-up screen to create a local account.
 
-## Project Structure
+## Project structure
 
 ```
 src/
-├── components/       # UI primitives (GlassCard, SearchBar, WordCard, …)
-├── context/          # Theme, Auth, Audio, Saved, History
-├── data/             # Suggestion bank for live search
-├── navigation/       # App navigator and helpers
-├── screens/          # Discover, WordDetails, Saved, History, Settings, Auth
-├── services/         # Dictionary API (Axios)
-└── styles/           # Theme tokens and typography
+├── assets/           # Static files used by app screens
+├── components/       # Reusable UI components
+├── context/          # State providers for theme, auth, audio, saved words, history
+├── data/             # Suggestion data and lookup helpers
+├── navigation/       # Navigation stacks and tab setup
+├── screens/          # App screens and feature pages
+├── services/         # API and data services
+└── styles/           # Theme tokens, spacing, typography, colors
 ```
 
-## Navigation
+## App flow
 
 ```
 Root
@@ -95,16 +99,14 @@ Root
 
 ## API
 
-Word data is fetched from the [Free Dictionary API](https://dictionaryapi.dev/). The app handles 404 (word not found), network failures, and malformed responses with dedicated error screens.
+Word data is fetched from the [Free Dictionary API](https://dictionaryapi.dev/). The app is built to handle network errors, 404 results, and display clear error screens during failed lookups.
+
+## Notes
+
+- Keep `stitch_verba_intelligence_platform/` for marketing and design reference only.
+- The app logic lives in `src/`.
+- `.expo/` is generated by Expo and should not be committed as a source artifact.
 
 ## License
 
 Educational project developed for LexiTech Solutions Ltd — Kigali City, Rwanda.
-
----
-
-<p align="center">
-  <img src="stitch_verba_intelligence_platform/verba_app_logo/screen.png" alt="Verba Logo" width="120" />
-  <br />
-  <strong>Verba</strong> — Master your vocabulary with intelligent precision.
-</p>

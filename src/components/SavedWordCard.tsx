@@ -85,6 +85,8 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
                 {
                   color: themeColors.onSurface,
                   fontSize: typography.sectionHeading.fontSize * 0.65 * fontSizeMultiplier,
+                  lineHeight:
+                    typography.sectionHeading.lineHeight * 0.65 * fontSizeMultiplier,
                 },
               ]}
               numberOfLines={2}
@@ -107,7 +109,14 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
               </View>
               {item.phonetic ? (
                 <Text
-                  style={[styles.phonetic, { color: themeColors.onSurfaceVariant }]}
+                  style={[
+                    styles.phonetic,
+                    {
+                      color: themeColors.onSurfaceVariant,
+                      fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                      lineHeight: typography.caption.lineHeight * fontSizeMultiplier,
+                    },
+                  ]}
                   numberOfLines={1}
                 >
                   {item.phonetic}
@@ -147,6 +156,7 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
               {
                 color: themeColors.onSurface,
                 fontSize: typography.definitionBody.fontSize * 0.85 * fontSizeMultiplier,
+                lineHeight: typography.definitionBody.lineHeight * 0.85 * fontSizeMultiplier,
               },
             ]}
           >
@@ -167,6 +177,7 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
                 {
                   color: themeColors.onSurfaceVariant,
                   fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                  lineHeight: typography.caption.lineHeight * fontSizeMultiplier,
                 },
               ]}
               numberOfLines={3}
@@ -180,7 +191,14 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
 
         <View style={styles.footer}>
           <Text
-            style={[styles.dateText, { color: themeColors.outline }]}
+            style={[
+              styles.dateText,
+              {
+                color: themeColors.outline,
+                fontSize: typography.caption.fontSize * 0.85 * fontSizeMultiplier,
+                lineHeight: typography.caption.lineHeight * 0.85 * fontSizeMultiplier,
+              },
+            ]}
             numberOfLines={1}
           >
             Added {relativeTime}
@@ -254,8 +272,8 @@ const styles = StyleSheet.create({
   },
   phonetic: {
     fontFamily: 'Inter',
-    fontSize: 12,
     flexShrink: 1,
+    minWidth: 0,
   },
   actions: {
     flexDirection: 'row',
@@ -284,7 +302,6 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     fontFamily: 'Inter',
-    lineHeight: 24,
   },
   exampleBox: {
     borderRadius: rounded.lg,
@@ -294,7 +311,6 @@ const styles = StyleSheet.create({
   exampleText: {
     fontFamily: 'Inter',
     fontStyle: 'italic',
-    lineHeight: 20,
   },
   divider: {
     height: 1,
@@ -309,7 +325,6 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     fontFamily: 'Inter',
-    fontSize: 12,
     marginRight: spacing.stackSm,
   },
   masteryDots: {

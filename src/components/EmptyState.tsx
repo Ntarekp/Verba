@@ -26,15 +26,23 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         <MaterialIcons name={icon} size={36} color={themeColors.outline} />
       </View>
       <Text style={[
-        styles.title, 
-        { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
+        styles.title,
+        {
+          color: themeColors.onSurface,
+          fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+          lineHeight: typography.buttonText.lineHeight * fontSizeMultiplier,
+        },
       ]}>
         {title}
       </Text>
       <Text style={[
         styles.desc,
         compact && styles.descCompact,
-        { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }
+        {
+          color: themeColors.onSurfaceVariant,
+          fontSize: typography.caption.fontSize * fontSizeMultiplier,
+          lineHeight: typography.caption.lineHeight * fontSizeMultiplier,
+        },
       ]}>
         {description}
       </Text>
@@ -71,7 +79,6 @@ const styles = StyleSheet.create({
   desc: {
     fontFamily: 'Inter',
     textAlign: 'center',
-    lineHeight: 20,
     maxWidth: 260,
     opacity: 0.8,
   },
