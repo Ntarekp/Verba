@@ -160,21 +160,21 @@ export type FontStyles = {
 
 export const typography = {
   displayWord: {
-    fontFamily: 'Inter',
+    fontFamily: 'Inter-Bold',
     fontSize: 48,
     fontWeight: '700' as const,
     lineHeight: 56,
     letterSpacing: -0.96,
   },
   displayWordMobile: {
-    fontFamily: 'Inter',
+    fontFamily: 'Inter-Bold',
     fontSize: 40,
     fontWeight: '700' as const,
     lineHeight: 48,
     letterSpacing: -0.8,
   },
   sectionHeading: {
-    fontFamily: 'Inter',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 28,
     fontWeight: '600' as const,
     lineHeight: 36,
@@ -187,14 +187,14 @@ export const typography = {
     lineHeight: 28,
   },
   labelCaps: {
-    fontFamily: 'Inter',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
     fontWeight: '600' as const,
     lineHeight: 16,
     letterSpacing: 0.6,
   },
   buttonText: {
-    fontFamily: 'Inter',
+    fontFamily: 'Inter-Medium',
     fontSize: 16,
     fontWeight: '500' as const,
     lineHeight: 24,
