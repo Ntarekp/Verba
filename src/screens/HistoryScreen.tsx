@@ -7,7 +7,7 @@ import {
   TouchableOpacity, 
   Alert
 } from 'react-native';
-import { DrawerScreenProps } from '@react-navigation/drawer';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useHistory } from '../context/HistoryContext';
 import { useTheme } from '../context/ThemeContext';
@@ -15,10 +15,11 @@ import { HistoryItem } from '../components/HistoryItem';
 import { SearchBar } from '../components/SearchBar';
 import { EmptyState } from '../components/EmptyState';
 import { groupHistoryByDate } from '../utils/dateHelper';
-import { DrawerParamList } from '../navigation/AppNavigator';
+import { MainTabParamList } from '../navigation/AppNavigator';
+import { navigateToWordDetails } from '../navigation/navigationHelpers';
 import { spacing, typography } from '../styles/theme';
 
-type Props = DrawerScreenProps<DrawerParamList, 'History'>;
+type Props = BottomTabScreenProps<MainTabParamList, 'History'>;
 
 export const HistoryScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
@@ -37,8 +38,7 @@ export const HistoryScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleSelectItem = (word: string) => {
-    // Navigate using parent stack
-    navigation.getParent()?.navigate('WordDetails', { word });
+    navigateToWordDetails(navigation, word);
   };
 
   const filteredHistory = history.filter(item => 

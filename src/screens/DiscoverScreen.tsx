@@ -8,19 +8,19 @@ import {
   FlatList,
   Alert
 } from 'react-native';
-import { useAudio } from '../hooks/useAudio';
-import { DrawerScreenProps } from '@react-navigation/drawer';
+import { useAudio } from '../context/AudioContext';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';
 import { SearchBar } from '../components/SearchBar';
 import { WordCard } from '../components/WordCard';
 import { useTheme } from '../context/ThemeContext';
 import { useSaved } from '../context/SavedContext';
 import { useHistory } from '../context/HistoryContext';
-import { DrawerParamList } from '../navigation/AppNavigator';
+import { DictionaryStackParamList } from '../navigation/AppNavigator';
 import { rounded, spacing, typography } from '../styles/theme';
 import { useDebounce } from '../hooks/useDebounce';
 
-type Props = DrawerScreenProps<DrawerParamList, 'Discover'>;
+type Props = NativeStackScreenProps<DictionaryStackParamList, 'Discover'>;
 
 // Preset list for live search suggestions overlay
 const SUGGESTIONS_BANK = [
@@ -86,8 +86,7 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
     }
     setSearchQuery('');
     setSuggestions([]);
-    // Navigate using the parent Stack navigator
-    navigation.getParent()?.navigate('WordDetails', { word: targetWord.trim() });
+    navigation.navigate('WordDetails', { word: targetWord.trim() });
   };
 
   const handleToggleSaveWod = () => {
@@ -117,34 +116,16 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
             placeholder="Search millions of words"
           />
 
-          {/* Activity 1: explicit search button */}
-          <TouchableOpacity
-            onPress={() => handleSearchSubmit()}
-            style={[styles.searchButton, { backgroundColor: themeColors.secondary }]}
-            activeOpacity={0.85}
-            accessibilityLabel="Search dictionary"
-            accessibilityRole="button"
-          >
-            <MaterialIcons name="search" size={20} color="#fff" />
-            <Text
+          {suggestions.length > 0 && (
+            <View
               style={[
-                styles.searchButtonText,
-                { fontSize: typography.buttonText.fontSize * fontSizeMultiplier },
+                styles.suggestionsPanel,
+                {
+                  backgroundColor: themeColors.surfaceContainerLowest,
+                  borderColor: themeColors.outlineVariant + '60',
+                },
               ]}
             >
-              Search
-            </Text>
-          </TouchableOpacity>
-
-          {/* Suggestions Dropdown panel */}
-          {suggestions.length > 0 && (
-            <View style={[
-              styles.suggestionsPanel, 
-              { 
-                backgroundColor: themeColors.surfaceContainerLowest, 
-                borderColor: themeColors.outlineVariant + '60' 
-              }
-            ]}>
               {suggestions.map((item, idx) => {
                 const query = debouncedQuery.trim().toLowerCase();
                 const matchLen = query.length;
@@ -192,7 +173,7 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
           isAudioLoading={isWodAudioLoading}
           definition={wordOfDay.definition}
           example={wordOfDay.example}
-          savedCollection="WORD OF THE DAY"
+          badgeLabel="WORD OF THE DAY"
         />
 
         {/* Bento Grid layout */}
@@ -334,37 +315,16 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: spacing.gutter,
-    paddingBottom: 40,
+    paddingBottom: 48,
+    flexGrow: 1,
   },
   searchSection: {
     position: 'relative',
     zIndex: 10,
     marginBottom: spacing.stackLg,
-    gap: spacing.stackSm,
-  },
-  searchButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 14,
-    borderRadius: rounded.xl,
-    shadowColor: '#0058be',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  searchButtonText: {
-    fontFamily: 'Inter',
-    color: '#fff',
-    fontWeight: '600',
   },
   suggestionsPanel: {
-    position: 'absolute',
-    top: 120,
-    left: 0,
-    right: 0,
+    marginTop: spacing.stackSm,
     borderRadius: rounded.lg,
     borderWidth: 1,
     shadowColor: '#0b1c30',
@@ -372,8 +332,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 16,
     elevation: 5,
-    zIndex: 999,
     paddingVertical: 4,
+    overflow: 'hidden',
   },
   suggestionRow: {
     flexDirection: 'row',
@@ -407,6 +367,7 @@ const styles = StyleSheet.create({
   },
   bentoCard: {
     flex: 1,
+    minWidth: 0,
     borderRadius: rounded.lg,
     padding: 16,
     flexDirection: 'row',
@@ -422,6 +383,8 @@ const styles = StyleSheet.create({
   },
   bentoCardText: {
     flex: 1,
+    minWidth: 0,
+    paddingRight: 8,
   },
   bentoTitle: {
     fontFamily: 'Inter',

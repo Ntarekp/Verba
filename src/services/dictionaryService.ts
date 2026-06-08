@@ -15,14 +15,24 @@ export const lookupWord = async (word: string): Promise<DictionaryEntry> => {
       throw error;
     }
     if (error.response) {
-      if (error.response.status === 404) {
+      const status = error.response.status;
+      if (status === 404) {
         throw new Error('WORD_NOT_FOUND');
       }
-      throw new Error('SERVER_ERROR');
-    } else if (error.request) {
-      throw new Error('NETWORK_TIMEOUT');
-    } else {
-      throw new Error('UNKNOWN_ERROR');
+      if (status === 503 || status === 504) {
+        throw new Error('SERVER_TIMEOUT');
+      }
+      if (status >= 500) {
+        throw new Error('SERVER_ERROR');
+      }
+      throw new Error('CONNECTION_ERROR');
     }
+    if (error.request) {
+      if (error.code === 'ECONNABORTED') {
+        throw new Error('NETWORK_TIMEOUT');
+      }
+      throw new Error('NETWORK_OFFLINE');
+    }
+    throw new Error('UNKNOWN_ERROR');
   }
 };

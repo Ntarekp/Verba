@@ -2,16 +2,17 @@ import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, Animated, StyleSheet, ActivityIndicator, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
-import { rounded } from '../styles/theme';
 
 interface PronunciationButtonProps {
   audioUrl: string | null;
   onPress: () => void;
-  isPlaying?: boolean;   // true = audio is actively playing → show pause icon
-  isPaused?: boolean;    // true = audio is loaded but paused
-  isLoading?: boolean;   // true = buffering
+  isPlaying?: boolean;
+  isPaused?: boolean;
+  isLoading?: boolean;
   size?: number;
 }
+
+const MIN_TOUCH = 44;
 
 export const PronunciationButton: React.FC<PronunciationButtonProps> = ({
   audioUrl,
@@ -19,21 +20,21 @@ export const PronunciationButton: React.FC<PronunciationButtonProps> = ({
   isPlaying = false,
   isPaused = false,
   isLoading = false,
-  size = 44,
+  size = 48,
 }) => {
   const { themeColors } = useTheme();
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const pulseRef = useRef<Animated.CompositeAnimation | null>(null);
 
   const isDisabled = !audioUrl;
+  const slotSize = Math.max(size * 1.35, MIN_TOUCH + 8);
 
-  // Pulse ring animation: runs only when idle (not playing, not loading, not disabled)
   useEffect(() => {
     if (!isDisabled && !isLoading && !isPlaying) {
       pulseRef.current = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
-            toValue: 1.18,
+            toValue: 1.15,
             duration: 1500,
             useNativeDriver: true,
           }),
@@ -53,7 +54,7 @@ export const PronunciationButton: React.FC<PronunciationButtonProps> = ({
     return () => {
       pulseRef.current?.stop();
     };
-  }, [isDisabled, isLoading, isPlaying]);
+  }, [isDisabled, isLoading, isPlaying, pulseAnim]);
 
   const handlePress = () => {
     if (!isDisabled && !isLoading) {
@@ -61,11 +62,6 @@ export const PronunciationButton: React.FC<PronunciationButtonProps> = ({
     }
   };
 
-  // Icon logic:
-  //  - Loading → ActivityIndicator
-  //  - Playing → pause icon (user can pause)
-  //  - Paused / Idle → volume-up icon (user can play/resume)
-  //  - Disabled → volume-off icon (greyed)
   const getIcon = () => {
     if (isDisabled) return 'volume-off';
     if (isPlaying) return 'pause';
@@ -75,18 +71,13 @@ export const PronunciationButton: React.FC<PronunciationButtonProps> = ({
   const buttonBg = isDisabled
     ? 'rgba(119, 117, 135, 0.15)'
     : isPlaying
-    ? themeColors.tertiary + '30'
-    : themeColors.tertiaryFixedDim + '20';
+      ? themeColors.tertiary + '30'
+      : themeColors.tertiaryFixedDim + '20';
 
-  const iconColor = isDisabled
-    ? themeColors.outline
-    : isPlaying
-    ? themeColors.tertiary
-    : themeColors.tertiary;
+  const iconColor = isDisabled ? themeColors.outline : themeColors.tertiary;
 
   return (
-    <View style={styles.container}>
-      {/* Pulse ring — only visible when idle and audio available */}
+    <View style={[styles.slot, { width: slotSize, height: slotSize }]}>
       {!isDisabled && !isLoading && !isPlaying && (
         <Animated.View
           style={[
@@ -115,20 +106,15 @@ export const PronunciationButton: React.FC<PronunciationButtonProps> = ({
           },
         ]}
         activeOpacity={0.8}
-        accessibilityLabel={
-          isPlaying ? 'Pause pronunciation' : 'Play pronunciation'
-        }
+        hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+        accessibilityLabel={isPlaying ? 'Pause pronunciation' : 'Play pronunciation'}
         accessibilityRole="button"
         accessibilityState={{ disabled: isDisabled || isLoading }}
       >
         {isLoading ? (
           <ActivityIndicator size="small" color={themeColors.tertiary} />
         ) : (
-          <MaterialIcons
-            name={getIcon() as any}
-            size={size * 0.52}
-            color={iconColor}
-          />
+          <MaterialIcons name={getIcon() as any} size={Math.round(size * 0.5)} color={iconColor} />
         )}
       </TouchableOpacity>
     </View>
@@ -136,14 +122,13 @@ export const PronunciationButton: React.FC<PronunciationButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
+  slot: {
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
+    flexShrink: 0,
   },
   pulseRing: {
     position: 'absolute',
-    zIndex: 0,
   },
   button: {
     justifyContent: 'center',

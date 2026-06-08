@@ -10,14 +10,14 @@ import {
   Linking
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CommonActions } from '@react-navigation/native';
-import { DrawerScreenProps } from '@react-navigation/drawer';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme, ThemeType, FontScaleType } from '../context/ThemeContext';
-import { DrawerParamList } from '../navigation/AppNavigator';
+import { DictionaryStackParamList } from '../navigation/AppNavigator';
+import { resetToOnboarding } from '../navigation/navigationHelpers';
 import { rounded, spacing, typography } from '../styles/theme';
 
-type Props = DrawerScreenProps<DrawerParamList, 'Settings'>;
+type Props = NativeStackScreenProps<DictionaryStackParamList, 'Settings'>;
 
 export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
   const { 
@@ -80,12 +80,7 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
             } catch (e) {
               console.warn('[Settings] Failed to reset first-launch flag', e);
             }
-            navigation.getParent()?.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Onboarding' }],
-              })
-            );
+            resetToOnboarding(navigation);
           },
         },
       ]

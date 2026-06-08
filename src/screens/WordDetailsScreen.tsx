@@ -12,21 +12,22 @@ import {
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { DictionaryStackParamList } from '../navigation/AppNavigator';
+import { navigateToSavedTab } from '../navigation/navigationHelpers';
 import { lookupWord } from '../services/dictionaryService';
 import { DictionaryEntry, Phonetic } from '../models/DictionaryTypes';
 import { WordCard } from '../components/WordCard';
 import { MeaningCard } from '../components/MeaningCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import { ErrorView } from '../components/ErrorView';
+import { ErrorView, ErrorViewType } from '../components/ErrorView';
 import { useTheme } from '../context/ThemeContext';
 import { useSaved } from '../context/SavedContext';
 import { useHistory } from '../context/HistoryContext';
-import { useAudio } from '../hooks/useAudio';
+import { useAudio } from '../context/AudioContext';
 import { getAutoplayEnabled } from '../utils/settingsHelper';
 import { rounded, spacing, typography } from '../styles/theme';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'WordDetails'>;
+type Props = NativeStackScreenProps<DictionaryStackParamList, 'WordDetails'>;
 
 // Derive a human-readable accent label from the audio URL
 const getAccentLabel = (phonetic: Phonetic): string => {
@@ -55,7 +56,7 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   } = useAudio();
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [errorType, setErrorType] = useState<'404' | 'offline' | 'server' | null>(null);
+  const [errorType, setErrorType] = useState<ErrorViewType | null>(null);
   const [entry, setEntry] = useState<DictionaryEntry | null>(null);
   const [noteText, setNoteText] = useState('');
 
@@ -105,12 +106,20 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       console.error(e);
       if (e.message === 'WORD_NOT_FOUND') {
         setErrorType('404');
-      } else if (e.message === 'NETWORK_TIMEOUT') {
+      } else if (e.message === 'NETWORK_OFFLINE') {
         setErrorType('offline');
+      } else if (e.message === 'NETWORK_TIMEOUT' || e.message === 'SERVER_TIMEOUT') {
+        setErrorType('timeout');
+      } else if (e.message === 'CONNECTION_ERROR') {
+        setErrorType('connection_error');
+      } else if (e.message === 'UNKNOWN_ERROR') {
+        setErrorType('unexpected');
       } else if (e.message === 'EMPTY_RESPONSE' || e.message === 'EMPTY_QUERY') {
         setErrorType('server');
-      } else {
+      } else if (e.message === 'SERVER_ERROR') {
         setErrorType('server');
+      } else {
+        setErrorType('unexpected');
       }
     } finally {
       setLoading(false);
@@ -125,8 +134,20 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   }, [route.params.word]);
 
   useEffect(() => {
-    stopAudio();
-    fetchDetails(word);
+    let cancelled = false;
+
+    const loadWord = async () => {
+      await stopAudio();
+      if (!cancelled) {
+        fetchDetails(word);
+      }
+    };
+
+    loadWord();
+
+    return () => {
+      cancelled = true;
+    };
   }, [word]);
 
   // Activity 3 Req 7: stop audio when leaving the screen
@@ -198,13 +219,18 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       <ErrorView
         type={errorType}
         query={word}
+        savedCount={savedWords.length}
         onRetry={() => fetchDetails(word)}
         onBack={() => navigation.goBack()}
+        onSearchNew={(newWord) => {
+          setWord(newWord);
+          navigation.setParams({ word: newWord });
+        }}
         onNavigateToSaved={
           errorType === 'offline'
             ? () => {
                 navigation.goBack();
-                navigation.getParent()?.navigate('MainDrawer', { screen: 'SavedWords' });
+                navigateToSavedTab(navigation);
               }
             : undefined
         }

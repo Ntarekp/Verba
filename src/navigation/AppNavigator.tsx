@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { OnboardingScreen } from '../screens/OnboardingScreen';
@@ -10,39 +13,40 @@ import { HistoryScreen } from '../screens/HistoryScreen';
 import { SavedWordsScreen } from '../screens/SavedWordsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { SplashScreen } from '../screens/SplashScreen';
-import { DrawerContent } from './DrawerContent';
+import { VerbaTabBar } from '../components/VerbaTabBar';
 import { useTheme } from '../context/ThemeContext';
 
-export type RootStackParamList = {
-  Onboarding: undefined;
-  MainDrawer: undefined;
-  WordDetails: { word: string };
-};
-
-export type DrawerParamList = {
+export type DictionaryStackParamList = {
   Discover: undefined;
-  SavedWords: undefined;
-  History: undefined;
+  WordDetails: { word: string };
   Settings: undefined;
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-const Drawer = createDrawerNavigator<DrawerParamList>();
+export type MainTabParamList = {
+  Dictionary: NavigatorScreenParams<DictionaryStackParamList>;
+  History: undefined;
+  Saved: undefined;
+};
+
+export type RootStackParamList = {
+  Onboarding: undefined;
+  Main: undefined;
+};
+
+const RootStack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<MainTabParamList>();
+const DictionaryStack = createNativeStackNavigator<DictionaryStackParamList>();
 
 const FIRST_LAUNCH_KEY = 'verba_first_launch_done';
 
-function DrawerNavigator() {
+function DictionaryStackNavigator() {
   const { themeColors } = useTheme();
 
   return (
-    <Drawer.Navigator
-      drawerContent={(props) => <DrawerContent {...props} />}
+    <DictionaryStack.Navigator
       screenOptions={{
-        headerShown: true,
         headerStyle: {
           backgroundColor: themeColors.surface,
-          shadowColor: 'transparent',
-          elevation: 0,
         },
         headerTintColor: themeColors.primary,
         headerTitleStyle: {
@@ -50,51 +54,102 @@ function DrawerNavigator() {
           fontWeight: '700',
           fontSize: 20,
         },
-        drawerStyle: {
-          width: 300,
-          borderTopRightRadius: 24,
-          borderBottomRightRadius: 24,
-        },
+        animation: 'slide_from_right',
       }}
     >
-      <Drawer.Screen 
-        name="Discover" 
-        component={DiscoverScreen} 
-        options={{ title: 'Verba' }}
+      <DictionaryStack.Screen
+        name="Discover"
+        component={DiscoverScreen}
+        options={({ navigation }) => ({
+          title: 'Verba',
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Settings')}
+              style={{ marginRight: 8, padding: 8 }}
+              accessibilityLabel="Open settings"
+              accessibilityRole="button"
+            >
+              <MaterialIcons
+                name="account-circle"
+                size={28}
+                color={themeColors.onSurfaceVariant}
+              />
+            </TouchableOpacity>
+          ),
+        })}
       />
-      <Drawer.Screen 
-        name="SavedWords" 
-        component={SavedWordsScreen} 
-        options={{ title: 'Saved Words' }}
+      <DictionaryStack.Screen
+        name="WordDetails"
+        component={WordDetailsScreen}
+        options={{ headerShown: false }}
       />
-      <Drawer.Screen 
-        name="History" 
-        component={HistoryScreen} 
-        options={{ title: 'Search History' }}
-      />
-      <Drawer.Screen 
-        name="Settings" 
-        component={SettingsScreen} 
+      <DictionaryStack.Screen
+        name="Settings"
+        component={SettingsScreen}
         options={{ title: 'Settings' }}
       />
-    </Drawer.Navigator>
+    </DictionaryStack.Navigator>
+  );
+}
+
+function MainTabNavigator() {
+  const { themeColors } = useTheme();
+
+  return (
+    <Tab.Navigator
+      tabBar={(props) => <VerbaTabBar {...props} />}
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Tab.Screen
+        name="Dictionary"
+        component={DictionaryStackNavigator}
+      />
+      <Tab.Screen
+        name="History"
+        component={HistoryScreen}
+        options={{
+          headerShown: true,
+          title: 'Search History',
+          headerStyle: { backgroundColor: themeColors.surface },
+          headerTintColor: themeColors.primary,
+          headerTitleStyle: {
+            fontFamily: 'Inter',
+            fontWeight: '700',
+            fontSize: 20,
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Saved"
+        component={SavedWordsScreen}
+        options={{
+          headerShown: true,
+          title: 'Saved Words',
+          headerStyle: { backgroundColor: themeColors.surface },
+          headerTintColor: themeColors.primary,
+          headerTitleStyle: {
+            fontFamily: 'Inter',
+            fontWeight: '700',
+            fontSize: 20,
+          },
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 
 export const AppNavigator = () => {
-  const [initialRoute, setInitialRoute] = useState<'Onboarding' | 'MainDrawer' | null>(null);
+  const [initialRoute, setInitialRoute] = useState<'Onboarding' | 'Main' | null>(null);
 
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
         const value = await AsyncStorage.getItem(FIRST_LAUNCH_KEY);
-        if (value === 'true') {
-          setInitialRoute('MainDrawer');
-        } else {
-          setInitialRoute('Onboarding');
-        }
-      } catch (e) {
-        setInitialRoute('MainDrawer');
+        setInitialRoute(value === 'true' ? 'Main' : 'Onboarding');
+      } catch {
+        setInitialRoute('Main');
       }
     };
     checkFirstLaunch();
@@ -105,17 +160,17 @@ export const AppNavigator = () => {
   }
 
   return (
-    <Stack.Navigator
+    <RootStack.Navigator
       initialRouteName={initialRoute}
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
       }}
     >
-      <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-      <Stack.Screen name="MainDrawer" component={DrawerNavigator} />
-      <Stack.Screen name="WordDetails" component={WordDetailsScreen} />
-    </Stack.Navigator>
+      <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
+      <RootStack.Screen name="Main" component={MainTabNavigator} />
+    </RootStack.Navigator>
   );
 };
+
 export default AppNavigator;

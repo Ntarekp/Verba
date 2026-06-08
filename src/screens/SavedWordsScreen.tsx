@@ -10,17 +10,18 @@ import {
   Modal,
   SafeAreaView
 } from 'react-native';
-import { DrawerScreenProps } from '@react-navigation/drawer';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSaved } from '../context/SavedContext';
 import { useTheme } from '../context/ThemeContext';
-import { useAudio } from '../hooks/useAudio';
+import { useAudio } from '../context/AudioContext';
 import { SearchBar } from '../components/SearchBar';
 import { EmptyState } from '../components/EmptyState';
-import { DrawerParamList } from '../navigation/AppNavigator';
+import { MainTabParamList } from '../navigation/AppNavigator';
+import { navigateToWordDetails } from '../navigation/navigationHelpers';
 import { rounded, spacing, typography } from '../styles/theme';
 
-type Props = DrawerScreenProps<DrawerParamList, 'SavedWords'>;
+type Props = BottomTabScreenProps<MainTabParamList, 'Saved'>;
 
 type CollectionType = 'ALL' | 'Favorites' | 'Academic' | 'Travel';
 
@@ -69,7 +70,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
   });
 
   const handleSelectItem = (word: string) => {
-    navigation.getParent()?.navigate('WordDetails', { word });
+    navigateToWordDetails(navigation, word);
   };
 
   const handleStartQuiz = () => {

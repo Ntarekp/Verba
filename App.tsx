@@ -15,6 +15,7 @@ import {
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 import { HistoryProvider } from './src/context/HistoryContext';
 import { SavedProvider } from './src/context/SavedContext';
+import { AudioProvider } from './src/context/AudioContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 
 // Keep the splash screen visible while we fetch resources
@@ -54,11 +55,13 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider>
-      <HistoryProvider>
-        <SavedProvider>
-          <AppContent />
-        </SavedProvider>
-      </HistoryProvider>
+      <AudioProvider>
+        <HistoryProvider>
+          <SavedProvider>
+            <AppContent />
+          </SavedProvider>
+        </HistoryProvider>
+      </AudioProvider>
     </ThemeProvider>
   );
 }
