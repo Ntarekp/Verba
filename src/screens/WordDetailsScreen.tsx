@@ -25,6 +25,7 @@ import { useSaved } from '../context/SavedContext';
 import { useHistory } from '../context/HistoryContext';
 import { useAudio } from '../context/AudioContext';
 import { getAutoplayEnabled } from '../utils/settingsHelper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { rounded, spacing, typography } from '../styles/theme';
 
 type Props = NativeStackScreenProps<DictionaryStackParamList, 'WordDetails'>;
@@ -43,6 +44,7 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const [word, setWord] = useState(initialWord);
 
   const { themeColors, fontSizeMultiplier } = useTheme();
+  const insets = useSafeAreaInsets();
   const { savedWords, addSavedWord, removeSavedWord, updateWordNotes } = useSaved();
   const { addHistoryWord } = useHistory();
   const {
@@ -253,7 +255,16 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     >
       <View style={[styles.container, { backgroundColor: themeColors.background }]}>
         {/* Custom Header Nav */}
-        <View style={styles.header}>
+        <View
+          style={[
+            styles.header,
+            {
+              paddingTop: insets.top,
+              backgroundColor: themeColors.surface + 'E8',
+              borderBottomColor: themeColors.outlineVariant + '30',
+            },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.navBtn}
@@ -463,17 +474,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
-    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.stackSm,
+    paddingBottom: spacing.stackSm,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.3)',
-    marginTop: Platform.OS === 'android' ? 24 : 0,
+    minHeight: 56,
   },
   navBtn: {
-    padding: 8,
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontFamily: 'Inter',
@@ -487,7 +500,7 @@ const styles = StyleSheet.create({
   // Activity 3 Req 5 — Accent selector
   accentSection: {
     marginBottom: spacing.stackLg,
-    marginTop: -spacing.stackMd,
+    marginTop: spacing.stackSm,
   },
   accentLabel: {
     fontFamily: 'Inter',

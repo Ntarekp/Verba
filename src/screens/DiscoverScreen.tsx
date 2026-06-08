@@ -344,6 +344,7 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     flex: 1,
+    minWidth: 0,
     fontFamily: 'Inter',
     fontWeight: '500',
     marginLeft: 12,

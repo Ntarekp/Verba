@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    maxWidth: 320,
+    maxWidth: 340,
+    alignSelf: 'center',
   },
   header: {
     flexDirection: 'row',

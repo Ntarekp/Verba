@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     marginBottom: spacing.stackMd,
   },
-  statusCell: { flex: 1 },
+  statusCell: { flex: 1, minWidth: 0 },
   statusLabel: {
     fontFamily: 'Inter',
     fontSize: 11,
