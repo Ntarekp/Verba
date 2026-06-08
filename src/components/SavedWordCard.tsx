@@ -179,7 +179,10 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
         <View style={[styles.divider, { backgroundColor: themeColors.outlineVariant + '25' }]} />
 
         <View style={styles.footer}>
-          <Text style={[styles.dateText, { color: themeColors.outline }]}>
+          <Text
+            style={[styles.dateText, { color: themeColors.outline }]}
+            numberOfLines={1}
+          >
             Added {relativeTime}
           </Text>
           <View style={styles.masteryDots}>
@@ -213,6 +216,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     gap: spacing.stackSm,
@@ -221,6 +225,7 @@ const styles = StyleSheet.create({
   titleCol: {
     flex: 1,
     minWidth: 0,
+    flexGrow: 1,
   },
   wordName: {
     fontFamily: 'Inter',
@@ -255,8 +260,9 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
     flexShrink: 0,
+    marginLeft: 'auto',
   },
   removeBtn: {
     minWidth: 44,
@@ -300,8 +306,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dateText: {
+    flex: 1,
+    minWidth: 0,
     fontFamily: 'Inter',
     fontSize: 12,
+    marginRight: spacing.stackSm,
   },
   masteryDots: {
     flexDirection: 'row',

@@ -1,5 +1,6 @@
 import {
   CommonActions,
+  DrawerActions,
   NavigationProp,
   ParamListBase,
 } from '@react-navigation/native';
@@ -30,6 +31,27 @@ export function navigateToWordDetails(
       return;
     }
 
+    if (routeNames.includes('MainTabs')) {
+      current.navigate('MainTabs', {
+        screen: 'Dictionary',
+        params: { screen: 'WordDetails', params: { word } },
+      });
+      return;
+    }
+
+    current = current.getParent();
+  }
+}
+
+/** Open the app drawer from any nested screen. */
+export function openAppDrawer(navigation: NavigationLike): void {
+  let current: NavigationLike | undefined = navigation;
+
+  while (current) {
+    if (current.getState().type === 'drawer') {
+      current.dispatch(DrawerActions.openDrawer());
+      return;
+    }
     current = current.getParent();
   }
 }

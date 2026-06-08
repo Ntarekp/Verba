@@ -7,6 +7,8 @@ import {
   FlatList,
   Alert,
   Modal,
+  ScrollView,
+  useWindowDimensions,
 } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -56,6 +58,8 @@ const getRelativeTime = (ts: number) => {
 export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const insets = useSafeAreaInsets();
+  const { width: windowWidth } = useWindowDimensions();
+  const narrowStatsLayout = windowWidth < 360;
   const {
     savedWords,
     removeSavedWord,
@@ -202,6 +206,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
           {
             color: themeColors.onSurfaceVariant,
             fontSize: typography.definitionBody.fontSize * 0.85 * fontSizeMultiplier,
+            lineHeight: typography.definitionBody.lineHeight * 0.85 * fontSizeMultiplier,
           },
         ]}
       >
@@ -209,8 +214,8 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
       </Text>
 
       <GlassCard padding={spacing.gutter} borderRadius={rounded.xl * 1.5} style={styles.statsCard}>
-        <View style={styles.statsRow}>
-          <View style={styles.statBlock}>
+        <View style={[styles.statsRow, narrowStatsLayout && styles.statsRowNarrow]}>
+          <View style={[styles.statBlock, narrowStatsLayout && styles.statBlockNarrow]}>
             <View
               style={[
                 styles.statIcon,
@@ -223,7 +228,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                 color={themeColors.onTertiaryContainer}
               />
             </View>
-            <View>
+            <View style={styles.statTextCol}>
               <Text
                 style={[
                   styles.statLabel,
@@ -236,13 +241,24 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                 Current Streak
               </Text>
               <View style={styles.statValueRow}>
-                <Text style={[styles.statValue, { color: themeColors.tertiary }]}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    {
+                      color: themeColors.tertiary,
+                      fontSize: 28 * fontSizeMultiplier,
+                    },
+                  ]}
+                >
                   {streakCount}
                 </Text>
                 <Text
                   style={[
                     styles.statUnit,
-                    { color: themeColors.tertiaryFixedDim ?? themeColors.tertiary },
+                    {
+                      color: themeColors.tertiaryFixedDim ?? themeColors.tertiary,
+                      fontSize: 13 * fontSizeMultiplier,
+                    },
                   ]}
                 >
                   days
@@ -251,9 +267,13 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           </View>
 
-          <View style={[styles.statDivider, { backgroundColor: themeColors.outlineVariant + '40' }]} />
+          {!narrowStatsLayout ? (
+            <View
+              style={[styles.statDivider, { backgroundColor: themeColors.outlineVariant + '40' }]}
+            />
+          ) : null}
 
-          <View style={styles.statBlock}>
+          <View style={[styles.statBlock, narrowStatsLayout && styles.statBlockNarrow]}>
             <View
               style={[
                 styles.statIcon,
@@ -266,7 +286,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                 color={themeColors.onPrimaryContainer}
               />
             </View>
-            <View>
+            <View style={styles.statTextCol}>
               <Text
                 style={[
                   styles.statLabel,
@@ -279,13 +299,24 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                 Words Mastered
               </Text>
               <View style={styles.statValueRow}>
-                <Text style={[styles.statValue, { color: themeColors.primary }]}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    {
+                      color: themeColors.primary,
+                      fontSize: 28 * fontSizeMultiplier,
+                    },
+                  ]}
+                >
                   {wordsMastered}
                 </Text>
                 <Text
                   style={[
                     styles.statUnit,
-                    { color: themeColors.primaryFixedDim ?? themeColors.primary },
+                    {
+                      color: themeColors.primaryFixedDim ?? themeColors.primary,
+                      fontSize: 13 * fontSizeMultiplier,
+                    },
                   ]}
                 >
                   total
@@ -334,6 +365,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.tabsContainer}>
         <FlatList
           horizontal
+          nestedScrollEnabled
           showsHorizontalScrollIndicator={false}
           data={COLLECTION_TABS}
           keyExtractor={(tab) => tab.id}
@@ -391,7 +423,13 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <View
+        style={[
+          styles.container,
+          styles.loadingWrap,
+          { backgroundColor: themeColors.background },
+        ]}
+      >
         <LoadingSpinner message="Loading your collection..." />
       </View>
     );
@@ -433,27 +471,41 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
           </View>
 
           {quizQuestions.length > 0 && (
-            <View style={styles.quizBody}>
+            <ScrollView
+              style={styles.quizBodyScroll}
+              contentContainerStyle={styles.quizBodyContent}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
               <Text style={[styles.progressText, { color: themeColors.outline }]}>
                 QUESTION {currentQuestionIdx + 1} OF {quizQuestions.length}
               </Text>
 
-              <Text
-                style={[
-                  styles.questionWord,
-                  {
-                    color: themeColors.onSurface,
-                    fontSize: 32 * fontSizeMultiplier,
-                  },
-                ]}
-              >
-                "{quizQuestions[currentQuestionIdx].word}"
-              </Text>
+              <View style={styles.questionWordWrap}>
+                <Text
+                  style={[
+                    styles.questionWord,
+                    {
+                      color: themeColors.onSurface,
+                      fontSize: 32 * fontSizeMultiplier,
+                    },
+                  ]}
+                  adjustsFontSizeToFit
+                  numberOfLines={3}
+                  minimumFontScale={0.75}
+                >
+                  "{quizQuestions[currentQuestionIdx].word}"
+                </Text>
+              </View>
 
               <Text
                 style={[
                   styles.questionSubtitle,
-                  { color: themeColors.onSurfaceVariant },
+                  {
+                    color: themeColors.onSurfaceVariant,
+                    fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                    lineHeight: typography.buttonText.lineHeight * fontSizeMultiplier,
+                  },
                 ]}
               >
                 Choose the correct definition for this word:
@@ -489,7 +541,16 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                       ]}
                       activeOpacity={0.7}
                     >
-                      <Text style={[styles.optionText, { color: themeColors.onSurface }]}>
+                      <Text
+                        style={[
+                          styles.optionText,
+                          {
+                            color: themeColors.onSurface,
+                            fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                            lineHeight: typography.buttonText.lineHeight * fontSizeMultiplier,
+                          },
+                        ]}
+                      >
                         {option}
                       </Text>
                     </TouchableOpacity>
@@ -515,7 +576,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={[styles.scoreHint, { color: themeColors.outline }]}>
                 Score: {score} / {quizQuestions.length}
               </Text>
-            </View>
+            </ScrollView>
           )}
         </View>
       </Modal>
@@ -527,6 +588,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
         ListHeaderComponent={renderListHeader}
         ListEmptyComponent={
           <EmptyState
+            compact
             title="Empty Collection"
             description={
               searchQuery
@@ -564,22 +626,35 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: 'Inter',
     marginBottom: spacing.stackMd,
-    lineHeight: 24,
+  },
+  loadingWrap: {
+    paddingHorizontal: spacing.containerPadding,
+    justifyContent: 'center',
   },
   statsCard: {
     marginBottom: spacing.stackLg,
   },
   statsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'stretch',
     marginBottom: spacing.stackMd,
     gap: spacing.stackSm,
+  },
+  statsRowNarrow: {
+    flexWrap: 'wrap',
   },
   statBlock: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    minWidth: 0,
+  },
+  statBlockNarrow: {
+    flexBasis: '100%',
+  },
+  statTextCol: {
+    flex: 1,
     minWidth: 0,
   },
   statIcon: {
@@ -602,17 +677,16 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontFamily: 'Inter',
-    fontSize: 28,
     fontWeight: '700',
   },
   statUnit: {
     fontFamily: 'Inter',
-    fontSize: 13,
     fontWeight: '500',
   },
   statDivider: {
     width: 1,
-    height: 48,
+    minHeight: 48,
+    alignSelf: 'stretch',
     flexShrink: 0,
   },
   quizBtn: {
@@ -673,10 +747,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  quizBody: {
+  quizBodyScroll: {
     flex: 1,
+  },
+  quizBodyContent: {
+    flexGrow: 1,
     padding: spacing.containerPadding,
-    justifyContent: 'center',
+    paddingBottom: spacing.stackLg,
+  },
+  questionWordWrap: {
+    width: '100%',
+    paddingHorizontal: spacing.gutter,
+    marginBottom: 6,
   },
   progressText: {
     fontFamily: 'Inter',
@@ -690,7 +772,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 6,
+    width: '100%',
   },
   questionSubtitle: {
     fontFamily: 'Inter',
@@ -702,16 +784,18 @@ const styles = StyleSheet.create({
   optionsContainer: {
     gap: 12,
     marginBottom: 24,
+    flexShrink: 1,
+    width: '100%',
   },
   optionCard: {
     borderWidth: 1,
     borderRadius: rounded.lg,
     padding: 16,
+    width: '100%',
   },
   optionText: {
     fontFamily: 'Inter',
-    fontSize: 16,
-    lineHeight: 22,
+    flexShrink: 1,
   },
   nextBtn: {
     flexDirection: 'row',
