@@ -14,12 +14,15 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme, ThemeType, FontScaleType } from '../context/ThemeContext';
 import { DictionaryStackParamList } from '../navigation/AppNavigator';
-import { resetToOnboarding } from '../navigation/navigationHelpers';
+import { resetToAuth } from '../navigation/navigationHelpers';
+import { useAuth, showAuthAlert } from '../context/AuthContext';
+import { GlassCard } from '../components/GlassCard';
 import { rounded, spacing, typography } from '../styles/theme';
 
 type Props = NativeStackScreenProps<DictionaryStackParamList, 'Settings'>;
 
 export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
+  const { user, logout } = useAuth();
   const { 
     themeColors, 
     fontSizeMultiplier,
@@ -67,20 +70,17 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleLogout = () => {
     Alert.alert(
-      'Reset App',
-      'This will return you to the onboarding screen. Your saved words and search history will be kept.',
+      'Sign Out',
+      'Are you sure you want to sign out of Verba? Your saved words and search history will remain on this device.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Continue',
+          text: 'Sign Out',
           style: 'destructive',
           onPress: async () => {
-            try {
-              await AsyncStorage.removeItem('verba_first_launch_done');
-            } catch (e) {
-              console.warn('[Settings] Failed to reset first-launch flag', e);
-            }
-            resetToOnboarding(navigation);
+            await logout();
+            showAuthAlert('Signed Out', 'You have been signed out successfully.');
+            resetToAuth(navigation);
           },
         },
       ]
@@ -110,6 +110,21 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
             Manage your app preferences and settings.
           </Text>
         </View>
+
+        {user ? (
+          <GlassCard style={styles.accountCard} padding={spacing.gutter}>
+            <View style={styles.accountRow}>
+              <View style={[styles.avatar, { backgroundColor: themeColors.primaryContainer }]}>
+                <MaterialIcons name="person" size={28} color={themeColors.onPrimaryContainer} />
+              </View>
+              <View style={styles.accountText}>
+                <Text style={[styles.accountName, { color: themeColors.onSurface }]}>{user.name}</Text>
+                <Text style={[styles.accountEmail, { color: themeColors.onSurfaceVariant }]}>{user.email}</Text>
+                <Text style={[styles.accountBadge, { color: themeColors.primary }]}>Verba Premium</Text>
+              </View>
+            </View>
+          </GlassCard>
+        ) : null}
 
         <View style={styles.sectionsContainer}>
           {/* Appearance Group */}
@@ -299,6 +314,41 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontSize: 14,
     opacity: 0.8,
+  },
+  accountCard: {
+    marginBottom: spacing.stackMd,
+  },
+  accountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  accountText: {
+    flex: 1,
+    minWidth: 0,
+  },
+  accountName: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  accountEmail: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    marginTop: 2,
+  },
+  accountBadge: {
+    fontFamily: 'Inter',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
   },
   sectionsContainer: {
     gap: spacing.stackMd,

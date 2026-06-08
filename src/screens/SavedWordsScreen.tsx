@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
+import React, { useMemo, useRef, useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   FlatList,
   Alert,
   Modal,
-  SafeAreaView
 } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSaved } from '../context/SavedContext';
 import { useTheme } from '../context/ThemeContext';
-import { useAudio } from '../context/AudioContext';
 import { SearchBar } from '../components/SearchBar';
 import { EmptyState } from '../components/EmptyState';
+import { GlassCard } from '../components/GlassCard';
+import { SavedWordCard } from '../components/SavedWordCard';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { SavedWordItem } from '../models/DictionaryTypes';
 import { MainTabParamList } from '../navigation/AppNavigator';
 import { navigateToWordDetails } from '../navigation/navigationHelpers';
 import { rounded, spacing, typography } from '../styles/theme';
@@ -31,90 +33,126 @@ interface QuizQuestion {
   options: string[];
 }
 
+const COLLECTION_TABS: { id: CollectionType; label: string; showStar?: boolean }[] = [
+  { id: 'ALL', label: 'ALL WORDS' },
+  { id: 'Favorites', label: 'FAVORITES', showStar: true },
+  { id: 'Academic', label: 'ACADEMIC' },
+  { id: 'Travel', label: 'TRAVEL' },
+];
+
+const getRelativeTime = (ts: number) => {
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days}d ago`;
+  return `${Math.floor(days / 7)}w ago`;
+};
+
 export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
-  const { savedWords, removeSavedWord, streakCount } = useSaved();
-  const { togglePlayPause, isPlaying, isLoading } = useAudio();
-
-  // Helper: relative time from timestamp
-  const getRelativeTime = (ts: number) => {
-    const diff = Date.now() - ts;
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'Just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days === 1) return 'Yesterday';
-    if (days < 7) return `${days}d ago`;
-    return `${Math.floor(days / 7)}w ago`;
-  };
+  const insets = useSafeAreaInsets();
+  const {
+    savedWords,
+    removeSavedWord,
+    updateWordMastery,
+    streakCount,
+    isLoading,
+  } = useSaved();
 
   const [activeTab, setActiveTab] = useState<CollectionType>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Quiz states
   const [quizActive, setQuizActive] = useState(false);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [score, setScore] = useState(0);
+  const scoreRef = useRef(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
 
-  const tabs: CollectionType[] = ['ALL', 'Favorites', 'Academic', 'Travel'];
+  const wordsMastered = useMemo(
+    () => savedWords.filter((w) => w.masteryLevel >= 3).length,
+    [savedWords]
+  );
 
-  const filteredWords = savedWords.filter(item => {
-    const matchesSearch = item.word.toLowerCase().includes(searchQuery.toLowerCase());
-    if (activeTab === 'ALL') return matchesSearch;
-    return matchesSearch && item.collection === activeTab;
-  });
+  const collectionCounts = useMemo(() => {
+    const counts: Record<CollectionType, number> = {
+      ALL: savedWords.length,
+      Favorites: 0,
+      Academic: 0,
+      Travel: 0,
+    };
+    savedWords.forEach((item) => {
+      counts[item.collection] += 1;
+    });
+    return counts;
+  }, [savedWords]);
 
-  const handleSelectItem = (word: string) => {
-    navigateToWordDetails(navigation, word);
-  };
+  const filteredWords = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return savedWords.filter((item) => {
+      const matchesSearch =
+        !query ||
+        item.word.toLowerCase().includes(query) ||
+        item.definitionSummary.toLowerCase().includes(query);
+      if (activeTab === 'ALL') return matchesSearch;
+      return matchesSearch && item.collection === activeTab;
+    });
+  }, [savedWords, searchQuery, activeTab]);
+
+  const handleSelectItem = useCallback(
+    (word: string) => {
+      navigateToWordDetails(navigation, word);
+    },
+    [navigation]
+  );
+
+  const handleRemoveWord = useCallback(
+    (word: string) => {
+      removeSavedWord(word);
+    },
+    [removeSavedWord]
+  );
 
   const handleStartQuiz = () => {
     if (savedWords.length < 4) {
       Alert.alert(
         'Vocabulary Quiz',
-        'You need at least 4 saved words to generate a multiple-choice quiz. Go back and lookup more words!'
+        'You need at least 4 saved words to generate a multiple-choice quiz. Save more words from the dictionary first!'
       );
       return;
     }
 
-    // Generate questions
     const generatedQuestions: QuizQuestion[] = [];
     const pool = [...savedWords];
-    
-    // Determine number of questions (up to 5)
     const numQuestions = Math.min(5, pool.length);
-
-    // Shuffle pool
-    const shuffledPool = pool.sort(() => 0.5 - Math.random());
+    const shuffledPool = [...pool].sort(() => 0.5 - Math.random());
 
     for (let i = 0; i < numQuestions; i++) {
       const target = shuffledPool[i];
       const correctAnswer = target.definitionSummary;
-      
-      // Get distractors from other words in pool
       const distractors = pool
-        .filter(w => w.word !== target.word)
-        .map(w => w.definitionSummary)
+        .filter((w) => w.word !== target.word)
+        .map((w) => w.definitionSummary)
         .sort(() => 0.5 - Math.random())
         .slice(0, 3);
-      
-      // Combine options and shuffle
       const options = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
 
       generatedQuestions.push({
         word: target.word,
         correctAnswer,
-        options
+        options,
       });
     }
 
     setQuizQuestions(generatedQuestions);
     setCurrentQuestionIdx(0);
+    scoreRef.current = 0;
     setScore(0);
     setSelectedOption(null);
     setIsAnswered(false);
@@ -126,155 +164,316 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
     setSelectedOption(option);
     setIsAnswered(true);
 
-    const correct = option === quizQuestions[currentQuestionIdx].correctAnswer;
+    const current = quizQuestions[currentQuestionIdx];
+    const correct = option === current.correctAnswer;
     if (correct) {
-      setScore(prev => prev + 1);
+      scoreRef.current += 1;
+      setScore(scoreRef.current);
+
+      const saved = savedWords.find(
+        (w) => w.word.toLowerCase() === current.word.toLowerCase()
+      );
+      if (saved && saved.masteryLevel < 3) {
+        const nextLevel = Math.min(3, saved.masteryLevel + 1) as 1 | 2 | 3;
+        updateWordMastery(current.word, nextLevel);
+      }
     }
   };
 
   const handleNextQuestion = () => {
     if (currentQuestionIdx < quizQuestions.length - 1) {
-      setCurrentQuestionIdx(prev => prev + 1);
+      setCurrentQuestionIdx((prev) => prev + 1);
       setSelectedOption(null);
       setIsAnswered(false);
     } else {
-      // Quiz ended
       Alert.alert(
         'Quiz Finished!',
-        `You scored ${score} out of ${quizQuestions.length} correct answers!`,
+        `You scored ${scoreRef.current} out of ${quizQuestions.length} correct answers!`,
         [{ text: 'Close', onPress: () => setQuizActive(false) }]
       );
     }
   };
 
-  const renderSavedItem = ({ item }: { item: typeof savedWords[0] }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => handleSelectItem(item.word)}
-        style={[styles.wordCard, { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '40' }]}
-        activeOpacity={0.8}
+  const renderListHeader = () => (
+    <View style={styles.headerBlock}>
+      <Text
+        style={[
+          styles.subtitle,
+          {
+            color: themeColors.onSurfaceVariant,
+            fontSize: typography.definitionBody.fontSize * 0.85 * fontSizeMultiplier,
+          },
+        ]}
       >
-        <View style={styles.cardHeader}>
-          <View style={styles.wordHeaderLeft}>
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Text style={[styles.wordName, { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
-                  {item.word}
+        Review and manage your vocabulary collection.
+      </Text>
+
+      <GlassCard padding={spacing.gutter} borderRadius={rounded.xl * 1.5} style={styles.statsCard}>
+        <View style={styles.statsRow}>
+          <View style={styles.statBlock}>
+            <View
+              style={[
+                styles.statIcon,
+                { backgroundColor: themeColors.tertiaryContainer },
+              ]}
+            >
+              <MaterialIcons
+                name="local-fire-department"
+                size={32}
+                color={themeColors.onTertiaryContainer}
+              />
+            </View>
+            <View>
+              <Text
+                style={[
+                  styles.statLabel,
+                  {
+                    color: themeColors.onSurfaceVariant,
+                    fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                  },
+                ]}
+              >
+                Current Streak
+              </Text>
+              <View style={styles.statValueRow}>
+                <Text style={[styles.statValue, { color: themeColors.tertiary }]}>
+                  {streakCount}
                 </Text>
-                <View style={[styles.badge, { borderColor: themeColors.primary + '30', backgroundColor: themeColors.primary + '0A' }]}>
-                  <Text style={[styles.badgeText, { color: themeColors.primary, fontSize: 10 }]}>
-                    {item.partOfSpeech.substring(0, 3)}
-                  </Text>
-                </View>
+                <Text
+                  style={[
+                    styles.statUnit,
+                    { color: themeColors.tertiaryFixedDim ?? themeColors.tertiary },
+                  ]}
+                >
+                  days
+                </Text>
               </View>
-              {/* T3.2: Phonetic text */}
-              {item.phonetic ? (
-                <Text style={[styles.phoneticText, { color: themeColors.onSurfaceVariant }]}>
-                  {item.phonetic}
-                </Text>
-              ) : null}
             </View>
           </View>
-          <View style={styles.cardHeaderRight}>
-            {/* T3.1: Audio icon */}
-            <TouchableOpacity 
-              onPress={() => togglePlayPause(`https://api.dictionaryapi.dev/media/pronunciations/en/${item.word.toLowerCase()}-us.mp3`)}
-              style={styles.audioBtn}
-              activeOpacity={0.7}
+
+          <View style={[styles.statDivider, { backgroundColor: themeColors.outlineVariant + '40' }]} />
+
+          <View style={styles.statBlock}>
+            <View
+              style={[
+                styles.statIcon,
+                { backgroundColor: themeColors.primaryContainer },
+              ]}
             >
-              <MaterialIcons name="volume-up" size={20} color={themeColors.tertiary} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => removeSavedWord(item.word)} style={styles.bookmarkBtn}>
-              <MaterialIcons name="star" size={22} color="#d97706" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* T3.5: Definition with left blue bar */}
-        <View style={styles.defWithBar}>
-          <View style={[styles.defBar, { backgroundColor: themeColors.primary }]} />
-          <Text 
-            style={[styles.definitionSummary, { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }]}
-            numberOfLines={2}
-          >
-            {item.definitionSummary}
-          </Text>
-        </View>
-
-        <View style={styles.cardFooter}>
-          {/* T3.3: Added X ago timestamp */}
-          <Text style={[styles.dateText, { color: themeColors.outline }]}>
-            Added {getRelativeTime(item.timestamp)}
-          </Text>
-          {/* Mastery Indicator dots */}
-          <View style={styles.masteryDots}>
-            {[1, 2, 3].map((dot) => (
-              <View 
-                key={dot} 
-                style={[
-                  styles.masteryDot, 
-                  { 
-                    backgroundColor: dot <= item.masteryLevel 
-                      ? themeColors.secondary 
-                      : themeColors.outlineVariant 
-                  }
-                ]} 
+              <MaterialIcons
+                name="workspace-premium"
+                size={32}
+                color={themeColors.onPrimaryContainer}
               />
-            ))}
+            </View>
+            <View>
+              <Text
+                style={[
+                  styles.statLabel,
+                  {
+                    color: themeColors.onSurfaceVariant,
+                    fontSize: typography.caption.fontSize * fontSizeMultiplier,
+                  },
+                ]}
+              >
+                Words Mastered
+              </Text>
+              <View style={styles.statValueRow}>
+                <Text style={[styles.statValue, { color: themeColors.primary }]}>
+                  {wordsMastered}
+                </Text>
+                <Text
+                  style={[
+                    styles.statUnit,
+                    { color: themeColors.primaryFixedDim ?? themeColors.primary },
+                  ]}
+                >
+                  total
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
-      </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleStartQuiz}
+          style={[
+            styles.quizBtn,
+            {
+              borderColor: themeColors.outlineVariant,
+              backgroundColor: themeColors.surfaceContainerLow,
+            },
+          ]}
+          activeOpacity={0.8}
+        >
+          <MaterialIcons name="psychology" size={22} color={themeColors.onSurface} />
+          <Text
+            style={[
+              styles.quizBtnText,
+              {
+                color: themeColors.onSurface,
+                fontSize: typography.buttonText.fontSize * 0.9 * fontSizeMultiplier,
+              },
+            ]}
+          >
+            Start Quiz
+          </Text>
+        </TouchableOpacity>
+      </GlassCard>
+
+      <View style={styles.searchSection}>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onSubmit={() => {}}
+          onClear={() => setSearchQuery('')}
+          placeholder="Search saved words..."
+        />
+      </View>
+
+      <View style={styles.tabsContainer}>
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={COLLECTION_TABS}
+          keyExtractor={(tab) => tab.id}
+          contentContainerStyle={styles.tabsScroll}
+          renderItem={({ item: tab }) => {
+            const isActive = activeTab === tab.id;
+            const count = collectionCounts[tab.id];
+            return (
+              <TouchableOpacity
+                onPress={() => setActiveTab(tab.id)}
+                style={[
+                  styles.tabBtn,
+                  {
+                    backgroundColor: isActive
+                      ? themeColors.secondaryContainer
+                      : 'transparent',
+                    borderColor: isActive
+                      ? 'transparent'
+                      : themeColors.outlineVariant,
+                  },
+                ]}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.tabBtnText,
+                    {
+                      color: isActive
+                        ? themeColors.onSecondaryContainer
+                        : themeColors.onSurfaceVariant,
+                      fontSize: typography.labelCaps.fontSize * fontSizeMultiplier,
+                    },
+                  ]}
+                >
+                  {tab.label}
+                  {tab.showStar ? ' ★' : ''}
+                  {!isActive && count > 0 ? ` (${count})` : ''}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+    </View>
+  );
+
+  const renderSavedItem = ({ item }: { item: SavedWordItem }) => (
+    <SavedWordCard
+      item={item}
+      relativeTime={getRelativeTime(item.timestamp)}
+      onPress={() => handleSelectItem(item.word)}
+      onRemove={() => handleRemoveWord(item.word)}
+    />
+  );
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+        <LoadingSpinner message="Loading your collection..." />
+      </View>
     );
-  };
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: themeColors.background }]}>
-      {/* Quiz Modal */}
       <Modal
         visible={quizActive}
         animationType="slide"
-        transparent={false}
         onRequestClose={() => setQuizActive(false)}
       >
-        <SafeAreaView style={[styles.quizContainer, { backgroundColor: themeColors.background }]}>
-          <View style={styles.quizHeader}>
-            <Text style={[styles.quizHeaderTitle, { color: themeColors.primary }]}>Vocabulary Quiz</Text>
-            <TouchableOpacity onPress={() => setQuizActive(false)} style={styles.closeBtn}>
+        <View
+          style={[
+            styles.quizContainer,
+            {
+              backgroundColor: themeColors.background,
+              paddingTop: insets.top,
+              paddingBottom: insets.bottom,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.quizHeader,
+              { borderBottomColor: themeColors.outlineVariant + '40' },
+            ]}
+          >
+            <Text style={[styles.quizHeaderTitle, { color: themeColors.primary }]}>
+              Vocabulary Quiz
+            </Text>
+            <TouchableOpacity
+              onPress={() => setQuizActive(false)}
+              style={styles.closeBtn}
+              accessibilityLabel="Close quiz"
+            >
               <MaterialIcons name="close" size={24} color={themeColors.onSurface} />
             </TouchableOpacity>
           </View>
 
           {quizQuestions.length > 0 && (
             <View style={styles.quizBody}>
-              {/* Question progress */}
-              <Text style={[styles.progressIndicatorText, { color: themeColors.outline }]}>
+              <Text style={[styles.progressText, { color: themeColors.outline }]}>
                 QUESTION {currentQuestionIdx + 1} OF {quizQuestions.length}
               </Text>
 
-              {/* Question Word */}
-              <Text style={[styles.questionWord, { color: themeColors.onSurface, fontSize: 32 * fontSizeMultiplier }]}>
+              <Text
+                style={[
+                  styles.questionWord,
+                  {
+                    color: themeColors.onSurface,
+                    fontSize: 32 * fontSizeMultiplier,
+                  },
+                ]}
+              >
                 "{quizQuestions[currentQuestionIdx].word}"
               </Text>
-              
-              <Text style={[styles.questionSubtitle, { color: themeColors.onSurfaceVariant }]}>
+
+              <Text
+                style={[
+                  styles.questionSubtitle,
+                  { color: themeColors.onSurfaceVariant },
+                ]}
+              >
                 Choose the correct definition for this word:
               </Text>
 
-              {/* Options list */}
               <View style={styles.optionsContainer}>
                 {quizQuestions[currentQuestionIdx].options.map((option) => {
                   let optionBg = themeColors.surfaceContainerLowest;
                   let optionBorder = themeColors.outlineVariant + '40';
-                  
+
                   if (isAnswered) {
-                    const isCorrectOption = option === quizQuestions[currentQuestionIdx].correctAnswer;
+                    const isCorrectOption =
+                      option === quizQuestions[currentQuestionIdx].correctAnswer;
                     const isSelected = option === selectedOption;
-                    
+
                     if (isCorrectOption) {
-                      optionBg = '#dcfce7'; // green background
+                      optionBg = '#dcfce7';
                       optionBorder = '#16a34a';
                     } else if (isSelected) {
-                      optionBg = '#fee2e2'; // red background
+                      optionBg = '#fee2e2';
                       optionBorder = '#dc2626';
                     }
                   }
@@ -284,7 +483,10 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                       key={option}
                       onPress={() => handleAnswerSubmit(option)}
                       disabled={isAnswered}
-                      style={[styles.optionCard, { backgroundColor: optionBg, borderColor: optionBorder }]}
+                      style={[
+                        styles.optionCard,
+                        { backgroundColor: optionBg, borderColor: optionBorder },
+                      ]}
                       activeOpacity={0.7}
                     >
                       <Text style={[styles.optionText, { color: themeColors.onSurface }]}>
@@ -295,113 +497,54 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
                 })}
               </View>
 
-              {/* Action buttons */}
               {isAnswered && (
                 <TouchableOpacity
                   onPress={handleNextQuestion}
-                  style={[styles.nextQuestionBtn, { backgroundColor: themeColors.primary }]}
+                  style={[styles.nextBtn, { backgroundColor: themeColors.primary }]}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.nextQuestionBtnText}>
-                    {currentQuestionIdx === quizQuestions.length - 1 ? 'Show Score' : 'Next Question'}
+                  <Text style={styles.nextBtnText}>
+                    {currentQuestionIdx === quizQuestions.length - 1
+                      ? 'Show Score'
+                      : 'Next Question'}
                   </Text>
                   <MaterialIcons name="arrow-forward" size={20} color="#fff" />
                 </TouchableOpacity>
               )}
+
+              <Text style={[styles.scoreHint, { color: themeColors.outline }]}>
+                Score: {score} / {quizQuestions.length}
+              </Text>
             </View>
           )}
-        </SafeAreaView>
+        </View>
       </Modal>
 
-      {/* Main Canvas ScrollView */}
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
-        {/* Streak and stats bento */}
-        <View style={[styles.streakBento, { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '40' }]}>
-          <View style={styles.streakLeft}>
-            <View style={[styles.fireCircle, { backgroundColor: themeColors.tertiaryContainer + '20' }]}>
-              <MaterialIcons name="local-fire-department" size={28} color={themeColors.tertiary} />
-            </View>
-            <View>
-              <Text style={[styles.streakLabel, { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }]}>
-                Current Streak
-              </Text>
-              <Text style={[styles.streakCount, { color: themeColors.tertiary }]}>
-                {streakCount} <Text style={{ fontSize: 14, fontWeight: '400' }}>days</Text>
-              </Text>
-            </View>
-          </View>
-          <View style={styles.streakDivider} />
-          <View style={styles.streakRight}>
-            <TouchableOpacity 
-              onPress={handleStartQuiz}
-              style={[styles.quizBtn, { backgroundColor: themeColors.secondary }]}
-              activeOpacity={0.8}
-            >
-              <MaterialIcons name="psychology" size={20} color="#fff" />
-              <Text style={styles.quizBtnText}>Start Quiz</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Search list filtering */}
-        <View style={styles.searchSection}>
-          <SearchBar
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onSubmit={() => {}}
-            onClear={() => setSearchQuery('')}
-            placeholder="Search saved words..."
-          />
-        </View>
-
-        {/* Tabs collections grid */}
-        <View style={styles.tabsContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}>
-            {tabs.map((tab) => (
-              <TouchableOpacity
-                key={tab}
-                onPress={() => setActiveTab(tab)}
-                style={[
-                  styles.tabBtn,
-                  { 
-                    backgroundColor: activeTab === tab ? themeColors.secondaryContainer : 'transparent',
-                    borderColor: activeTab === tab ? 'transparent' : themeColors.outlineVariant 
-                  }
-                ]}
-                activeOpacity={0.7}
-              >
-                <Text style={[
-                  styles.tabBtnText,
-                  { 
-                    color: activeTab === tab ? themeColors.onSecondaryContainer : themeColors.onSurfaceVariant,
-                    fontWeight: activeTab === tab ? '600' : '500',
-                    fontSize: typography.labelCaps.fontSize * fontSizeMultiplier
-                  }
-                ]}>
-                  {tab.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Words cards grid */}
-        {filteredWords.length === 0 ? (
+      <FlatList
+        data={filteredWords}
+        renderItem={renderSavedItem}
+        keyExtractor={(item) => item.word}
+        ListHeaderComponent={renderListHeader}
+        ListEmptyComponent={
           <EmptyState
             title="Empty Collection"
-            description={searchQuery ? `No bookmarked words match "${searchQuery}".` : `Your "${activeTab}" collection is currently empty.`}
-            icon="star-border"
+            description={
+              searchQuery
+                ? `No bookmarked words match "${searchQuery}".`
+                : activeTab === 'ALL'
+                  ? 'Words you bookmark from the dictionary will appear here.'
+                  : `Your "${activeTab}" collection is currently empty.`
+            }
+            icon="bookmark-border"
           />
-        ) : (
-          <FlatList
-            data={filteredWords}
-            renderItem={renderSavedItem}
-            keyExtractor={(item) => item.word}
-            scrollEnabled={false} // Nested inside ScrollView
-            contentContainerStyle={styles.wordsGrid}
-          />
-        )}
-      </ScrollView>
+        }
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: Math.max(insets.bottom, 24) + 16 },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
@@ -410,82 +553,89 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollContainer: {
-    padding: spacing.gutter,
-    paddingBottom: 40,
+  listContent: {
+    paddingHorizontal: spacing.gutter,
+    paddingTop: spacing.stackSm,
+    flexGrow: 1,
   },
-  streakBento: {
-    flexDirection: 'row',
-    borderRadius: rounded.xl,
-    padding: 16,
-    borderWidth: 1,
-    alignItems: 'center',
+  headerBlock: {
+    marginBottom: spacing.stackSm,
+  },
+  subtitle: {
+    fontFamily: 'Inter',
+    marginBottom: spacing.stackMd,
+    lineHeight: 24,
+  },
+  statsCard: {
     marginBottom: spacing.stackLg,
-    shadowColor: '#0b1c30',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 2,
   },
-  streakLeft: {
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.stackMd,
+    gap: spacing.stackSm,
+  },
+  statBlock: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    minWidth: 0,
   },
-  fireCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
+  statIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: rounded.lg,
     alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
-  streakLabel: {
+  statLabel: {
     fontFamily: 'Inter',
     fontWeight: '500',
+    marginBottom: 2,
   },
-  streakCount: {
+  statValueRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 6,
+  },
+  statValue: {
     fontFamily: 'Inter',
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: '700',
-    marginTop: 2,
   },
-  streakDivider: {
+  statUnit: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  statDivider: {
     width: 1,
-    height: 36,
-    backgroundColor: 'rgba(119, 117, 135, 0.2)',
-    marginHorizontal: 12,
-  },
-  streakRight: {
-    justifyContent: 'center',
+    height: 48,
+    flexShrink: 0,
   },
   quizBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: rounded.lg,
-    shadowColor: '#0058be',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 2,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: rounded.xl,
+    borderWidth: 1,
   },
   quizBtnText: {
     fontFamily: 'Inter',
-    color: '#fff',
     fontWeight: '600',
-    fontSize: 14,
   },
   searchSection: {
     marginBottom: spacing.stackMd,
   },
   tabsContainer: {
-    marginBottom: spacing.stackLg,
+    marginBottom: spacing.stackMd,
   },
   tabsScroll: {
-    flexDirection: 'row',
     gap: 8,
     paddingVertical: 4,
   },
@@ -497,100 +647,9 @@ const styles = StyleSheet.create({
   },
   tabBtnText: {
     fontFamily: 'Inter',
+    fontWeight: '600',
     letterSpacing: 0.5,
   },
-  wordsGrid: {
-    gap: 12,
-  },
-  wordCard: {
-    borderWidth: 1,
-    borderRadius: rounded.xl,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#0b1c30',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  wordHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  wordName: {
-    fontFamily: 'Inter',
-    fontWeight: '700',
-  },
-  badge: {
-    borderWidth: 1,
-    borderRadius: rounded.sm,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  badgeText: {
-    fontFamily: 'Inter',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-  },
-  cardHeaderRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  bookmarkBtn: {
-    padding: 4,
-  },
-  audioBtn: {
-    padding: 4,
-    marginRight: 4,
-  },
-  phoneticText: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-    fontStyle: 'italic',
-    marginTop: 2,
-    opacity: 0.7,
-  },
-  defWithBar: {
-    flexDirection: 'row',
-    marginBottom: 12,
-  },
-  defBar: {
-    width: 2,
-    borderRadius: 99,
-    marginRight: 10,
-  },
-  definitionSummary: {
-    fontFamily: 'Inter',
-    lineHeight: 18,
-    flex: 1,
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  dateText: {
-    fontFamily: 'Inter',
-    fontSize: 12,
-  },
-  masteryDots: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  masteryDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-
-  // Quiz styling
   quizContainer: {
     flex: 1,
   },
@@ -601,7 +660,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(119, 117, 135, 0.2)',
   },
   quizHeaderTitle: {
     fontFamily: 'Inter',
@@ -609,14 +667,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   closeBtn: {
-    padding: 4,
+    padding: 8,
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   quizBody: {
     flex: 1,
     padding: spacing.containerPadding,
     justifyContent: 'center',
   },
-  progressIndicatorText: {
+  progressText: {
     fontFamily: 'Inter',
     fontSize: 12,
     fontWeight: '600',
@@ -639,35 +701,36 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     gap: 12,
-    marginBottom: 32,
+    marginBottom: 24,
   },
   optionCard: {
     borderWidth: 1,
     borderRadius: rounded.lg,
     padding: 16,
-    shadowColor: '#0b1c30',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 6,
-    elevation: 1,
   },
   optionText: {
     fontFamily: 'Inter',
     fontSize: 16,
     lineHeight: 22,
   },
-  nextQuestionBtn: {
+  nextBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
     paddingVertical: 14,
     borderRadius: rounded.xl,
+    marginBottom: 12,
   },
-  nextQuestionBtnText: {
+  nextBtnText: {
     fontFamily: 'Inter',
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
+  },
+  scoreHint: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    textAlign: 'center',
   },
 });

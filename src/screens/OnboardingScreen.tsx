@@ -84,9 +84,9 @@ export const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
   const handleGetStarted = async () => {
     try {
       await AsyncStorage.setItem(FIRST_LAUNCH_KEY, 'true');
-      navigation.replace('Main');
+      navigation.replace('Auth', { screen: 'Login' });
     } catch {
-      navigation.replace('Main');
+      navigation.replace('Auth', { screen: 'Login' });
     }
   };
 
@@ -237,7 +237,9 @@ const styles = StyleSheet.create({
   slide: {
     width: SCREEN_WIDTH,
     paddingHorizontal: spacing.containerPadding,
+    paddingVertical: spacing.stackSm,
     justifyContent: 'center',
+    overflow: 'visible',
   },
   textBlock: {
     alignItems: 'center',

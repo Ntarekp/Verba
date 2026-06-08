@@ -50,7 +50,7 @@ export function navigateToSavedTab(navigation: NavigationLike): void {
   }
 }
 
-/** Reset the root navigator back to onboarding (Settings logout). */
+/** Reset the root navigator back to onboarding. */
 export function resetToOnboarding(navigation: NavigationLike): void {
   let root: NavigationLike = navigation;
   while (root.getParent()) {
@@ -61,6 +61,21 @@ export function resetToOnboarding(navigation: NavigationLike): void {
     CommonActions.reset({
       index: 0,
       routes: [{ name: 'Onboarding' }],
+    })
+  );
+}
+
+/** Sign out and return to the auth login screen. */
+export function resetToAuth(navigation: NavigationLike): void {
+  let root: NavigationLike = navigation;
+  while (root.getParent()) {
+    root = root.getParent() as NavigationLike;
+  }
+
+  root.dispatch(
+    CommonActions.reset({
+      index: 0,
+      routes: [{ name: 'Auth', params: { screen: 'Login' } }],
     })
   );
 }

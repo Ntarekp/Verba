@@ -1,41 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
   ScrollView, 
   TouchableOpacity, 
-  FlatList,
   Alert
 } from 'react-native';
 import { useAudio } from '../context/AudioContext';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';
 import { SearchBar } from '../components/SearchBar';
+import { SearchSuggestionsPanel } from '../components/SearchSuggestionsPanel';
 import { WordCard } from '../components/WordCard';
+import { GlassCard } from '../components/GlassCard';
 import { useTheme } from '../context/ThemeContext';
 import { useSaved } from '../context/SavedContext';
 import { useHistory } from '../context/HistoryContext';
 import { DictionaryStackParamList } from '../navigation/AppNavigator';
+import { filterSuggestions } from '../data/suggestionBank';
 import { rounded, spacing, typography } from '../styles/theme';
-import { useDebounce } from '../hooks/useDebounce';
 
 type Props = NativeStackScreenProps<DictionaryStackParamList, 'Discover'>;
 
-// Preset list for live search suggestions overlay
-const SUGGESTIONS_BANK = [
-  'ephemeral', 'ethereal', 'ubiquitous', 'mellifluous', 
-  'enigma', 'resilience', 'empathy', 'paradigm', 'sycophant',
-  'solitude', 'serendipity', 'eloquent', 'audacious'
-];
-
-// POS lookup for suggestion bank words (for badge display)
-const SUGGESTION_POS: Record<string, string> = {
-  ephemeral: 'Adj', ethereal: 'Adj', ubiquitous: 'Adj',
-  mellifluous: 'Adj', eloquent: 'Adj', audacious: 'Adj',
-  enigma: 'Noun', resilience: 'Noun', empathy: 'Noun',
-  paradigm: 'Noun', sycophant: 'Noun', solitude: 'Noun',
-  serendipity: 'Noun',
+const getRelativeTime = (ts: number) => {
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return 'Yesterday';
+  return `${days}d ago`;
 };
 
 export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
@@ -50,8 +47,13 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
   } = useAudio();
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const debouncedQuery = useDebounce(searchQuery, 200);
+
+  const suggestions = useMemo(
+    () => filterSuggestions(searchQuery),
+    [searchQuery]
+  );
+
+  const showSuggestions = searchQuery.trim().length > 0 && suggestions.length > 0;
 
   // Hardcoded Word of the Day
   const wordOfDay = {
@@ -65,19 +67,6 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
 
   const isWodSaved = savedWords.some(w => w.word.toLowerCase() === wordOfDay.word.toLowerCase());
 
-  // Handle live suggestions
-  useEffect(() => {
-    if (debouncedQuery.trim().length > 0) {
-      const filtered = SUGGESTIONS_BANK.filter(word => 
-        word.toLowerCase().startsWith(debouncedQuery.trim().toLowerCase()) &&
-        word.toLowerCase() !== debouncedQuery.trim().toLowerCase()
-      );
-      setSuggestions(filtered);
-    } else {
-      setSuggestions([]);
-    }
-  }, [debouncedQuery]);
-
   const handleSearchSubmit = (wordToSearch?: string) => {
     const targetWord = wordToSearch || searchQuery;
     if (!targetWord.trim()) {
@@ -85,7 +74,6 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
     setSearchQuery('');
-    setSuggestions([]);
     navigation.navigate('WordDetails', { word: targetWord.trim() });
   };
 
@@ -98,7 +86,9 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
         wordOfDay.phonetic,
         wordOfDay.partOfSpeech,
         wordOfDay.definition,
-        'Favorites'
+        'Favorites',
+        wordOfDay.audioUrl,
+        wordOfDay.example
       );
     }
   };
@@ -113,51 +103,65 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
             onChangeText={setSearchQuery}
             onSubmit={() => handleSearchSubmit()}
             onClear={() => setSearchQuery('')}
-            placeholder="Search millions of words"
+            placeholder="Search the dictionary..."
           />
+          <SearchSuggestionsPanel
+            query={searchQuery}
+            suggestions={suggestions}
+            visible={showSuggestions}
+            onSelect={(word) => handleSearchSubmit(word)}
+          />
+        </View>
 
-          {suggestions.length > 0 && (
-            <View
+        {history.length > 0 && !showSuggestions && (
+          <View style={styles.section}>
+            <Text
               style={[
-                styles.suggestionsPanel,
+                styles.recentLabel,
                 {
-                  backgroundColor: themeColors.surfaceContainerLowest,
-                  borderColor: themeColors.outlineVariant + '60',
+                  color: themeColors.outline,
+                  fontSize: typography.labelCaps.fontSize * fontSizeMultiplier,
                 },
               ]}
             >
-              {suggestions.map((item, idx) => {
-                const query = debouncedQuery.trim().toLowerCase();
-                const matchLen = query.length;
-                const boldPart = item.slice(0, matchLen);
-                const restPart = item.slice(matchLen);
-                const pos = SUGGESTION_POS[item.toLowerCase()] || '';
-                return (
-                  <TouchableOpacity
-                    key={item}
-                    style={[
-                      styles.suggestionRow,
-                      { borderBottomColor: idx < suggestions.length - 1 ? themeColors.outlineVariant + '20' : 'transparent' }
-                    ]}
-                    onPress={() => handleSearchSubmit(item)}
-                    activeOpacity={0.7}
-                  >
-                    <MaterialIcons name="search" size={18} color={themeColors.outline} />
-                    <Text style={[styles.suggestionText, { color: themeColors.onSurface, fontSize: 16 * fontSizeMultiplier }]}>
-                      <Text style={{ fontWeight: '700', color: themeColors.primary }}>{boldPart}</Text>
-                      {restPart}
-                    </Text>
-                    {pos ? (
-                      <View style={[styles.posBadge, { backgroundColor: themeColors.primaryContainer + '30' }]}>
-                        <Text style={[styles.posBadgeText, { color: themeColors.primary }]}>{pos}</Text>
+              RECENT LOOKUPS
+            </Text>
+            <View style={styles.recentGrid}>
+              {history.slice(0, 4).map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => handleSearchSubmit(item.word)}
+                  activeOpacity={0.8}
+                >
+                  <GlassCard padding={spacing.gutter} borderRadius={rounded.xl}>
+                    <View style={styles.recentRow}>
+                      <View style={styles.recentLeft}>
+                        <MaterialIcons name="history" size={20} color={themeColors.outlineVariant} />
+                        <View>
+                          <Text
+                            style={[
+                              styles.recentWord,
+                              {
+                                color: themeColors.onSurface,
+                                fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                              },
+                            ]}
+                          >
+                            {item.word.charAt(0).toUpperCase() + item.word.slice(1)}
+                          </Text>
+                          <Text style={[styles.recentTime, { color: themeColors.outline }]}>
+                            {getRelativeTime(item.timestamp)}
+                          </Text>
+                        </View>
                       </View>
-                    ) : null}
-                  </TouchableOpacity>
-                );
-              })}
+                      <MaterialIcons name="arrow-forward" size={18} color={themeColors.outline} />
+                    </View>
+                  </GlassCard>
+                </TouchableOpacity>
+              ))}
             </View>
-          )}
-        </View>
+          </View>
+        )}
 
         {/* Word of the Day Hero card */}
         <WordCard
@@ -221,33 +225,6 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
             <MaterialIcons name="local-fire-department" size={44} color={themeColors.tertiary} style={styles.streakIcon} />
           </View>
         </View>
-
-        {/* Recent searches row */}
-        {history.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[
-              styles.sectionHeader, 
-              { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
-            ]}>
-              Recent Searches
-            </Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsContainer}>
-              {history.slice(0, 5).map((item) => (
-                <TouchableOpacity
-                  key={item.id}
-                  onPress={() => handleSearchSubmit(item.word)}
-                  style={[styles.chip, { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '60' }]}
-                  activeOpacity={0.7}
-                >
-                  <MaterialIcons name="history" size={14} color={themeColors.outline} />
-                  <Text style={[styles.chipText, { color: themeColors.onSurface, fontSize: typography.caption.fontSize * fontSizeMultiplier }]}>
-                    {item.word}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        )}
 
         {/* Trending Words list */}
         <View style={styles.section}>
@@ -320,46 +297,38 @@ const styles = StyleSheet.create({
   },
   searchSection: {
     position: 'relative',
-    zIndex: 10,
+    zIndex: 50,
     marginBottom: spacing.stackLg,
   },
-  suggestionsPanel: {
-    marginTop: spacing.stackSm,
-    borderRadius: rounded.lg,
-    borderWidth: 1,
-    shadowColor: '#0b1c30',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 5,
-    paddingVertical: 4,
-    overflow: 'hidden',
+  recentLabel: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
+    letterSpacing: 0.8,
+    marginBottom: spacing.stackMd,
+    paddingHorizontal: 4,
   },
-  suggestionRow: {
+  recentGrid: {
+    gap: spacing.stackSm,
+  },
+  recentRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
+    justifyContent: 'space-between',
   },
-  suggestionText: {
+  recentLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
     flex: 1,
-    minWidth: 0,
-    fontFamily: 'Inter',
-    fontWeight: '500',
-    marginLeft: 12,
   },
-  posBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: rounded.sm,
-    marginLeft: 8,
-  },
-  posBadgeText: {
+  recentWord: {
     fontFamily: 'Inter',
-    fontSize: 11,
     fontWeight: '600',
-    letterSpacing: 0.3,
+  },
+  recentTime: {
+    fontFamily: 'Inter',
+    fontSize: 12,
+    marginTop: 2,
   },
   bentoGrid: {
     flexDirection: 'row',
@@ -414,6 +383,8 @@ const styles = StyleSheet.create({
   },
   streakTextContainer: {
     flex: 1,
+    minWidth: 0,
+    paddingRight: 4,
   },
   streakNumber: {
     fontFamily: 'Inter',
@@ -423,7 +394,8 @@ const styles = StyleSheet.create({
   },
   streakIcon: {
     opacity: 0.9,
-    marginLeft: 8,
+    marginLeft: 4,
+    flexShrink: 0,
   },
   section: {
     marginBottom: spacing.stackLg,

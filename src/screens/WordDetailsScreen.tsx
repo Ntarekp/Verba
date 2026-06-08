@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -16,9 +17,9 @@ import { DictionaryStackParamList } from '../navigation/AppNavigator';
 import { navigateToSavedTab } from '../navigation/navigationHelpers';
 import { lookupWord } from '../services/dictionaryService';
 import { DictionaryEntry, Phonetic } from '../models/DictionaryTypes';
-import { WordCard } from '../components/WordCard';
-import { MeaningCard } from '../components/MeaningCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { GlassCard } from '../components/GlassCard';
+import { PronunciationButton } from '../components/PronunciationButton';
 import { ErrorView, ErrorViewType } from '../components/ErrorView';
 import { useTheme } from '../context/ThemeContext';
 import { useSaved } from '../context/SavedContext';
@@ -29,6 +30,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { rounded, spacing, typography } from '../styles/theme';
 
 type Props = NativeStackScreenProps<DictionaryStackParamList, 'WordDetails'>;
+
+const DEFAULT_HERO_IMAGE =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAZQL3vR2NpgAGUqV4erNAttdcBhvrO6c6crNnRl4vYigntwZn-Lf24qCaqB6Xvcxy6_BlDsxnhlrzyQYubcdGQgctTqVjKYm9VPMwOr4sDbu5rWRCQKbGfil6Ravjv3CmP8M6MMkgZVkJhu3hpXHWPhX_BiiWLRymbDHSEgvgbbKVz_PAxhuH3lFDB3cKfU8r_Vsm6DTD8MIHkmuRmE7Z0alox3SmEwgXZFn1AIqeMoXEZhoV1a6ORP6JxilRcZmAWYT043hCEAQ';
+
+const formatPartOfSpeech = (pos: string) =>
+  pos ? pos.charAt(0).toUpperCase() + pos.slice(1) : 'Noun';
 
 // Derive a human-readable accent label from the audio URL
 const getAccentLabel = (phonetic: Phonetic): string => {
@@ -187,7 +194,19 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       const primaryMeaning = entry.meanings[0];
       const partOfSpeech = primaryMeaning?.partOfSpeech || 'noun';
       const summary = primaryMeaning?.definitions[0]?.definition || '';
-      addSavedWord(entry.word, entry.phonetic, partOfSpeech, summary, 'Favorites');
+      const audioUrl =
+        entry.phonetics.find((p) => p.audio?.trim())?.audio ??
+        availablePhonetics[0]?.audio;
+      const exampleSentence = primaryMeaning?.definitions[0]?.example;
+      addSavedWord(
+        entry.word,
+        entry.phonetic,
+        partOfSpeech,
+        summary,
+        'Favorites',
+        audioUrl,
+        exampleSentence
+      );
     }
   };
 
@@ -248,6 +267,35 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   // Determine if the currently-playing URL matches the selected phonetic
   const isCurrentlySelected = currentUrl === activeAudioUrl;
 
+  const primaryPos = entry.meanings[0]?.partOfSpeech || 'noun';
+  const displayPhonetic =
+    entry.phonetic ||
+    availablePhonetics[selectedPhoneticIndex]?.text ||
+    entry.phonetics.find((p) => p.text)?.text ||
+    '';
+
+  const allDefinitions = entry.meanings.flatMap((meaning) =>
+    meaning.definitions.map((def) => ({ ...def, partOfSpeech: meaning.partOfSpeech }))
+  );
+
+  const synonyms = Array.from(
+    new Set(
+      entry.meanings.flatMap((m) => [
+        ...(m.synonyms || []),
+        ...m.definitions.flatMap((d) => d.synonyms || []),
+      ])
+    )
+  ).slice(0, 8);
+
+  const antonyms = Array.from(
+    new Set(
+      entry.meanings.flatMap((m) => [
+        ...(m.antonyms || []),
+        ...m.definitions.flatMap((d) => d.antonyms || []),
+      ])
+    )
+  ).slice(0, 8);
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -283,24 +331,71 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* Main Word Header Card */}
-          <WordCard
-            word={entry.word}
-            phonetic={entry.phonetic}
-            partOfSpeech={entry.meanings[0]?.partOfSpeech || 'noun'}
-            audioUrl={activeAudioUrl}
-            isSaved={isSaved}
-            onPlay={handlePlayAudio}
-            onToggleSave={handleToggleSave}
-            savedCollection={savedItem?.collection}
-            isAudioPlaying={isAudioPlaying && isCurrentlySelected}
-            isAudioPaused={isAudioPaused && isCurrentlySelected}
-            isAudioLoading={isAudioLoading && isCurrentlySelected}
-          />
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: Math.max(insets.bottom, 24) + 24 },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.wordHeader}>
+            <Text
+              style={[
+                styles.displayWord,
+                {
+                  color: themeColors.primary,
+                  fontSize: typography.displayWord.fontSize * 0.85 * fontSizeMultiplier,
+                },
+              ]}
+            >
+              {entry.word.charAt(0).toUpperCase() + entry.word.slice(1)}
+            </Text>
 
-          {/* Activity 3, Req 5: Accent Selector — shown only when multiple pronunciations exist */}
-          {availablePhonetics.length > 1 && (
+            <View style={styles.phoneticRow}>
+              {displayPhonetic ? (
+                <Text style={[styles.phoneticText, { color: themeColors.onSurfaceVariant }]}>
+                  {displayPhonetic}
+                </Text>
+              ) : null}
+              <PronunciationButton
+                audioUrl={activeAudioUrl}
+                onPress={handlePlayAudio}
+                isPlaying={isAudioPlaying && isCurrentlySelected}
+                isPaused={isAudioPaused && isCurrentlySelected}
+                isLoading={isAudioLoading && isCurrentlySelected}
+                size={40}
+              />
+            </View>
+
+            <View style={styles.posSaveRow}>
+              <View
+                style={[
+                  styles.posPill,
+                  { borderColor: themeColors.primary, backgroundColor: themeColors.primary + '08' },
+                ]}
+              >
+                <Text style={[styles.posPillText, { color: themeColors.primary }]}>
+                  {formatPartOfSpeech(primaryPos)}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={handleToggleSave}
+                style={styles.saveBtn}
+                accessibilityLabel={isSaved ? 'Remove bookmark' : 'Save word'}
+              >
+                <MaterialIcons
+                  name={isSaved ? 'bookmark' : 'bookmark-border'}
+                  size={22}
+                  color={isSaved ? themeColors.secondary : themeColors.onSurfaceVariant}
+                />
+                <Text style={[styles.saveBtnText, { color: themeColors.onSurfaceVariant }]}>
+                  {isSaved ? 'Saved' : 'Save'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {availablePhonetics.length > 1 ? (
             <View style={styles.accentSection}>
               <Text
                 style={[
@@ -333,9 +428,6 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                         },
                       ]}
                       activeOpacity={0.7}
-                      accessibilityLabel={`Select ${accentLabel} pronunciation`}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: isSelected }}
                     >
                       <Text
                         style={[
@@ -345,7 +437,6 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                               ? themeColors.onSecondaryContainer
                               : themeColors.onSurfaceVariant,
                             fontWeight: isSelected ? '600' : '500',
-                            fontSize: typography.caption.fontSize * fontSizeMultiplier,
                           },
                         ]}
                       >
@@ -356,27 +447,78 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                 })}
               </View>
             </View>
-          )}
+          ) : null}
 
-          {/* Word Origin Card (Etymology) */}
-          {entry.origin ? (
+          <View style={styles.heroImageWrap}>
+            <Image
+              source={{ uri: DEFAULT_HERO_IMAGE }}
+              style={styles.heroImage}
+              resizeMode="cover"
+              accessibilityIgnoresInvertColors
+            />
             <View
               style={[
-                styles.originCard,
-                {
-                  backgroundColor: themeColors.surfaceContainerLowest,
-                  borderColor: themeColors.outlineVariant + '30',
-                },
+                styles.heroGradient,
+                { backgroundColor: themeColors.background + '00' },
               ]}
-            >
+            />
+            <View
+              style={[
+                styles.heroGradientBottom,
+                { backgroundColor: themeColors.background + 'E6' },
+              ]}
+            />
+          </View>
+
+          <View
+            style={[
+              styles.definitionsBlock,
+              { borderLeftColor: themeColors.primary },
+            ]}
+          >
+            {allDefinitions.map((def, idx) => (
+              <View key={idx} style={styles.definitionItem}>
+                <Text
+                  style={[
+                    styles.definitionText,
+                    {
+                      color: themeColors.onBackground,
+                      fontSize: typography.definitionBody.fontSize * fontSizeMultiplier,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.defNumber, { color: themeColors.primary }]}>
+                    {idx + 1}.{' '}
+                  </Text>
+                  {def.definition}
+                </Text>
+                {def.example ? (
+                  <Text
+                    style={[
+                      styles.exampleText,
+                      {
+                        color: themeColors.onSurfaceVariant,
+                        fontSize: typography.definitionBody.fontSize * 0.9 * fontSizeMultiplier,
+                      },
+                    ]}
+                  >
+                    "{def.example}"
+                  </Text>
+                ) : null}
+              </View>
+            ))}
+          </View>
+
+          {entry.origin ? (
+            <GlassCard style={styles.originCard} padding={spacing.containerPadding}>
               <View style={styles.originHeader}>
-                <MaterialIcons name="history-edu" size={20} color={themeColors.secondary} />
+                <MaterialIcons name="history-edu" size={22} color={themeColors.secondary} />
                 <Text
                   style={[
                     styles.originTitle,
                     {
                       color: themeColors.secondary,
-                      fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                      fontSize: typography.sectionHeading.fontSize * 0.55 * fontSizeMultiplier,
                     },
                   ]}
                 >
@@ -394,19 +536,60 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
               >
                 {entry.origin}
               </Text>
-            </View>
+            </GlassCard>
           ) : null}
 
-          {/* Meanings — all parts of speech with definitions (Activity 2) */}
-          {entry.meanings.map((meaning, idx) => (
-            <MeaningCard
-              key={idx}
-              meaning={meaning}
-              onSelectWord={handleSelectRelatedWord}
-            />
-          ))}
+          {(synonyms.length > 0 || antonyms.length > 0) && (
+            <View style={styles.thesaurusGrid}>
+              {synonyms.length > 0 ? (
+                <GlassCard style={styles.thesaurusCard} padding={spacing.stackMd}>
+                  <Text style={[styles.thesaurusLabel, { color: themeColors.onSurfaceVariant }]}>
+                    Synonyms
+                  </Text>
+                  <View style={styles.chipRow}>
+                    {synonyms.map((syn) => (
+                      <TouchableOpacity
+                        key={syn}
+                        onPress={() => handleSelectRelatedWord(syn)}
+                        style={[
+                          styles.thesaurusChip,
+                          { backgroundColor: themeColors.surfaceContainer },
+                        ]}
+                      >
+                        <Text style={[styles.chipText, { color: themeColors.onSurface }]}>
+                          {syn}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </GlassCard>
+              ) : null}
+              {antonyms.length > 0 ? (
+                <GlassCard style={styles.thesaurusCard} padding={spacing.stackMd}>
+                  <Text style={[styles.thesaurusLabel, { color: themeColors.onSurfaceVariant }]}>
+                    Antonyms
+                  </Text>
+                  <View style={styles.chipRow}>
+                    {antonyms.map((ant) => (
+                      <TouchableOpacity
+                        key={ant}
+                        onPress={() => handleSelectRelatedWord(ant)}
+                        style={[
+                          styles.thesaurusChip,
+                          { backgroundColor: themeColors.surfaceContainer },
+                        ]}
+                      >
+                        <Text style={[styles.chipText, { color: themeColors.onSurface }]}>
+                          {ant}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </GlassCard>
+              ) : null}
+            </View>
+          )}
 
-          {/* Learning Notes Section */}
           <View style={styles.notesSection}>
             <View style={styles.notesHeader}>
               <MaterialIcons name="edit-note" size={24} color={themeColors.primary} />
@@ -415,38 +598,36 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                   styles.notesTitle,
                   {
                     color: themeColors.onSurface,
-                    fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
+                    fontSize: typography.sectionHeading.fontSize * 0.55 * fontSizeMultiplier,
                   },
                 ]}
               >
                 Learning Notes
               </Text>
             </View>
-            <TextInput
-              style={[
-                styles.notesInput,
-                {
-                  backgroundColor: themeColors.surfaceContainerLowest,
-                  borderColor: themeColors.outlineVariant + '50',
-                  color: themeColors.onSurface,
-                  fontSize: 16 * fontSizeMultiplier,
-                },
-              ]}
-              multiline
-              numberOfLines={4}
-              placeholder="Add your personal notes or mnemonic devices here..."
-              placeholderTextColor={`${themeColors.outline}A0`}
-              value={noteText}
-              onChangeText={setNoteText}
-              accessibilityLabel="Learning notes input"
-            />
+            <GlassCard padding={spacing.stackMd} borderRadius={rounded.xl}>
+              <TextInput
+                style={[
+                  styles.notesInput,
+                  {
+                    color: themeColors.onSurface,
+                    fontSize: typography.definitionBody.fontSize * 0.9 * fontSizeMultiplier,
+                  },
+                ]}
+                multiline
+                numberOfLines={4}
+                placeholder="Add your personal notes or mnemonic devices here..."
+                placeholderTextColor={`${themeColors.outline}A0`}
+                value={noteText}
+                onChangeText={setNoteText}
+                accessibilityLabel="Learning notes input"
+              />
+            </GlassCard>
             <View style={styles.notesActions}>
               <TouchableOpacity
                 onPress={handleSaveNotes}
                 style={[styles.saveNoteBtn, { backgroundColor: themeColors.secondary }]}
                 activeOpacity={0.8}
-                accessibilityLabel="Save learning notes"
-                accessibilityRole="button"
               >
                 <Text
                   style={[
@@ -494,13 +675,110 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   scrollContent: {
-    padding: spacing.gutter,
-    paddingBottom: 40,
+    padding: spacing.containerPadding,
   },
-  // Activity 3 Req 5 — Accent selector
+  wordHeader: {
+    alignItems: 'center',
+    marginBottom: spacing.stackLg,
+  },
+  displayWord: {
+    fontFamily: 'Inter',
+    fontWeight: '700',
+    letterSpacing: -1,
+    textAlign: 'center',
+    marginBottom: spacing.stackSm,
+  },
+  phoneticRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: spacing.stackMd,
+  },
+  phoneticText: {
+    fontFamily: 'Inter',
+    fontSize: typography.caption.fontSize,
+    fontStyle: 'italic',
+  },
+  posSaveRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.stackMd,
+  },
+  posPill: {
+    borderWidth: 1,
+    borderRadius: rounded.full,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+  },
+  posPillText: {
+    fontFamily: 'Inter',
+    fontSize: typography.labelCaps.fontSize,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  saveBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    padding: 8,
+  },
+  saveBtnText: {
+    fontFamily: 'Inter',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  heroImageWrap: {
+    width: '100%',
+    height: 220,
+    borderRadius: rounded.xl,
+    overflow: 'hidden',
+    marginBottom: spacing.stackLg,
+    shadowColor: '#4f46e5',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 24,
+    elevation: 4,
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+  },
+  heroGradient: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  heroGradientBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '45%',
+  },
+  definitionsBlock: {
+    borderLeftWidth: 2,
+    paddingLeft: spacing.stackMd,
+    marginBottom: spacing.stackLg,
+    gap: spacing.stackMd,
+  },
+  definitionItem: {
+    gap: 6,
+  },
+  definitionText: {
+    fontFamily: 'Inter',
+    lineHeight: 28,
+  },
+  defNumber: {
+    fontWeight: '700',
+  },
+  exampleText: {
+    fontFamily: 'Inter',
+    fontStyle: 'italic',
+    paddingLeft: 20,
+    lineHeight: 26,
+    opacity: 0.85,
+  },
   accentSection: {
     marginBottom: spacing.stackLg,
-    marginTop: spacing.stackSm,
   },
   accentLabel: {
     fontFamily: 'Inter',
@@ -527,17 +805,40 @@ const styles = StyleSheet.create({
   accentChipText: {
     fontFamily: 'Inter',
   },
-  // Word Origin
   originCard: {
-    borderRadius: rounded.xl,
-    padding: spacing.gutter,
-    borderWidth: 1,
     marginBottom: spacing.stackLg,
-    shadowColor: '#0b1c30',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.02,
-    shadowRadius: 8,
-    elevation: 1,
+  },
+  thesaurusGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.stackMd,
+    marginBottom: spacing.stackLg,
+  },
+  thesaurusCard: {
+    flex: 1,
+    minWidth: 150,
+  },
+  thesaurusLabel: {
+    fontFamily: 'Inter',
+    fontSize: typography.labelCaps.fontSize,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  thesaurusChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: rounded.default,
+  },
+  chipText: {
+    fontFamily: 'Inter',
+    fontSize: typography.caption.fontSize,
   },
   originHeader: {
     flexDirection: 'row',
@@ -569,12 +870,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   notesInput: {
-    borderWidth: 1,
-    borderRadius: rounded.lg,
-    padding: 12,
     textAlignVertical: 'top',
     minHeight: 100,
     fontFamily: 'Inter',
+    padding: 0,
   },
   notesActions: {
     alignItems: 'flex-end',

@@ -10,6 +10,8 @@ interface PronunciationButtonProps {
   isPaused?: boolean;
   isLoading?: boolean;
   size?: number;
+  /** Allow interaction even when audioUrl is missing (e.g. lazy lookup). */
+  forceEnabled?: boolean;
 }
 
 const MIN_TOUCH = 44;
@@ -21,12 +23,13 @@ export const PronunciationButton: React.FC<PronunciationButtonProps> = ({
   isPaused = false,
   isLoading = false,
   size = 48,
+  forceEnabled = false,
 }) => {
   const { themeColors } = useTheme();
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const pulseRef = useRef<Animated.CompositeAnimation | null>(null);
 
-  const isDisabled = !audioUrl;
+  const isDisabled = !forceEnabled && !audioUrl;
   const slotSize = Math.max(size * 1.35, MIN_TOUCH + 8);
 
   useEffect(() => {

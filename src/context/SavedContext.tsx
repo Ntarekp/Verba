@@ -5,11 +5,13 @@ import { SavedWordItem } from '../models/DictionaryTypes';
 interface SavedContextProps {
   savedWords: SavedWordItem[];
   addSavedWord: (
-    word: string, 
-    phonetic: string, 
-    partOfSpeech: string, 
-    definitionSummary: string, 
-    collection?: 'Favorites' | 'Academic' | 'Travel'
+    word: string,
+    phonetic: string,
+    partOfSpeech: string,
+    definitionSummary: string,
+    collection?: 'Favorites' | 'Academic' | 'Travel',
+    audioUrl?: string,
+    exampleSentence?: string
   ) => Promise<void>;
   removeSavedWord: (word: string) => Promise<void>;
   updateWordNotes: (word: string, notes: string) => Promise<void>;
@@ -89,11 +91,13 @@ export const SavedProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const addSavedWord = async (
-    word: string, 
-    phonetic: string, 
-    partOfSpeech: string, 
+    word: string,
+    phonetic: string,
+    partOfSpeech: string,
     definitionSummary: string,
-    collection: 'Favorites' | 'Academic' | 'Travel' = 'Favorites'
+    collection: 'Favorites' | 'Academic' | 'Travel' = 'Favorites',
+    audioUrl?: string,
+    exampleSentence?: string
   ) => {
     try {
       const alreadySaved = savedWords.find(
@@ -109,8 +113,10 @@ export const SavedProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         definitionSummary,
         timestamp: Date.now(),
         collection,
-        masteryLevel: 1, // Start at mastery level 1
+        masteryLevel: 1,
         learningNotes: '',
+        audioUrl,
+        exampleSentence,
       };
 
       const updated = [newItem, ...savedWords];

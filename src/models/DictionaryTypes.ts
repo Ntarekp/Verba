@@ -44,4 +44,6 @@ export interface SavedWordItem {
   collection: 'Favorites' | 'Academic' | 'Travel';
   masteryLevel: 1 | 2 | 3;
   learningNotes?: string;
+  audioUrl?: string;
+  exampleSentence?: string;
 }

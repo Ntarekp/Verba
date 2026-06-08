@@ -13,8 +13,12 @@ import { HistoryScreen } from '../screens/HistoryScreen';
 import { SavedWordsScreen } from '../screens/SavedWordsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { SplashScreen } from '../screens/SplashScreen';
+import { LoginScreen } from '../screens/auth/LoginScreen';
+import { SignUpScreen } from '../screens/auth/SignUpScreen';
+import { ForgotPasswordScreen } from '../screens/auth/ForgotPasswordScreen';
 import { VerbaTabBar } from '../components/VerbaTabBar';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 export type DictionaryStackParamList = {
   Discover: undefined;
@@ -28,16 +32,34 @@ export type MainTabParamList = {
   Saved: undefined;
 };
 
+export type AuthStackParamList = {
+  Login: undefined;
+  SignUp: undefined;
+  ForgotPassword: undefined;
+};
+
 export type RootStackParamList = {
   Onboarding: undefined;
+  Auth: NavigatorScreenParams<AuthStackParamList>;
   Main: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
+const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const DictionaryStack = createNativeStackNavigator<DictionaryStackParamList>();
 
 const FIRST_LAUNCH_KEY = 'verba_first_launch_done';
+
+function AuthStackNavigator() {
+  return (
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+      <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+    </AuthStack.Navigator>
+  );
+}
 
 function DictionaryStackNavigator() {
   const { themeColors } = useTheme();
@@ -102,10 +124,7 @@ function MainTabNavigator() {
         headerShown: false,
       }}
     >
-      <Tab.Screen
-        name="Dictionary"
-        component={DictionaryStackNavigator}
-      />
+      <Tab.Screen name="Dictionary" component={DictionaryStackNavigator} />
       <Tab.Screen
         name="History"
         component={HistoryScreen}
@@ -140,34 +159,45 @@ function MainTabNavigator() {
   );
 }
 
+type BootstrapRoute = keyof RootStackParamList | null;
+
 export const AppNavigator = () => {
-  const [initialRoute, setInitialRoute] = useState<'Onboarding' | 'Main' | null>(null);
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const [bootstrapRoute, setBootstrapRoute] = useState<BootstrapRoute>(null);
 
   useEffect(() => {
-    const checkFirstLaunch = async () => {
+    const resolveInitialRoute = async () => {
       try {
-        const value = await AsyncStorage.getItem(FIRST_LAUNCH_KEY);
-        setInitialRoute(value === 'true' ? 'Main' : 'Onboarding');
+        const onboardingDone = await AsyncStorage.getItem(FIRST_LAUNCH_KEY);
+        if (onboardingDone !== 'true') {
+          setBootstrapRoute('Onboarding');
+          return;
+        }
+        setBootstrapRoute(isAuthenticated ? 'Main' : 'Auth');
       } catch {
-        setInitialRoute('Main');
+        setBootstrapRoute(isAuthenticated ? 'Main' : 'Auth');
       }
     };
-    checkFirstLaunch();
-  }, []);
 
-  if (initialRoute === null) {
+    if (!authLoading) {
+      resolveInitialRoute();
+    }
+  }, [authLoading, isAuthenticated]);
+
+  if (authLoading || bootstrapRoute === null) {
     return <SplashScreen />;
   }
 
   return (
     <RootStack.Navigator
-      initialRouteName={initialRoute}
+      initialRouteName={bootstrapRoute}
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
       }}
     >
       <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
+      <RootStack.Screen name="Auth" component={AuthStackNavigator} />
       <RootStack.Screen name="Main" component={MainTabNavigator} />
     </RootStack.Navigator>
   );

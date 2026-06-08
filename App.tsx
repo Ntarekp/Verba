@@ -13,6 +13,7 @@ import {
 } from '@expo-google-fonts/inter';
 
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import { AuthProvider } from './src/context/AuthContext';
 import { HistoryProvider } from './src/context/HistoryContext';
 import { SavedProvider } from './src/context/SavedContext';
 import { AudioProvider } from './src/context/AudioContext';
@@ -55,13 +56,15 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider>
-      <AudioProvider>
-        <HistoryProvider>
-          <SavedProvider>
-            <AppContent />
-          </SavedProvider>
-        </HistoryProvider>
-      </AudioProvider>
+      <AuthProvider>
+        <AudioProvider>
+          <HistoryProvider>
+            <SavedProvider>
+              <AppContent />
+            </SavedProvider>
+          </HistoryProvider>
+        </AudioProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
