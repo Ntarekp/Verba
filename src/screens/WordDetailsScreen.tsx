@@ -26,8 +26,10 @@ import { useSaved } from '../context/SavedContext';
 import { useHistory } from '../context/HistoryContext';
 import { useAudio } from '../context/AudioContext';
 import { getAutoplayEnabled } from '../utils/settingsHelper';
+import { getAccentLabel, getValidPhonetics } from '../utils/pronunciationHelpers';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { rounded, spacing, typography } from '../styles/theme';
+import { CollectionPicker, CollectionType } from '../components/CollectionPicker';
 
 type Props = NativeStackScreenProps<DictionaryStackParamList, 'WordDetails'>;
 
@@ -36,15 +38,6 @@ const DEFAULT_HERO_IMAGE =
 
 const formatPartOfSpeech = (pos: string) =>
   pos ? pos.charAt(0).toUpperCase() + pos.slice(1) : 'Noun';
-
-// Derive a human-readable accent label from the audio URL
-const getAccentLabel = (phonetic: Phonetic): string => {
-  const url = phonetic.audio?.toLowerCase() || '';
-  if (url.includes('-us') || url.includes('_us') || url.includes('/en-us')) return '🇺🇸 American';
-  if (url.includes('-uk') || url.includes('_uk') || url.includes('/en-gb')) return '🇬🇧 British';
-  if (url.includes('-au') || url.includes('_au')) return '🇦🇺 Australian';
-  return phonetic.text ? phonetic.text : '🔊 Standard';
-};
 
 export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const { word: initialWord } = route.params;
@@ -72,6 +65,7 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   // Activity 3, Req 5: track all available audio phonetics + which one is selected
   const [availablePhonetics, setAvailablePhonetics] = useState<Phonetic[]>([]);
   const [selectedPhoneticIndex, setSelectedPhoneticIndex] = useState<number>(0);
+  const [collectionPickerVisible, setCollectionPickerVisible] = useState(false);
 
   const savedItem = savedWords.find(w => w.word.toLowerCase() === word.toLowerCase());
   const isSaved = !!savedItem;
@@ -87,9 +81,7 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       setEntry(data);
 
       // Extract all phonetics that have valid audio URLs (Activity 3, Req 1 & 5)
-      const validPhonetics = data.phonetics.filter(
-        p => p.audio && p.audio.trim().length > 0
-      );
+      const validPhonetics = getValidPhonetics(data);
       setAvailablePhonetics(validPhonetics);
 
       // Activity 3 + Settings: autoplay first pronunciation when enabled
@@ -113,6 +105,11 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       addHistoryWord(data.word, partOfSpeech, summary);
     } catch (e: any) {
       console.error(e);
+      if (e.message === 'INVALID_QUERY') {
+        Alert.alert('Invalid Search', 'Please enter a valid word (letters and hyphens only).');
+        navigation.goBack();
+        return;
+      }
       if (e.message === 'WORD_NOT_FOUND') {
         setErrorType('404');
       } else if (e.message === 'NETWORK_OFFLINE') {
@@ -191,23 +188,28 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     if (isSaved) {
       removeSavedWord(entry.word);
     } else {
-      const primaryMeaning = entry.meanings[0];
-      const partOfSpeech = primaryMeaning?.partOfSpeech || 'noun';
-      const summary = primaryMeaning?.definitions[0]?.definition || '';
-      const audioUrl =
-        entry.phonetics.find((p) => p.audio?.trim())?.audio ??
-        availablePhonetics[0]?.audio;
-      const exampleSentence = primaryMeaning?.definitions[0]?.example;
-      addSavedWord(
-        entry.word,
-        entry.phonetic,
-        partOfSpeech,
-        summary,
-        'Favorites',
-        audioUrl,
-        exampleSentence
-      );
+      setCollectionPickerVisible(true);
     }
+  };
+
+  const handleCollectionSelect = (collection: CollectionType) => {
+    if (!entry) return;
+    const primaryMeaning = entry.meanings[0];
+    const partOfSpeech = primaryMeaning?.partOfSpeech || 'noun';
+    const summary = primaryMeaning?.definitions[0]?.definition || '';
+    const audioUrl =
+      entry.phonetics.find((p) => p.audio?.trim())?.audio ??
+      availablePhonetics[0]?.audio;
+    const exampleSentence = primaryMeaning?.definitions[0]?.example;
+    addSavedWord(
+      entry.word,
+      entry.phonetic,
+      partOfSpeech,
+      summary,
+      collection,
+      audioUrl,
+      exampleSentence
+    );
   };
 
   const handleSaveNotes = () => {
@@ -224,7 +226,10 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   };
 
   const handleSelectRelatedWord = (newWord: string) => {
-    setWord(newWord);
+    // Clear current entry and route to the same details route so navigation history is consistent
+    setLoading(true);
+    setEntry(null);
+    navigation.setParams({ word: newWord, phoneticIndex: 0 });
   };
 
   if (loading) {
@@ -366,6 +371,40 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                 size={40}
               />
             </View>
+
+            {availablePhonetics.length > 0 ? (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('AudioExperience', {
+                    word: entry.word,
+                    phoneticIndex: selectedPhoneticIndex,
+                  })
+                }
+                style={[
+                  styles.immersiveLink,
+                  {
+                    backgroundColor: themeColors.primaryContainer + '20',
+                    borderColor: themeColors.primary + '30',
+                  },
+                ]}
+                activeOpacity={0.8}
+                accessibilityLabel="Open immersive pronunciation experience"
+              >
+                <MaterialIcons name="spatial-audio-off" size={20} color={themeColors.primary} />
+                <Text
+                  style={[
+                    styles.immersiveLinkText,
+                    {
+                      color: themeColors.primary,
+                      fontSize: typography.buttonText.fontSize * 0.9 * fontSizeMultiplier,
+                    },
+                  ]}
+                >
+                  Immersive Pronunciation
+                </Text>
+                <MaterialIcons name="chevron-right" size={20} color={themeColors.primary} />
+              </TouchableOpacity>
+            ) : null}
 
             <View style={styles.posSaveRow}>
               <View
@@ -642,6 +681,12 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </View>
         </ScrollView>
       </View>
+      <CollectionPicker
+        visible={collectionPickerVisible}
+        onClose={() => setCollectionPickerVisible(false)}
+        onSelect={handleCollectionSelect}
+        currentCollection={savedItem?.collection}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -693,7 +738,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    marginBottom: spacing.stackSm,
+  },
+  immersiveLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: spacing.stackMd,
+    borderRadius: rounded.full,
+    borderWidth: 1,
     marginBottom: spacing.stackMd,
+    alignSelf: 'center',
+  },
+  immersiveLinkText: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
   },
   phoneticText: {
     fontFamily: 'Inter',

@@ -20,6 +20,7 @@ import { useHistory } from '../context/HistoryContext';
 import { DictionaryStackParamList } from '../navigation/AppNavigator';
 import { filterSuggestions } from '../data/suggestionBank';
 import { rounded, spacing, typography } from '../styles/theme';
+import { CollectionPicker, CollectionType } from '../components/CollectionPicker';
 
 type Props = NativeStackScreenProps<DictionaryStackParamList, 'Discover'>;
 
@@ -41,12 +42,14 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
   const { history, addHistoryWord } = useHistory();
   const {
     togglePlayPause: toggleWodAudio,
+    prefetchAudio,
     isPlaying: isWodPlaying,
     isPaused: isWodPaused,
     isLoading: isWodAudioLoading,
   } = useAudio();
   
   const [searchQuery, setSearchQuery] = useState('');
+  const [collectionPickerVisible, setCollectionPickerVisible] = useState(false);
 
   const suggestions = useMemo(
     () => filterSuggestions(searchQuery),
@@ -65,12 +68,22 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
     example: 'Her ethereal beauty seemed to glow in the dim light of the church.'
   };
 
+  useEffect(() => {
+    prefetchAudio(wordOfDay.audioUrl);
+  }, [prefetchAudio, wordOfDay.audioUrl]);
+
   const isWodSaved = savedWords.some(w => w.word.toLowerCase() === wordOfDay.word.toLowerCase());
 
   const handleSearchSubmit = (wordToSearch?: string) => {
     const targetWord = wordToSearch || searchQuery;
     if (!targetWord.trim()) {
       Alert.alert('Empty Search', 'Please enter a word to search.');
+      return;
+    }
+    // Validate allowed characters
+    const { isValidSearchQuery } = require('../utils/validation');
+    if (!isValidSearchQuery(targetWord)) {
+      Alert.alert('Invalid Search', 'Search queries may only contain letters, spaces and hyphens.');
       return;
     }
     setSearchQuery('');
@@ -81,16 +94,20 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
     if (isWodSaved) {
       removeSavedWord(wordOfDay.word);
     } else {
-      addSavedWord(
-        wordOfDay.word,
-        wordOfDay.phonetic,
-        wordOfDay.partOfSpeech,
-        wordOfDay.definition,
-        'Favorites',
-        wordOfDay.audioUrl,
-        wordOfDay.example
-      );
+      setCollectionPickerVisible(true);
     }
+  };
+
+  const handleCollectionSelectWod = (collection: CollectionType) => {
+    addSavedWord(
+      wordOfDay.word,
+      wordOfDay.phonetic,
+      wordOfDay.partOfSpeech,
+      wordOfDay.definition,
+      collection,
+      wordOfDay.audioUrl,
+      wordOfDay.example
+    );
   };
 
   return (
@@ -282,6 +299,12 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
+      <CollectionPicker
+        visible={collectionPickerVisible}
+        onClose={() => setCollectionPickerVisible(false)}
+        onSelect={handleCollectionSelectWod}
+        currentCollection="Favorites"
+      />
     </View>
   );
 };
@@ -309,6 +332,7 @@ const styles = StyleSheet.create({
   },
   recentGrid: {
     gap: spacing.stackSm,
+    marginTop: 8,
   },
   recentRow: {
     flexDirection: 'row',
@@ -334,6 +358,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.gutter,
     marginBottom: spacing.stackLg,
+    marginTop: spacing.stackSm,
   },
   bentoCard: {
     flex: 1,

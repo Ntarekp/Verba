@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { SavedWordItem } from '../models/DictionaryTypes';
 import { useTheme } from '../context/ThemeContext';
@@ -14,6 +14,7 @@ interface SavedWordCardProps {
   onPress: () => void;
   onRemove: () => void;
   relativeTime: string;
+  onOpenAudioExperience?: (word: string) => void;
 }
 
 export const SavedWordCard: React.FC<SavedWordCardProps> = ({
@@ -21,6 +22,7 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
   onPress,
   onRemove,
   relativeTime,
+  onOpenAudioExperience,
 }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const { playAudio, togglePlayPause, isPlaying, isPaused, isLoading, currentUrl } = useAudio();
@@ -126,7 +128,11 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
           </View>
 
           <View style={styles.actions}>
-            <View onStartShouldSetResponder={() => true}>
+            <Pressable
+              onLongPress={() => onOpenAudioExperience?.(item.word)}
+              delayLongPress={400}
+              onStartShouldSetResponder={() => true}
+            >
               <PronunciationButton
                 audioUrl={effectiveAudioUrl}
                 onPress={handlePlay}
@@ -136,7 +142,7 @@ export const SavedWordCard: React.FC<SavedWordCardProps> = ({
                 size={40}
                 forceEnabled
               />
-            </View>
+            </Pressable>
             <TouchableOpacity
               onPress={handleRemovePress}
               style={styles.removeBtn}
@@ -234,7 +240,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     gap: spacing.stackSm,

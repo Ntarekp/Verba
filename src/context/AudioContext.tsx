@@ -14,10 +14,16 @@ interface AudioContextValue {
   pauseAudio: () => Promise<void>;
   stopAudio: () => Promise<void>;
   togglePlayPause: (url: string) => Promise<void>;
+  replayAudio: () => Promise<void>;
+  setPlaybackRate: (rate: number) => Promise<void>;
+  prefetchAudio: (url: string) => Promise<void>;
   isPlaying: boolean;
   isPaused: boolean;
   isLoading: boolean;
   currentUrl: string | null;
+  positionMillis: number;
+  durationMillis: number;
+  playbackRate: number;
 }
 
 const AudioContext = createContext<AudioContextValue | undefined>(undefined);
@@ -42,11 +48,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
+  const [positionMillis, setPositionMillis] = useState(0);
+  const [durationMillis, setDurationMillis] = useState(0);
+  const [playbackRate, setPlaybackRateState] = useState(1);
 
   const soundRef = useRef<Audio.Sound | null>(null);
   const isCleaningUp = useRef(false);
   const isPausedRef = useRef(false);
   const currentUrlRef = useRef<string | null>(null);
+  const playbackRateRef = useRef(1);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
@@ -88,11 +98,16 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsPaused(
         !status.isPlaying && status.positionMillis > 0 && !status.didJustFinish
       );
+      setPositionMillis(status.positionMillis ?? 0);
+      setDurationMillis(status.durationMillis ?? 0);
 
       if (status.didJustFinish) {
         setIsPlaying(false);
         setIsPaused(false);
         setIsLoading(false);
+        if (status.durationMillis) {
+          setPositionMillis(status.durationMillis);
+        }
       }
     } else if (status.error) {
       console.error(`[AudioProvider] Playback error: ${status.error}`);
@@ -115,6 +130,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIsPlaying(false);
     setIsPaused(false);
     setIsLoading(false);
+    setPositionMillis(0);
+    setDurationMillis(0);
 
     try {
       await unloadSoundInstance(sound);
@@ -151,6 +168,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setIsLoading(true);
         setCurrentUrl(url);
         setIsPaused(false);
+        setPositionMillis(0);
+        setDurationMillis(0);
 
         // Stop any existing sound before loading a new one
         const previous = soundRef.current;
@@ -171,6 +190,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         );
 
         soundRef.current = sound;
+
+        if (playbackRateRef.current !== 1) {
+          try {
+            await sound.setRateAsync(playbackRateRef.current, true);
+          } catch (e) {
+            console.warn('[AudioProvider] Failed to apply playback rate', e);
+          }
+        }
       } catch (e: any) {
         console.error('[AudioProvider] Failed to play audio', e);
         setIsLoading(false);
@@ -225,6 +252,59 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     [isPlaying, pauseAudio, playAudio]
   );
 
+  const replayAudio = useCallback(async () => {
+    const sound = soundRef.current;
+    if (!sound) return;
+
+    try {
+      const status = await sound.getStatusAsync();
+      if (status.isLoaded) {
+        await sound.setPositionAsync(0);
+        if (!status.isPlaying) {
+          await sound.playAsync();
+        }
+        setPositionMillis(0);
+        setIsPaused(false);
+      }
+    } catch (e) {
+      console.warn('[AudioProvider] Failed to replay audio', e);
+      const url = currentUrlRef.current;
+      if (url) {
+        await playAudio(url);
+      }
+    }
+  }, [playAudio]);
+
+  const setPlaybackRate = useCallback(async (rate: number) => {
+    const clamped = Math.max(0.5, Math.min(2, rate));
+    playbackRateRef.current = clamped;
+    setPlaybackRateState(clamped);
+
+    const sound = soundRef.current;
+    if (!sound) return;
+
+    try {
+      const status = await sound.getStatusAsync();
+      if (status.isLoaded) {
+        await sound.setRateAsync(clamped, true);
+      }
+    } catch (e) {
+      console.warn('[AudioProvider] Failed to set playback rate', e);
+    }
+  }, []);
+
+  const prefetchAudio = useCallback(async (url: string) => {
+    if (!url) return;
+    try {
+      await Audio.Sound.createAsync(
+        { uri: url },
+        { shouldPlay: false }
+      );
+    } catch (e) {
+      console.warn('[AudioProvider] Prefetch failed', e);
+    }
+  }, []);
+
   return (
     <AudioContext.Provider
       value={{
@@ -232,10 +312,16 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         pauseAudio,
         stopAudio,
         togglePlayPause,
+        replayAudio,
+        setPlaybackRate,
+        prefetchAudio,
         isPlaying,
         isPaused,
         isLoading,
         currentUrl,
+        positionMillis,
+        durationMillis,
+        playbackRate,
       }}
     >
       {children}

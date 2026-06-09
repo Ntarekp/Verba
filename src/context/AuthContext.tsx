@@ -32,6 +32,7 @@ interface AuthContextProps {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginAsGuest: () => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
   logout: (options?: { silent?: boolean }) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<boolean>;
@@ -173,6 +174,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLastMessage(`Welcome back, ${match.name.split(' ')[0]}!`);
   };
 
+  const loginAsGuest = async () => {
+    setIsLoading(true);
+    try {
+      const guestUser: StoredUser = {
+        id: 'guest-user',
+        name: 'Guest Explorer',
+        email: 'guest@verba.app',
+        password: 'guest-no-password',
+      };
+      // We don't save guest to users list, but we persist session
+      await persistSession(guestUser);
+      setLastMessage('Welcome, Guest! Enjoy exploring Verba.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const signUp = async (name: string, email: string, password: string) => {
     const normalized = normalizeEmail(email);
     if (!normalized) throw authError('EMAIL_REQUIRED');
@@ -237,6 +255,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         isLoading,
         login,
+        loginAsGuest,
         signUp,
         logout,
         requestPasswordReset,

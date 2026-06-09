@@ -22,7 +22,7 @@ import { SavedWordCard } from '../components/SavedWordCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SavedWordItem } from '../models/DictionaryTypes';
 import { MainTabParamList } from '../navigation/AppNavigator';
-import { navigateToWordDetails } from '../navigation/navigationHelpers';
+import { navigateToWordDetails, navigateToAudioExperience } from '../navigation/navigationHelpers';
 import { rounded, spacing, typography } from '../styles/theme';
 
 type Props = BottomTabScreenProps<MainTabParamList, 'Saved'>;
@@ -420,6 +420,7 @@ export const SavedWordsScreen: React.FC<Props> = ({ navigation }) => {
       relativeTime={getRelativeTime(item.timestamp)}
       onPress={() => handleSelectItem(item.word)}
       onRemove={() => handleRemoveWord(item.word)}
+      onOpenAudioExperience={(word) => navigateToAudioExperience(navigation, word)}
     />
   );
 

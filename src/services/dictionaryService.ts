@@ -1,13 +1,18 @@
 import api from './api';
 import { parseApiResponse } from '../utils/apiParser';
+import { isValidSearchQuery, normalizeSearchQuery } from '../utils/validation';
 import { DictionaryEntry } from '../models/DictionaryTypes';
 
 export const lookupWord = async (word: string): Promise<DictionaryEntry> => {
   try {
-    const formattedWord = word.trim().toLowerCase();
-    if (!formattedWord) {
+    const formatted = normalizeSearchQuery(word);
+    if (!formatted) {
       throw new Error('EMPTY_QUERY');
     }
+    if (!isValidSearchQuery(formatted)) {
+      throw new Error('INVALID_QUERY');
+    }
+    const formattedWord = formatted.toLowerCase();
     const response = await api.get(`/${encodeURIComponent(formattedWord)}`);
     return parseApiResponse(response.data);
   } catch (error: any) {

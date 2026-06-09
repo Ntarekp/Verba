@@ -27,16 +27,32 @@ export const parseApiResponse = (data: any[]): DictionaryEntry => {
       };
     });
 
+  const normalizeList = (arr: any[], entryWord?: string): string[] => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    (arr || []).forEach((s: any) => {
+      if (s === null || s === undefined) return;
+      const str = String(s).trim();
+      if (!str) return;
+      if (entryWord && str.toLowerCase() === String(entryWord).toLowerCase()) return;
+      const key = str.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push(str);
+    });
+    return out;
+  };
+
   const structuredMeanings: Meaning[] = (raw.meanings || []).map((m: any) => ({
     partOfSpeech: m.partOfSpeech || 'unknown',
     definitions: (m.definitions || []).map((d: any) => ({
       definition: d.definition || '',
-      synonyms: d.synonyms || [],
-      antonyms: d.antonyms || [],
+      synonyms: normalizeList(d.synonyms || [], raw.word),
+      antonyms: normalizeList(d.antonyms || [], raw.word),
       example: d.example || undefined,
     })),
-    synonyms: m.synonyms || [],
-    antonyms: m.antonyms || [],
+    synonyms: normalizeList(m.synonyms || [], raw.word),
+    antonyms: normalizeList(m.antonyms || [], raw.word),
   }));
 
   return {

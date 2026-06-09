@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { DiscoverScreen } from '../screens/DiscoverScreen';
 import { WordDetailsScreen } from '../screens/WordDetailsScreen';
+import { AudioExperienceScreen } from '../screens/AudioExperienceScreen';
 import { HistoryScreen } from '../screens/HistoryScreen';
 import { SavedWordsScreen } from '../screens/SavedWordsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
@@ -26,6 +27,7 @@ import { useAuth } from '../context/AuthContext';
 export type DictionaryStackParamList = {
   Discover: undefined;
   WordDetails: { word: string };
+  AudioExperience: { word: string; phoneticIndex?: number };
   Settings: undefined;
 };
 
@@ -125,6 +127,11 @@ function DictionaryStackNavigator() {
       <DictionaryStack.Screen
         name="WordDetails"
         component={WordDetailsScreen}
+        options={{ headerShown: false }}
+      />
+      <DictionaryStack.Screen
+        name="AudioExperience"
+        component={AudioExperienceScreen}
         options={{ headerShown: false }}
       />
       <DictionaryStack.Screen

@@ -12,12 +12,21 @@
       "backgroundColor": "#f8f9ff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cabledie1.verba",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#f8f9ff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "package": "com.cabledie1.verba"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
@@ -25,6 +34,11 @@
     "plugins": [
       "expo-font",
       "expo-av"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "20cd30d9-cbc8-416c-8f20-b4e5a330f2b1"
+      }
+    }
   }
 }

@@ -82,6 +82,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     zIndex: 1,
     overflow: 'visible',
-    borderWidth: 1,
+    borderWidth: 0.5,
   },
 });

@@ -28,7 +28,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 export const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const insets = useSafeAreaInsets();
-  const { login, lastMessage, clearMessage } = useAuth();
+  const { login, loginAsGuest, lastMessage, clearMessage } = useAuth();
 
   const [email, setEmail] = useState('demo@verba.app');
   const [password, setPassword] = useState('Verba2024');
@@ -41,6 +41,24 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
       clearMessage();
     }
   }, [lastMessage, clearMessage]);
+
+  const handleGuestLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      await loginAsGuest();
+      navigation.getParent()?.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
+    } catch (e) {
+      const msg = getAuthErrorMessage(e);
+      setError(msg);
+      showAuthAlert('Guest Access Failed', msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogin = async () => {
     setError('');
@@ -143,6 +161,26 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 <MaterialIcons name="arrow-forward" size={20} color="#fff" />
               </>
             )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleGuestLogin}
+            disabled={loading}
+            style={[
+              styles.primaryBtn,
+              {
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: themeColors.outlineVariant,
+                marginTop: 12,
+              },
+            ]}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="person-outline" size={20} color={themeColors.onSurface} />
+            <Text style={[styles.primaryBtnText, { color: themeColors.onSurface }]}>
+              Continue as Guest
+            </Text>
           </TouchableOpacity>
 
           <View style={styles.dividerRow}>

@@ -43,6 +43,45 @@ export function navigateToWordDetails(
   }
 }
 
+/** Navigate to immersive audio experience inside the Dictionary tab stack. */
+export function navigateToAudioExperience(
+  navigation: NavigationLike,
+  word: string,
+  phoneticIndex?: number
+): void {
+  let current: NavigationLike | undefined = navigation;
+
+  while (current) {
+    const routeNames = current.getState().routeNames ?? [];
+
+    if (routeNames.includes('Dictionary')) {
+      current.navigate('Dictionary', {
+        screen: 'AudioExperience',
+        params: { word, phoneticIndex },
+      });
+      return;
+    }
+
+    if (routeNames.includes('MainTabs')) {
+      current.navigate('MainTabs', {
+        screen: 'Dictionary',
+        params: {
+          screen: 'AudioExperience',
+          params: { word, phoneticIndex },
+        },
+      });
+      return;
+    }
+
+    if (routeNames.includes('AudioExperience')) {
+      current.navigate('AudioExperience', { word, phoneticIndex });
+      return;
+    }
+
+    current = current.getParent();
+  }
+}
+
 /** Open the app drawer from any nested screen. */
 export function openAppDrawer(navigation: NavigationLike): void {
   let current: NavigationLike | undefined = navigation;

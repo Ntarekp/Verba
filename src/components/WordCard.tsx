@@ -54,7 +54,7 @@ export const WordCard: React.FC<WordCardProps> = ({
         pointerEvents="none"
       />
 
-      <GlassCard style={styles.card} padding={spacing.containerPadding} borderRadius={rounded.xl}>
+      <GlassCard style={styles.card} padding={spacing.stackMd} borderRadius={rounded.lg}>
         <View style={styles.headerRow}>
           <View style={styles.textContainer}>
             <Text
