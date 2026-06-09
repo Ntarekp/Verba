@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -17,6 +17,7 @@ import { GlassCard } from '../components/GlassCard';
 import { useTheme } from '../context/ThemeContext';
 import { useSaved } from '../context/SavedContext';
 import { useHistory } from '../context/HistoryContext';
+import { useAuth } from '../context/AuthContext';
 import { DictionaryStackParamList } from '../navigation/AppNavigator';
 import { filterSuggestions } from '../data/suggestionBank';
 import { rounded, spacing, typography } from '../styles/theme';
@@ -38,6 +39,7 @@ const getRelativeTime = (ts: number) => {
 
 export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
+  const { isGuest } = useAuth();
   const { savedWords, addSavedWord, removeSavedWord, streakCount } = useSaved();
   const { history, addHistoryWord } = useHistory();
   const {
@@ -91,6 +93,25 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleToggleSaveWod = () => {
+    if (isGuest) {
+      Alert.alert(
+        'Sign In Required',
+        'Saving words is only available for registered users. Would you like to sign in?',
+        [
+          { text: 'Later', style: 'cancel' },
+          {
+            text: 'Sign In',
+            onPress: () => {
+              navigation.getParent()?.reset({
+                index: 0,
+                routes: [{ name: 'Auth' }],
+              });
+            },
+          },
+        ]
+      );
+      return;
+    }
     if (isWodSaved) {
       removeSavedWord(wordOfDay.word);
     } else {
@@ -130,56 +151,6 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
           />
         </View>
 
-        {history.length > 0 && !showSuggestions && (
-          <View style={styles.section}>
-            <Text
-              style={[
-                styles.recentLabel,
-                {
-                  color: themeColors.outline,
-                  fontSize: typography.labelCaps.fontSize * fontSizeMultiplier,
-                },
-              ]}
-            >
-              RECENT LOOKUPS
-            </Text>
-            <View style={styles.recentGrid}>
-              {history.slice(0, 4).map((item) => (
-                <TouchableOpacity
-                  key={item.id}
-                  onPress={() => handleSearchSubmit(item.word)}
-                  activeOpacity={0.8}
-                >
-                  <GlassCard padding={spacing.gutter} borderRadius={rounded.xl}>
-                    <View style={styles.recentRow}>
-                      <View style={styles.recentLeft}>
-                        <MaterialIcons name="history" size={20} color={themeColors.outlineVariant} />
-                        <View>
-                          <Text
-                            style={[
-                              styles.recentWord,
-                              {
-                                color: themeColors.onSurface,
-                                fontSize: typography.buttonText.fontSize * fontSizeMultiplier,
-                              },
-                            ]}
-                          >
-                            {item.word.charAt(0).toUpperCase() + item.word.slice(1)}
-                          </Text>
-                          <Text style={[styles.recentTime, { color: themeColors.outline }]}>
-                            {getRelativeTime(item.timestamp)}
-                          </Text>
-                        </View>
-                      </View>
-                      <MaterialIcons name="arrow-forward" size={18} color={themeColors.outline} />
-                    </View>
-                  </GlassCard>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-
         {/* Word of the Day Hero card */}
         <WordCard
           word={wordOfDay.word}
@@ -195,53 +166,8 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
           definition={wordOfDay.definition}
           example={wordOfDay.example}
           badgeLabel="WORD OF THE DAY"
+          containerStyle={{ marginTop: 0 }}
         />
-
-        {/* Bento Grid layout */}
-        <View style={styles.bentoGrid}>
-          {/* Learning Progress widget */}
-          <View style={[styles.bentoCard, { backgroundColor: themeColors.surfaceContainerLowest }]}>
-            <View style={styles.bentoCardText}>
-              <Text style={[
-                styles.bentoTitle, 
-                { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
-              ]}>
-                Progress
-              </Text>
-              <Text style={[
-                styles.bentoSubtitle, 
-                { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }
-              ]}>
-                Lvl {Math.max(1, Math.floor(savedWords.length / 10))} • {savedWords.length} saved
-              </Text>
-            </View>
-            <View style={[styles.progressRing, { borderColor: themeColors.primary }]}>
-              <Text style={[styles.progressText, { color: themeColors.onSurface }]}>{Math.min(100, Math.round((savedWords.length / 50) * 100))}%</Text>
-            </View>
-          </View>
-
-          {/* Streak widget */}
-          <View style={[styles.bentoCard, styles.streakCard, { backgroundColor: themeColors.surfaceContainerLow, borderLeftColor: themeColors.secondary }]}>
-            <View style={styles.streakTextContainer}>
-              <Text style={[
-                styles.bentoTitle, 
-                { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
-              ]}>
-                Study Streak
-              </Text>
-              <Text style={[
-                styles.bentoSubtitle, 
-                { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }
-              ]}>
-                Active streak count
-              </Text>
-              <Text style={[styles.streakNumber, { color: themeColors.secondary }]}>
-                {streakCount} <Text style={{ fontSize: 14, fontWeight: '400' }}>days</Text>
-              </Text>
-            </View>
-            <MaterialIcons name="local-fire-department" size={44} color={themeColors.tertiary} style={styles.streakIcon} />
-          </View>
-        </View>
 
         {/* Trending Words list */}
         <View style={styles.section}>
@@ -253,14 +179,18 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
           </Text>
           <View style={styles.trendingList}>
             {[
-              { w: 'Resilience', desc: 'The capacity to recover quickly from difficulties; toughness.' },
-              { w: 'Empathy', desc: 'The ability to understand and share the feelings of another.' },
-              { w: 'Paradigm', desc: 'A typical example or pattern of something; a model.' }
-            ].map((item) => {
-              const isTrendingSaved = savedWords.some(w => w.word.toLowerCase() === item.w.toLowerCase());
-              return (
-                <View 
-                  key={item.w} 
+            { w: 'Resilience', desc: 'The capacity to recover quickly from difficulties; toughness.' },
+            { w: 'Empathy', desc: 'The ability to understand and share the feelings of another.' },
+            { w: 'Paradigm', desc: 'A typical example or pattern of something; a model.' }
+          ].map((item) => {
+            const isTrendingSaved = savedWords.some(w => w.word.toLowerCase() === item.w.toLowerCase());
+            return (
+              <TouchableOpacity
+                key={item.w}
+                onPress={() => handleSearchSubmit(item.w)}
+                activeOpacity={0.9}
+              >
+                <View
                   style={[styles.trendingRow, { backgroundColor: themeColors.surfaceContainerLowest, borderColor: themeColors.outlineVariant + '30' }]}
                 >
                   <View style={styles.trendingText}>
@@ -270,7 +200,7 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
                       </Text>
                       <MaterialIcons name="trending-up" size={14} color={themeColors.error} />
                     </View>
-                    <Text 
+                    <Text
                       style={[styles.trendingDesc, { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }]}
                       numberOfLines={1}
                     >
@@ -279,6 +209,14 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
                   </View>
                   <TouchableOpacity
                     onPress={() => {
+                      if (isGuest) {
+                        Alert.alert(
+                          'Sign In Required',
+                          'Saving words is only available for registered users.',
+                          [{ text: 'OK' }]
+                        );
+                        return;
+                      }
                       if (isTrendingSaved) {
                         removeSavedWord(item.w);
                       } else {
@@ -287,17 +225,121 @@ export const DiscoverScreen: React.FC<Props> = ({ navigation }) => {
                     }}
                     style={styles.trendingSave}
                   >
-                    <MaterialIcons 
-                      name={isTrendingSaved ? "star" : "star-border"} 
-                      size={22} 
-                      color={isTrendingSaved ? '#d97706' : themeColors.outline} 
+                    <MaterialIcons
+                      name={isTrendingSaved ? "star" : "star-border"}
+                      size={22}
+                      color={isTrendingSaved ? '#d97706' : themeColors.outline}
                     />
                   </TouchableOpacity>
                 </View>
-              );
-            })}
+              </TouchableOpacity>
+            );
+          })}
           </View>
         </View>
+
+        {/* Bento Grid layout */}
+        <View style={styles.bentoGrid}>
+          {/* Learning Progress widget */}
+          <View style={[styles.bentoCard, { backgroundColor: themeColors.surfaceContainerLowest }]}>
+            <View style={styles.bentoCardText}>
+              <Text style={[
+                styles.bentoTitle, 
+                { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
+              ]}>
+                {isGuest ? 'Sign in' : 'Progress'}
+              </Text>
+              <Text style={[
+                styles.bentoSubtitle, 
+                { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }
+              ]}>
+                {isGuest ? 'To track progress' : `Lvl ${Math.max(1, Math.floor(savedWords.length / 10))} • ${savedWords.length} saved`}
+              </Text>
+            </View>
+            <View style={[styles.progressRing, { borderColor: isGuest ? themeColors.outlineVariant : themeColors.primary }]}>
+              <Text style={[styles.progressText, { color: themeColors.onSurface }]}>{isGuest ? '—' : `${Math.min(100, Math.round((savedWords.length / 50) * 100))}%`}</Text>
+            </View>
+          </View>
+
+          {/* Streak widget */}
+          <View style={[styles.bentoCard, styles.streakCard, { backgroundColor: themeColors.surfaceContainerLow, borderLeftColor: themeColors.secondary }]}>
+            <View style={styles.streakTextContainer}>
+              <Text style={[
+                styles.bentoTitle, 
+                { color: themeColors.onSurface, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }
+              ]}>
+                {isGuest ? 'Sign in' : 'Study Streak'}
+              </Text>
+              <Text style={[
+                styles.bentoSubtitle, 
+                { color: themeColors.onSurfaceVariant, fontSize: typography.caption.fontSize * fontSizeMultiplier }
+              ]}>
+                {isGuest ? 'To start streak' : 'Active streak count'}
+              </Text>
+              <Text style={[styles.streakNumber, { color: isGuest ? themeColors.outlineVariant : themeColors.secondary }]}>
+                {isGuest ? '—' : streakCount} <Text style={{ fontSize: 14, fontWeight: '400' }}>days</Text>
+              </Text>
+            </View>
+            <MaterialIcons name="local-fire-department" size={44} color={isGuest ? themeColors.outlineVariant : themeColors.tertiary} style={styles.streakIcon} />
+          </View>
+        </View>
+
+        {history.length > 0 && !showSuggestions && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeaderRow}>
+              <Text
+                style={[
+                  styles.recentLabel,
+                  {
+                    color: themeColors.outline,
+                    fontSize: typography.labelCaps.fontSize * fontSizeMultiplier,
+                  },
+                ]}
+              >
+                RECENT LOOKUPS
+              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('History')}>
+                <Text style={[styles.viewAll, { color: themeColors.primary, fontSize: 12 * fontSizeMultiplier }]}>
+                  View All
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.recentGrid}>
+              {history.slice(0, 3).map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => handleSearchSubmit(item.word)}
+                  activeOpacity={0.8}
+                >
+                  <GlassCard padding={12} borderRadius={rounded.lg}>
+                    <View style={styles.recentRow}>
+                      <View style={styles.recentLeft}>
+                        <MaterialIcons name="history" size={18} color={themeColors.outlineVariant} />
+                        <View style={{ flex: 1 }}>
+                          <Text
+                            style={[
+                              styles.recentWord,
+                              {
+                                color: themeColors.onSurface,
+                                fontSize: 14 * fontSizeMultiplier,
+                              },
+                            ]}
+                          >
+                            {item.word.charAt(0).toUpperCase() + item.word.slice(1)}
+                          </Text>
+                          <Text style={[styles.recentTime, { color: themeColors.outline, fontSize: 11 * fontSizeMultiplier }]}>
+                            {getRelativeTime(item.timestamp)}
+                          </Text>
+                        </View>
+                      </View>
+                      <MaterialIcons name="chevron-right" size={18} color={themeColors.outline} />
+                    </View>
+                  </GlassCard>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
       </ScrollView>
       <CollectionPicker
         visible={collectionPickerVisible}
@@ -317,18 +359,27 @@ const styles = StyleSheet.create({
     padding: spacing.gutter,
     paddingBottom: 48,
     flexGrow: 1,
+    gap: spacing.stackLg,
   },
   searchSection: {
     position: 'relative',
     zIndex: 50,
-    marginBottom: spacing.stackLg,
   },
   recentLabel: {
     fontFamily: 'Inter',
     fontWeight: '600',
     letterSpacing: 0.8,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: spacing.stackMd,
     paddingHorizontal: 4,
+  },
+  viewAll: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
   },
   recentGrid: {
     gap: spacing.stackSm,
@@ -357,13 +408,11 @@ const styles = StyleSheet.create({
   bentoGrid: {
     flexDirection: 'row',
     gap: spacing.gutter,
-    marginBottom: spacing.stackLg,
-    marginTop: spacing.stackSm,
   },
   bentoCard: {
     flex: 1,
     minWidth: 0,
-    borderRadius: rounded.lg,
+    borderRadius: rounded.xl,
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -373,7 +422,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.03,
     shadowRadius: 8,
     elevation: 2,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: 'rgba(255, 255, 255, 0.4)',
   },
   bentoCardText: {
@@ -423,7 +472,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   section: {
-    marginBottom: spacing.stackLg,
   },
   sectionHeader: {
     fontFamily: 'Inter',
@@ -454,9 +502,9 @@ const styles = StyleSheet.create({
   trendingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: rounded.lg,
+    borderRadius: rounded.xl,
     padding: 12,
-    borderWidth: 1,
+    borderWidth: 0.5,
   },
   trendingText: {
     flex: 1,

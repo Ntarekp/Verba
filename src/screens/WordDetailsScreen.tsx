@@ -25,6 +25,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useSaved } from '../context/SavedContext';
 import { useHistory } from '../context/HistoryContext';
 import { useAudio } from '../context/AudioContext';
+import { useAuth } from '../context/AuthContext';
 import { getAutoplayEnabled } from '../utils/settingsHelper';
 import { getAccentLabel, getValidPhonetics } from '../utils/pronunciationHelpers';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -47,6 +48,7 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const insets = useSafeAreaInsets();
   const { savedWords, addSavedWord, removeSavedWord, updateWordNotes } = useSaved();
   const { addHistoryWord } = useHistory();
+  const { isGuest } = useAuth();
   const {
     playAudio,
     stopAudio,
@@ -184,6 +186,25 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   };
 
   const handleToggleSave = () => {
+    if (isGuest) {
+      Alert.alert(
+        'Sign In Required',
+        'Saving words is only available for registered users. Would you like to sign in?',
+        [
+          { text: 'Later', style: 'cancel' },
+          {
+            text: 'Sign In',
+            onPress: () => {
+              navigation.getParent()?.reset({
+                index: 0,
+                routes: [{ name: 'Auth' }],
+              });
+            },
+          },
+        ]
+      );
+      return;
+    }
     if (!entry) return;
     if (isSaved) {
       removeSavedWord(entry.word);
@@ -213,6 +234,14 @@ export const WordDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   };
 
   const handleSaveNotes = () => {
+    if (isGuest) {
+      Alert.alert(
+        'Sign In Required',
+        'Personal notes are only available for registered users.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
     if (!entry) return;
     if (!isSaved) {
       Alert.alert(

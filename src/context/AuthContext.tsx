@@ -30,6 +30,7 @@ export type AuthErrorCode =
 interface AuthContextProps {
   user: AuthUser | null;
   isAuthenticated: boolean;
+  isGuest: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginAsGuest: () => Promise<void>;
@@ -81,6 +82,7 @@ const messageForError = (code: AuthErrorCode): string => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [lastMessage, setLastMessage] = useState<string | null>(null);
 
@@ -116,6 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       name: storedUser.name,
       email: storedUser.email,
     });
+    setIsGuest(storedUser.id === 'guest-user');
   };
 
   const restoreSession = useCallback(async () => {
@@ -217,6 +220,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async (options?: { silent?: boolean }) => {
     await AsyncStorage.removeItem(SESSION_KEY);
     setUser(null);
+    setIsGuest(false);
     if (!options?.silent) {
       setLastMessage('You have been signed out successfully.');
     }
@@ -253,6 +257,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         isAuthenticated: !!user,
+        isGuest,
         isLoading,
         login,
         loginAsGuest,

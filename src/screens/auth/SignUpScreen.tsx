@@ -24,13 +24,31 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
 export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   const { themeColors, fontSizeMultiplier } = useTheme();
   const insets = useSafeAreaInsets();
-  const { signUp } = useAuth();
+  const { signUp, loginAsGuest } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleGuestLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      await loginAsGuest();
+      navigation.getParent()?.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
+    } catch (e) {
+      const msg = getAuthErrorMessage(e);
+      setError(msg);
+      showAuthAlert('Guest Access Failed', msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSignUp = async () => {
     setError('');
@@ -131,6 +149,26 @@ export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 <MaterialIcons name="arrow-forward" size={20} color="#fff" />
               </>
             )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleGuestLogin}
+            disabled={loading}
+            style={[
+              styles.primaryBtn,
+              {
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: themeColors.outlineVariant,
+                marginTop: 12,
+              },
+            ]}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="person-outline" size={20} color={themeColors.onSurface} />
+            <Text style={[styles.primaryBtnText, { color: themeColors.onSurface }]}>
+              Continue as Guest
+            </Text>
           </TouchableOpacity>
 
           <Text style={[styles.footer, { color: themeColors.onSurfaceVariant }]}>

@@ -22,7 +22,7 @@ import { rounded, spacing, typography } from '../styles/theme';
 type Props = NativeStackScreenProps<DictionaryStackParamList, 'Settings'>;
 
 export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, isGuest } = useAuth();
   const { 
     themeColors, 
     fontSizeMultiplier,
@@ -69,6 +69,11 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
   const setNotifications = (val: boolean) => { setNotificationsState(val); savePref('notifications', val); };
 
   const handleLogout = () => {
+    if (isGuest) {
+      logout({ silent: true });
+      resetToAuth(navigation);
+      return;
+    }
     Alert.alert(
       'Sign Out',
       'Are you sure you want to sign out of Verba? Your saved words and search history will remain on this device.',
@@ -286,7 +291,7 @@ export const SettingsScreen: React.FC<Props> = ({ navigation }) => {
           activeOpacity={0.8}
         >
           <Text style={[styles.logoutBtnText, { color: themeColors.error, fontSize: typography.buttonText.fontSize * fontSizeMultiplier }]}>
-            Log Out
+            {isGuest ? 'Exit Guest Mode' : 'Log Out'}
           </Text>
         </TouchableOpacity>
       </ScrollView>

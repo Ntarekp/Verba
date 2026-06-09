@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, Alert } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { MainTabParamList } from '../navigation/AppNavigator';
+import { useAuth } from '../context/AuthContext';
 import { rounded, spacing, typography } from '../styles/theme';
 
 type TabConfig = {
@@ -22,6 +23,7 @@ const TAB_CONFIG: Record<keyof MainTabParamList, TabConfig> = {
 
 export const VerbaTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
   const { themeColors, isDarkMode } = useTheme();
+  const { isGuest } = useAuth();
   const insets = useSafeAreaInsets();
 
   const content = (
@@ -31,6 +33,26 @@ export const VerbaTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) 
         const config = TAB_CONFIG[route.name as keyof MainTabParamList];
 
         const onPress = () => {
+          if (isGuest && (route.name === 'History' || route.name === 'Saved')) {
+            Alert.alert(
+              'Sign In Required',
+              'Searching history and saving words are only available for registered users. Would you like to sign in?',
+              [
+                { text: 'Later', style: 'cancel' },
+                {
+                  text: 'Sign In',
+                  onPress: () => {
+                    navigation.getParent()?.reset({
+                      index: 0,
+                      routes: [{ name: 'Auth' }],
+                    });
+                  },
+                },
+              ]
+            );
+            return;
+          }
+
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
