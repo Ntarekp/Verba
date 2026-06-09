@@ -2,14 +2,14 @@
 
 **Verba** is a cross-platform React Native dictionary app built for LexiTech Solutions Ltd. It combines fast search, audio pronunciation, saved words, and clean glass-style UI with a polished mobile experience.
 
-![Verba App Showcase](stitch_verba_intelligence_platform/app_store_showcase/screen.png)
+![Verba App Showcase](stitch_verba_intelligence_platform/stitch_verba_intelligence_platform/a_premium_marketing_showcase_of_three_iphones_arranged_in_a_dynamic_overlapping/screen.png)
 
 ## What this project includes
 
 - A working React Native app in `src/`
 - UI screens and business flow implemented for search, word details, saved collections, history, settings, and authentication
 - Offline-aware error states and responsive theming
-- Marketing and design assets located in `stitch_verba_intelligence_platform/`
+- Marketing and design assets located in `stitch_verba_intelligence_platform/stitch_verba_intelligence_platform/`
 
 > The `stitch_verba_intelligence_platform/` directory contains marketing screens and design references for the Verba Intelligence Platform experience. These assets are for visual alignment and presentation, not runtime app code.
 
@@ -25,8 +25,11 @@
 
 ## Marketing & design assets
 
-The following folders in `stitch_verba_intelligence_platform/` contain marketing screens, screenshots, and concept visuals used for presentation:
+The following folders in `stitch_verba_intelligence_platform/stitch_verba_intelligence_platform/` contain marketing screens and showcase visuals used for presentation:
 
+- `a_high_end_cinematic_3d_mockup_of_a_single_iphone_15_pro_floating_in_a_dark/`
+- `a_premium_marketing_showcase_of_three_iphones_arranged_in_a_dynamic_overlapping/`
+- `a_vertical_mobile_app_showcase_for_an_app_store_story._a_premium_smartphone/`
 - `app_store_showcase/`
 - `authentication_*`
 - `onboarding_*`
